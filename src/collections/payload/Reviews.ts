@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { adminOnly, publicRead, staffOnly } from "./access";
+import { adminOnly, staffOnly } from "./access";
 
 export const Reviews: CollectionConfig = {
   slug: "reviews",
