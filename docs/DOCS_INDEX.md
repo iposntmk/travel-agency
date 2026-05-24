@@ -1,0 +1,44 @@
+# Documentation Index
+
+Repository hiện là docs-only. Khi app được scaffold, đặt code trong `travel-agency/`.
+
+## Nguồn chính
+
+- `PURPOSE.md`: north star, audience, success criteria, non-goals.
+- `PROJECT_BRIEF.md`: business overview, MVP scope, stack summary.
+- `TECH_STACK.md`: quyết định công nghệ chính thức.
+- `DEVELOPMENT_APPROACH.md`: roadmap layer-based và exit criteria.
+- `DATABASE_SCHEMA.md`: Payload collections, fields, access control, migrations.
+- `CODING_GUIDELINES.md`: architecture guardrails, source layout, code rules.
+- `TESTING_STRATEGY.md`: test plan theo layer và priority cases.
+- `EXTENSION_GUIDE.md`: cách mở rộng payment, OTA, language, market, add-ons.
+
+## Product & operations
+
+- `FEATURE_LIST.md`: catalog tính năng tổng.
+- `BOOKING_FLOW.md`: customer journey, status flow, metrics.
+- `BOOK_NOW_PAY_LATER.md`: chính sách pay later.
+- `FREE_TOUR_STRATEGY.md`: free tour lead generation.
+- `TOUR_OPERATION_MODEL.md`: self-operated/partner/hybrid logic.
+- `ADD_ON_SERVICES.md`: spa/dental/wellness affiliate.
+- `OTA_INTEGRATIONS.md`: OTA affiliate/widgets.
+- `SOCIAL_MEDIA_INTEGRATION.md`: share, login, embed, consent.
+- `MEDIA_STRATEGY.md`: R2 + Sharp + QStash media pipeline.
+- `MARKET_SEASONALITY.md`: thị trường và mùa cao điểm.
+- `RISKS_AND_MITIGATIONS.md`: rủi ro vận hành/kỹ thuật.
+
+## Setup & deployment
+
+- `DEVELOPMENT_SETUP.md`: local setup, env, required scripts.
+- `LAYER_1_FOUNDATION_STATUS.md`: current Layer 1 completion status, verification commands, and remaining external setup blockers.
+- `DEPLOYMENT_GUIDE.md`: production env and deploy rules.
+- `AGENTS.md`: repository guidance for coding agents.
+- `CLAUDE.md`: Claude Code-specific working context.
+
+## Reference / superseded analysis
+
+- `Phan_tich.md`: phân tích tính khả thi và layer build ban đầu.
+- `proposal.md`: proposal build order ban đầu.
+- `gemini-code-1779596446260.md`: generated architecture draft, giữ làm reference.
+
+Các quyết định trong reference files không tự động thắng các nguồn chính. Khi có xung đột, cập nhật nguồn chính trước.

@@ -1,0 +1,17 @@
+.aider*
+.env
+.env*.local
+.next/
+node_modules/
+coverage/
+dist/
+pnpm-debug.log*
+tsconfig.tsbuildinfo
+dev-server.log
+
+# clerk configuration (can include secrets)
+/.clerk/
+
+# local API keys — never commit
+API-keys/
+Neno-connnection-string.txt
