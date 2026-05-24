@@ -14,7 +14,7 @@ export default function HomePage() {
               Central Vietnam Tours
             </p>
             <h1 className="max-w-3xl text-4xl font-bold leading-tight text-brand-ink md:text-6xl">
-              VM Travel
+              TC Travel Vietnam
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-700">
               Private, small group, and free walking tours in Hoi An, Hue, and Da Nang.

@@ -13,7 +13,7 @@
     "payload:generate-importmap": "payload generate:importmap",
     "payload:generate-types": "payload generate:types",
     "payload:migrate:create": "payload migrate:create",
-    "seed": "tsx scripts/seed.ts",
+    "seed": "node --env-file=.env --import=tsx/esm scripts/seed.ts",
     "payload:migrate": "payload migrate"
   },
   "dependencies": {

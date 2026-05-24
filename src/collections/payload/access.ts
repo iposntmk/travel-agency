@@ -39,3 +39,11 @@ export const adminOrSelf: Access = ({ id, req }) => {
 
   return req.user.id === id;
 };
+
+export const staffOnly: Access = ({ req }) => {
+  const user: unknown = req.user;
+  if (!user || typeof user !== "object") return false;
+  if (!("role" in user)) return false;
+  const role = (user as { role: string }).role;
+  return role === "admin" || role === "editor" || role === "sales";
+};

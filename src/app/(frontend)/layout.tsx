@@ -5,10 +5,10 @@ import "../globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "VM Travel",
-    template: "%s | VM Travel"
+    default: "TC Travel Vietnam",
+    template: "%s | TC Travel Vietnam"
   },
-  description: "Central Vietnam tours with Book Now - Pay Later inquiries."
+  description: "Private, small group, and free walking tours in Hội An, Huế, and Đà Nẵng. Book now, pay later — TC Travel Vietnam."
 };
 
 export default function FrontendLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -19,7 +19,7 @@ export default function FrontendLayout({ children }: Readonly<{ children: React.
           <header className="border-b border-slate-200 bg-white">
             <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
               <Link className="text-lg font-bold text-brand-blue" href="/">
-                VM Travel
+                TC Travel Vietnam
               </Link>
               <div className="flex gap-4 text-sm font-medium text-slate-700">
                 <Link href="/tours">Tours</Link>

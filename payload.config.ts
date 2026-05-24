@@ -4,7 +4,17 @@ import { postgresAdapter } from "@payloadcms/db-postgres";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { buildConfig } from "payload";
 import sharp from "sharp";
+import { Bookings } from "@/collections/payload/Bookings";
+import { Comments } from "@/collections/payload/Comments";
+import { Customers } from "@/collections/payload/Customers";
+import { Destinations } from "@/collections/payload/Destinations";
 import { Media } from "@/collections/payload/Media";
+import { Partners } from "@/collections/payload/Partners";
+import { Payments } from "@/collections/payload/Payments";
+import { Posts } from "@/collections/payload/Posts";
+import { Promotions } from "@/collections/payload/Promotions";
+import { Reviews } from "@/collections/payload/Reviews";
+import { Tours } from "@/collections/payload/Tours";
 import { Users } from "@/collections/payload/Users";
 import { migrations } from "@/migrations";
 
@@ -23,7 +33,20 @@ export default buildConfig({
       importMapFile: path.resolve(dirname, "src/app/(payload)/admin/importMap.js")
     }
   },
-  collections: [Users, Media],
+  collections: [
+    Users,
+    Media,
+    Destinations,
+    Partners,
+    Tours,
+    Customers,
+    Bookings,
+    Posts,
+    Comments,
+    Reviews,
+    Promotions,
+    Payments
+  ],
   db: postgresAdapter({
     migrationDir: path.resolve(dirname, "src/migrations"),
     pool: {

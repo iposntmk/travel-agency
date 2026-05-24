@@ -69,6 +69,16 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    destinations: Destination;
+    partners: Partner;
+    tours: Tour;
+    customers: Customer;
+    bookings: Booking;
+    posts: Post;
+    comments: Comment;
+    reviews: Review;
+    promotions: Promotion;
+    payments: Payment;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,6 +88,16 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    destinations: DestinationsSelect<false> | DestinationsSelect<true>;
+    partners: PartnersSelect<false> | PartnersSelect<true>;
+    tours: ToursSelect<false> | ToursSelect<true>;
+    customers: CustomersSelect<false> | CustomersSelect<true>;
+    bookings: BookingsSelect<false> | BookingsSelect<true>;
+    posts: PostsSelect<false> | PostsSelect<true>;
+    comments: CommentsSelect<false> | CommentsSelect<true>;
+    reviews: ReviewsSelect<false> | ReviewsSelect<true>;
+    promotions: PromotionsSelect<false> | PromotionsSelect<true>;
+    payments: PaymentsSelect<false> | PaymentsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -167,6 +187,346 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "destinations".
+ */
+export interface Destination {
+  id: number;
+  title: string;
+  /**
+   * URL-friendly identifier, e.g. hoi-an
+   */
+  slug: string;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  featuredImage?: (number | null) | Media;
+  region?: ('central' | 'north' | 'south') | null;
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partners".
+ */
+export interface Partner {
+  id: number;
+  name: string;
+  logo?: (number | null) | Media;
+  description?: string | null;
+  partnerType: 'tour-outsource' | 'spa' | 'dental' | 'nail' | 'wellness' | 'other';
+  location?: (number | null) | Destination;
+  commissionRate?: number | null;
+  contactPerson?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  whatsapp?: string | null;
+  rating?: number | null;
+  isFeatured?: boolean | null;
+  inquiryFormUrl?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tours".
+ */
+export interface Tour {
+  id: number;
+  title: string;
+  slug: string;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  featuredImage?: (number | null) | Media;
+  gallery?: (number | Media)[] | null;
+  destination: number | Destination;
+  operationType: 'self-operated' | 'partner' | 'hybrid';
+  partner?: (number | null) | Partner;
+  minPax?: number | null;
+  currentPax?: number | null;
+  tourType: 'free-walking' | 'free-cycling' | 'paid-private' | 'paid-group' | 'adventure' | 'family' | 'cultural';
+  season?: ('summer' | 'winter' | 'year-round') | null;
+  isFeaturedInSeason?: boolean | null;
+  status: 'active' | 'seasonal' | 'sold-out' | 'paused';
+  priceFrom?: number | null;
+  currency?: string | null;
+  pricingTiers?:
+    | {
+        label: string;
+        price: number;
+        minPax?: number | null;
+        maxPax?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  availableDates?:
+    | {
+        date: string;
+        id?: string | null;
+      }[]
+    | null;
+  itinerary?:
+    | {
+        time?: string | null;
+        activity?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        id?: string | null;
+      }[]
+    | null;
+  addOns?: (number | Partner)[] | null;
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "customers".
+ */
+export interface Customer {
+  id: number;
+  name: string;
+  email: string;
+  phone?: string | null;
+  nationality?: string | null;
+  /**
+   * Linked Clerk user ID (set on first SSO login)
+   */
+  clerkUserId?: string | null;
+  preferredContactChannel?: ('whatsapp' | 'email' | 'zalo' | 'phone') | null;
+  /**
+   * Internal CRM notes — not visible to customer
+   */
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bookings".
+ */
+export interface Booking {
+  id: number;
+  customer?: (number | null) | Customer;
+  tour: number | Tour;
+  numPax: number;
+  preferredDate: string;
+  specialRequest?: string | null;
+  contactChannel?: ('whatsapp' | 'email' | 'zalo' | 'phone') | null;
+  status: 'Pending' | 'Confirmed - Pay Later' | 'Confirmed - Paid' | 'Completed' | 'Cancelled';
+  /**
+   * Client-generated key for deduplication on submit
+   */
+  idempotencyKey: string;
+  /**
+   * Nullable — set in Phase 5
+   */
+  paymentMethod?: string | null;
+  /**
+   * Nullable — set in Phase 5
+   */
+  paymentStatus?: string | null;
+  /**
+   * Provider webhook event ID for idempotency — Phase 5
+   */
+  paymentProviderEventId?: string | null;
+  internalNotes?: string | null;
+  source?: ('direct' | 'free-tour-upsell' | 'blog-cta' | 'social' | 'ota') | null;
+  /**
+   * Append-only audit trail — do not edit manually
+   */
+  statusHistory?:
+    | {
+        from?: string | null;
+        to: string;
+        actor?: string | null;
+        reason?: string | null;
+        source?: string | null;
+        createdAt?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: number;
+  title: string;
+  slug: string;
+  featuredImage?: (number | null) | Media;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  status: 'draft' | 'published' | 'archived';
+  destination?: (number | null) | Destination;
+  relatedTour?: (number | null) | Tour;
+  relatedPosts?: (number | Post)[] | null;
+  tags?:
+    | {
+        tag: string;
+        id?: string | null;
+      }[]
+    | null;
+  featured?: boolean | null;
+  /**
+   * Estimated reading time in minutes
+   */
+  readingTime?: number | null;
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (number | null) | Media;
+    keywords?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "comments".
+ */
+export interface Comment {
+  id: number;
+  author: number | User;
+  target:
+    | {
+        relationTo: 'tours';
+        value: number | Tour;
+      }
+    | {
+        relationTo: 'posts';
+        value: number | Post;
+      };
+  content: string;
+  status: 'pending' | 'approved' | 'hidden';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews".
+ */
+export interface Review {
+  id: number;
+  customer: number | Customer;
+  tour: number | Tour;
+  booking?: (number | null) | Booking;
+  rating: number;
+  comment?: string | null;
+  status: 'pending' | 'approved' | 'hidden';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "promotions".
+ */
+export interface Promotion {
+  id: number;
+  name: string;
+  code: string;
+  description?: string | null;
+  discountType: 'percentage' | 'fixed';
+  discountValue: number;
+  applicableTours?: (number | Tour)[] | null;
+  applicableMarkets?: ('EU' | 'US' | 'AU' | 'Asia' | 'VN')[] | null;
+  startDate: string;
+  endDate: string;
+  season?: ('summer' | 'winter' | 'year-round') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payments".
+ */
+export interface Payment {
+  id: number;
+  booking: number | Booking;
+  amount: number;
+  currency: string;
+  paymentMethod?: ('cash' | 'bank-transfer' | 'stripe' | 'vnpay' | 'momo') | null;
+  status: 'pending' | 'processing' | 'completed' | 'failed' | 'refunded';
+  /**
+   * Payment provider event ID — used for webhook idempotency (Phase 5)
+   */
+  providerEventId?: string | null;
+  providerPaymentId?: string | null;
+  metadata?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -196,6 +556,46 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'destinations';
+        value: number | Destination;
+      } | null)
+    | ({
+        relationTo: 'partners';
+        value: number | Partner;
+      } | null)
+    | ({
+        relationTo: 'tours';
+        value: number | Tour;
+      } | null)
+    | ({
+        relationTo: 'customers';
+        value: number | Customer;
+      } | null)
+    | ({
+        relationTo: 'bookings';
+        value: number | Booking;
+      } | null)
+    | ({
+        relationTo: 'posts';
+        value: number | Post;
+      } | null)
+    | ({
+        relationTo: 'comments';
+        value: number | Comment;
+      } | null)
+    | ({
+        relationTo: 'reviews';
+        value: number | Review;
+      } | null)
+    | ({
+        relationTo: 'promotions';
+        value: number | Promotion;
+      } | null)
+    | ({
+        relationTo: 'payments';
+        value: number | Payment;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -282,6 +682,240 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "destinations_select".
+ */
+export interface DestinationsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  description?: T;
+  featuredImage?: T;
+  region?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partners_select".
+ */
+export interface PartnersSelect<T extends boolean = true> {
+  name?: T;
+  logo?: T;
+  description?: T;
+  partnerType?: T;
+  location?: T;
+  commissionRate?: T;
+  contactPerson?: T;
+  phone?: T;
+  email?: T;
+  whatsapp?: T;
+  rating?: T;
+  isFeatured?: T;
+  inquiryFormUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tours_select".
+ */
+export interface ToursSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  description?: T;
+  featuredImage?: T;
+  gallery?: T;
+  destination?: T;
+  operationType?: T;
+  partner?: T;
+  minPax?: T;
+  currentPax?: T;
+  tourType?: T;
+  season?: T;
+  isFeaturedInSeason?: T;
+  status?: T;
+  priceFrom?: T;
+  currency?: T;
+  pricingTiers?:
+    | T
+    | {
+        label?: T;
+        price?: T;
+        minPax?: T;
+        maxPax?: T;
+        id?: T;
+      };
+  availableDates?:
+    | T
+    | {
+        date?: T;
+        id?: T;
+      };
+  itinerary?:
+    | T
+    | {
+        time?: T;
+        activity?: T;
+        id?: T;
+      };
+  addOns?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "customers_select".
+ */
+export interface CustomersSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  phone?: T;
+  nationality?: T;
+  clerkUserId?: T;
+  preferredContactChannel?: T;
+  notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bookings_select".
+ */
+export interface BookingsSelect<T extends boolean = true> {
+  customer?: T;
+  tour?: T;
+  numPax?: T;
+  preferredDate?: T;
+  specialRequest?: T;
+  contactChannel?: T;
+  status?: T;
+  idempotencyKey?: T;
+  paymentMethod?: T;
+  paymentStatus?: T;
+  paymentProviderEventId?: T;
+  internalNotes?: T;
+  source?: T;
+  statusHistory?:
+    | T
+    | {
+        from?: T;
+        to?: T;
+        actor?: T;
+        reason?: T;
+        source?: T;
+        createdAt?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts_select".
+ */
+export interface PostsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  featuredImage?: T;
+  content?: T;
+  status?: T;
+  destination?: T;
+  relatedTour?: T;
+  relatedPosts?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
+  featured?: T;
+  readingTime?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+        keywords?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "comments_select".
+ */
+export interface CommentsSelect<T extends boolean = true> {
+  author?: T;
+  target?: T;
+  content?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews_select".
+ */
+export interface ReviewsSelect<T extends boolean = true> {
+  customer?: T;
+  tour?: T;
+  booking?: T;
+  rating?: T;
+  comment?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "promotions_select".
+ */
+export interface PromotionsSelect<T extends boolean = true> {
+  name?: T;
+  code?: T;
+  description?: T;
+  discountType?: T;
+  discountValue?: T;
+  applicableTours?: T;
+  applicableMarkets?: T;
+  startDate?: T;
+  endDate?: T;
+  season?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payments_select".
+ */
+export interface PaymentsSelect<T extends boolean = true> {
+  booking?: T;
+  amount?: T;
+  currency?: T;
+  paymentMethod?: T;
+  status?: T;
+  providerEventId?: T;
+  providerPaymentId?: T;
+  metadata?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
