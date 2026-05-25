@@ -43,6 +43,9 @@ describe("env schema", () => {
 
   it("normalizes optional local dev origins", () => {
     expect(parseNextConfigEnv({ DEV_ORIGIN: "" })).toEqual({});
+    expect(parseNextConfigEnv({ R2_PUBLIC_URL: validEnv.R2_PUBLIC_URL })).toEqual({
+      R2_PUBLIC_URL: validEnv.R2_PUBLIC_URL
+    });
 
     expect(
       parsePayloadConfigEnv({

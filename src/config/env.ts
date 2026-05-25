@@ -45,7 +45,8 @@ export const payloadConfigEnvSchema = z
 export type PayloadConfigEnv = z.infer<typeof payloadConfigEnvSchema>;
 
 export const nextConfigEnvSchema = z.object({
-  DEV_ORIGIN: optionalUrl
+  DEV_ORIGIN: optionalUrl,
+  R2_PUBLIC_URL: optionalUrl
 });
 
 export type NextConfigEnv = z.infer<typeof nextConfigEnvSchema>;

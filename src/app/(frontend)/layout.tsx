@@ -8,7 +8,10 @@ export const metadata: Metadata = {
     default: "TC Travel Vietnam",
     template: "%s | TC Travel Vietnam"
   },
-  description: "Private, small group, and free walking tours in Hội An, Huế, and Đà Nẵng. Book now, pay later — TC Travel Vietnam."
+  description: "Private, small group, and free walking tours in Hội An, Huế, and Đà Nẵng. Book now, pay later — TC Travel Vietnam.",
+  icons: {
+    icon: "/favicon.svg"
+  }
 };
 
 export default function FrontendLayout({ children }: Readonly<{ children: React.ReactNode }>) {
