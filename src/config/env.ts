@@ -27,12 +27,40 @@ export const payloadConfigEnvSchema = envSchema.pick({
 
 export type PayloadConfigEnv = z.infer<typeof payloadConfigEnvSchema>;
 
+export const payloadStorageEnvSchema = envSchema.pick({
+  R2_ACCOUNT_ID: true,
+  R2_BUCKET: true,
+  R2_ACCESS_KEY_ID: true,
+  R2_SECRET_ACCESS_KEY: true,
+  R2_PUBLIC_URL: true
+});
+
+export type PayloadStorageEnv = z.infer<typeof payloadStorageEnvSchema>;
+
 export function parseEnv(source: Record<string, string | undefined>): Env {
   return envSchema.parse(source);
 }
 
 export function parsePayloadConfigEnv(source: Record<string, string | undefined>): PayloadConfigEnv {
   return payloadConfigEnvSchema.parse(source);
+}
+
+export function parsePayloadStorageEnv(
+  source: Record<string, string | undefined>
+): PayloadStorageEnv | undefined {
+  const values = {
+    R2_ACCOUNT_ID: source.R2_ACCOUNT_ID,
+    R2_BUCKET: source.R2_BUCKET,
+    R2_ACCESS_KEY_ID: source.R2_ACCESS_KEY_ID,
+    R2_SECRET_ACCESS_KEY: source.R2_SECRET_ACCESS_KEY,
+    R2_PUBLIC_URL: source.R2_PUBLIC_URL
+  };
+
+  if (!Object.values(values).every(Boolean)) {
+    return undefined;
+  }
+
+  return payloadStorageEnvSchema.parse(values);
 }
 
 let cachedEnv: Env | undefined;
@@ -53,4 +81,16 @@ export function getPayloadConfigEnv(): PayloadConfigEnv {
   }
 
   return cachedPayloadConfigEnv;
+}
+
+let cachedPayloadStorageEnv: PayloadStorageEnv | undefined;
+let didReadPayloadStorageEnv = false;
+
+export function getPayloadStorageEnv(): PayloadStorageEnv | undefined {
+  if (!didReadPayloadStorageEnv) {
+    cachedPayloadStorageEnv = parsePayloadStorageEnv(process.env);
+    didReadPayloadStorageEnv = true;
+  }
+
+  return cachedPayloadStorageEnv;
 }

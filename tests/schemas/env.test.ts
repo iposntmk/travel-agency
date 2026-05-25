@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseEnv, parsePayloadConfigEnv } from "@/config/env";
+import { parseEnv, parsePayloadConfigEnv, parsePayloadStorageEnv } from "@/config/env";
 
 const validEnv = {
   DATABASE_URL: "https://example.com/db",
@@ -38,5 +38,22 @@ describe("env schema", () => {
       DATABASE_URL: validEnv.DATABASE_URL,
       PAYLOAD_SECRET: validEnv.PAYLOAD_SECRET
     });
+  });
+
+  it("enables Payload storage config only when all R2 values exist", () => {
+    expect(parsePayloadStorageEnv(validEnv)).toMatchObject({
+      R2_ACCOUNT_ID: validEnv.R2_ACCOUNT_ID,
+      R2_BUCKET: validEnv.R2_BUCKET,
+      R2_ACCESS_KEY_ID: validEnv.R2_ACCESS_KEY_ID,
+      R2_SECRET_ACCESS_KEY: validEnv.R2_SECRET_ACCESS_KEY,
+      R2_PUBLIC_URL: validEnv.R2_PUBLIC_URL
+    });
+
+    expect(
+      parsePayloadStorageEnv({
+        ...validEnv,
+        R2_ACCESS_KEY_ID: ""
+      })
+    ).toBeUndefined();
   });
 });

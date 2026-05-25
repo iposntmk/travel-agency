@@ -3,9 +3,7 @@ import { adminOnly, adminOnlyField, staffOnly } from "./access";
 
 export const Media: CollectionConfig = {
   slug: "media",
-  upload: {
-    disableLocalStorage: true
-  },
+  upload: true,
   admin: {
     useAsTitle: "alt"
   },
@@ -32,7 +30,7 @@ export const Media: CollectionConfig = {
       name: "status",
       type: "select",
       required: true,
-      defaultValue: "uploading",
+      defaultValue: "ready",
       options: [
         { label: "Uploading", value: "uploading" },
         { label: "Processing", value: "processing" },

@@ -79,4 +79,9 @@ describe("Payload collection access", () => {
       ])
     );
   });
+
+  it("keeps admin media uploads usable without a storage adapter", () => {
+    expect(Media.upload).toBe(true);
+    expect(namedField(Media, "status")).toMatchObject({ defaultValue: "ready" });
+  });
 });

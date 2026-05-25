@@ -2,6 +2,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { postgresAdapter } from "@payloadcms/db-postgres";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
+import { s3Storage } from "@payloadcms/storage-s3";
 import { buildConfig } from "payload";
 import sharp from "sharp";
 import { Bookings } from "@/collections/payload/Bookings";
@@ -16,13 +17,14 @@ import { Promotions } from "@/collections/payload/Promotions";
 import { Reviews } from "@/collections/payload/Reviews";
 import { Tours } from "@/collections/payload/Tours";
 import { Users } from "@/collections/payload/Users";
-import { getPayloadConfigEnv } from "@/config/env";
+import { getPayloadConfigEnv, getPayloadStorageEnv } from "@/config/env";
 import { migrations } from "@/migrations";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
 const env = getPayloadConfigEnv();
+const storageEnv = getPayloadStorageEnv();
 
 export default buildConfig({
   admin: {
@@ -55,6 +57,28 @@ export default buildConfig({
     push: false
   }),
   editor: lexicalEditor(),
+  plugins: [
+    ...(storageEnv
+      ? [
+          s3Storage({
+            bucket: storageEnv.R2_BUCKET,
+            clientUploads: true,
+            collections: {
+              media: true
+            },
+            config: {
+              credentials: {
+                accessKeyId: storageEnv.R2_ACCESS_KEY_ID,
+                secretAccessKey: storageEnv.R2_SECRET_ACCESS_KEY
+              },
+              endpoint: `https://${storageEnv.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+              forcePathStyle: true,
+              region: "auto"
+            }
+          })
+        ]
+      : [])
+  ],
   secret: env.PAYLOAD_SECRET,
   sharp,
   typescript: {
