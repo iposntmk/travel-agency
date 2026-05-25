@@ -1,11 +1,11 @@
 import type { CollectionConfig } from "payload";
-import { adminOnly, publicRead, staffOnly } from "./access";
+import { adminOnly, publicReadActive, staffOnly } from "./access";
 
 export const Tours: CollectionConfig = {
   slug: "tours",
   admin: { useAsTitle: "title" },
   access: {
-    read: publicRead,
+    read: publicReadActive,
     create: staffOnly,
     update: staffOnly,
     delete: adminOnly

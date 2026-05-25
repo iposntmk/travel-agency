@@ -4,6 +4,7 @@ import { getPayload } from "payload";
 import configPromise from "@payload-config";
 import { generateVariants } from "@/services/media-processor";
 import { getEnv } from "@/config/env";
+import { mediaProcessJobSchema } from "@/schemas/media";
 
 async function verifySignature(req: NextRequest, rawBody: string): Promise<boolean> {
   const env = getEnv();
@@ -29,24 +30,48 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { mediaId, r2Key } = JSON.parse(rawBody) as { mediaId: number; r2Key: string };
+  let body: unknown;
+  try {
+    body = JSON.parse(rawBody || "null");
+  } catch {
+    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+  }
+
+  const parsedBody = mediaProcessJobSchema.safeParse(body);
+
+  if (!parsedBody.success) {
+    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+  }
+
+  const { mediaId, r2Key } = parsedBody.data;
 
   const payload = await getPayload({ config: configPromise });
+  const media = await payload
+    .findByID({ collection: "media", id: mediaId, overrideAccess: true })
+    .catch(() => null);
 
-  const media = await payload.findByID({ collection: "media", id: mediaId, overrideAccess: true });
+  if (!media?.r2Key || media.r2Key !== r2Key) {
+    return NextResponse.json({ ok: true, skipped: true });
+  }
 
   // Idempotency: already processed
-  if (media?.status === "ready") {
+  if (media.status === "ready") {
     return NextResponse.json({ ok: true, skipped: true });
   }
 
   try {
     const variants = await generateVariants(String(mediaId), r2Key);
+    const variantsJson: Record<string, unknown> = {
+      thumb: variants.thumb,
+      card: variants.card,
+      hero: variants.hero,
+      og: variants.og
+    };
 
     await payload.update({
       collection: "media",
       id: mediaId,
-      data: { status: "ready", variants, processingError: null },
+      data: { status: "ready", variants: variantsJson, processingError: null },
       overrideAccess: true,
     });
 

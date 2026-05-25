@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { adminOnly, adminOnlyField, authenticated } from "./access";
+import { adminOnly, adminOnlyField, staffOnly } from "./access";
 
 export const Media: CollectionConfig = {
   slug: "media",
@@ -14,8 +14,8 @@ export const Media: CollectionConfig = {
       if (req.user) return true;
       return { status: { equals: "ready" } };
     },
-    create: authenticated,
-    update: authenticated,
+    create: staffOnly,
+    update: staffOnly,
     delete: adminOnly
   },
   fields: [

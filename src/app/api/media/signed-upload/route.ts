@@ -1,22 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
-import { z } from "zod";
 import { getPayload } from "payload";
 import configPromise from "@payload-config";
 import { createSignedPutUrl, r2PublicUrl } from "@/lib/r2";
+import { signedUploadSchema, type SignedUploadRequest } from "@/schemas/media";
 
-const ALLOWED_MIME = ["image/jpeg", "image/png", "image/webp"] as const;
-const MAX_SIZE = 20 * 1024 * 1024;
-
-const requestSchema = z.object({
-  filename: z.string().min(1).max(255),
-  mimeType: z.enum(ALLOWED_MIME),
-  fileSize: z.number().int().positive().max(MAX_SIZE),
-  alt: z.string().min(1).max(500),
-  caption: z.string().max(1000).optional(),
-});
-
-export type SignedUploadRequest = z.infer<typeof requestSchema>;
+export type { SignedUploadRequest };
 
 export async function POST(req: NextRequest) {
   const payload = await getPayload({ config: configPromise });
@@ -27,7 +16,7 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json().catch(() => null);
-  const parsed = requestSchema.safeParse(body);
+  const parsed = signedUploadSchema.safeParse(body);
 
   if (!parsed.success) {
     return NextResponse.json(
@@ -41,7 +30,7 @@ export async function POST(req: NextRequest) {
 
   const media = await payload.create({
     collection: "media",
-    data: { alt, caption, status: "uploading" },
+    data: { alt, caption, status: "uploading", filename, mimeType, filesize: fileSize },
     overrideAccess: false,
     user,
   });

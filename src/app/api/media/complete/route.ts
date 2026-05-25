@@ -1,16 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
-import { z } from "zod";
 import { getPayload } from "payload";
 import configPromise from "@payload-config";
 import { Client } from "@upstash/qstash";
 import { getEnv } from "@/config/env";
-
-const requestSchema = z.object({
-  mediaId: z.number().int().positive(),
-  width: z.number().int().positive().optional(),
-  height: z.number().int().positive().optional(),
-});
+import { completeMediaUploadSchema } from "@/schemas/media";
 
 export async function POST(req: NextRequest) {
   const payload = await getPayload({ config: configPromise });
@@ -21,7 +15,7 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json().catch(() => null);
-  const parsed = requestSchema.safeParse(body);
+  const parsed = completeMediaUploadSchema.safeParse(body);
 
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
@@ -60,7 +54,7 @@ export async function POST(req: NextRequest) {
 
   await qstash.publishJSON({
     url: `${env.NEXT_PUBLIC_SITE_URL}/api/qstash/media-process`,
-    body: { mediaId, r2Key: media.r2Key },
+    body: { mediaId, r2Key: media.r2Key, jobKey: `media:${mediaId}:${media.r2Key}` },
     retries: 3,
   });
 

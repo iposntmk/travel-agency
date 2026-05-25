@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseEnv } from "@/config/env";
+import { parseEnv, parsePayloadConfigEnv } from "@/config/env";
 
 const validEnv = {
   DATABASE_URL: "https://example.com/db",
@@ -25,5 +25,18 @@ describe("env schema", () => {
 
   it("fails fast when required values are missing", () => {
     expect(() => parseEnv({ ...validEnv, DATABASE_URL: "" })).toThrow();
+  });
+
+  it("validates the narrower Payload CLI environment separately", () => {
+    expect(
+      parsePayloadConfigEnv({
+        DATABASE_URL: validEnv.DATABASE_URL,
+        PAYLOAD_SECRET: validEnv.PAYLOAD_SECRET,
+        QSTASH_TOKEN: ""
+      })
+    ).toEqual({
+      DATABASE_URL: validEnv.DATABASE_URL,
+      PAYLOAD_SECRET: validEnv.PAYLOAD_SECRET
+    });
   });
 });

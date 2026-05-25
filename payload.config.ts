@@ -16,14 +16,13 @@ import { Promotions } from "@/collections/payload/Promotions";
 import { Reviews } from "@/collections/payload/Reviews";
 import { Tours } from "@/collections/payload/Tours";
 import { Users } from "@/collections/payload/Users";
+import { getPayloadConfigEnv } from "@/config/env";
 import { migrations } from "@/migrations";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
-const databaseUrl = process.env.DATABASE_URL || "postgres://payload:payload@localhost:5432/travel_agency";
-const payloadSecret =
-  process.env.PAYLOAD_SECRET || "local-development-payload-secret-change-before-production";
+const env = getPayloadConfigEnv();
 
 export default buildConfig({
   admin: {
@@ -50,13 +49,13 @@ export default buildConfig({
   db: postgresAdapter({
     migrationDir: path.resolve(dirname, "src/migrations"),
     pool: {
-      connectionString: databaseUrl
+      connectionString: env.DATABASE_URL
     },
     prodMigrations: migrations,
     push: false
   }),
   editor: lexicalEditor(),
-  secret: payloadSecret,
+  secret: env.PAYLOAD_SECRET,
   sharp,
   typescript: {
     outputFile: path.resolve(dirname, "src/payload-types.ts")

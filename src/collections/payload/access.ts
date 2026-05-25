@@ -10,6 +10,21 @@ const hasAdminRole = (user: unknown): boolean => {
 
 export const publicRead: Access = () => true;
 
+export const publicReadActive: Access = ({ req }) => {
+  if (req.user) return true;
+  return { status: { equals: "active" } };
+};
+
+export const publicReadPublished: Access = ({ req }) => {
+  if (req.user) return true;
+  return { status: { equals: "published" } };
+};
+
+export const publicReadFeatured: Access = ({ req }) => {
+  if (req.user) return true;
+  return { isFeatured: { equals: true } };
+};
+
 export const authenticated: Access = ({ req }) => Boolean(req.user);
 
 export const adminOnly: Access = ({ req }) => hasAdminRole(req.user);

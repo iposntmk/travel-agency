@@ -69,7 +69,7 @@ async function main() {
   console.log("✓ Partners");
 
   // 3. Tours
-  const [tour1, tour2, tour3, tour4] = await Promise.all([
+  const [tour1, tour2, tour3] = await Promise.all([
     payload.create({
       collection: "tours",
       data: {

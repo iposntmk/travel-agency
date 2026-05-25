@@ -143,7 +143,7 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
-  role: 'admin' | 'editor';
+  role: 'admin' | 'editor' | 'sales';
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -167,12 +167,6 @@ export interface User {
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
-export interface MediaVariants {
-  thumb: { avif: string; webp: string };
-  card: { avif: string; webp: string };
-  hero: { avif: string; webp: string };
-  og: string;
-}
 export interface Media {
   id: number;
   alt: string;
@@ -180,7 +174,15 @@ export interface Media {
   status: 'uploading' | 'processing' | 'ready' | 'failed';
   r2Key?: string | null;
   publicUrl?: string | null;
-  variants?: MediaVariants | null;
+  variants?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   processingError?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -241,6 +243,9 @@ export interface Partner {
   description?: string | null;
   partnerType: 'tour-outsource' | 'spa' | 'dental' | 'nail' | 'wellness' | 'other';
   location?: (number | null) | Destination;
+  /**
+   * Affiliate commission as a decimal. 0.2 = 20%.
+   */
   commissionRate?: number | null;
   contactPerson?: string | null;
   phone?: string | null;

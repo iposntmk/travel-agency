@@ -20,8 +20,19 @@ export const envSchema = z.object({
 
 export type Env = z.infer<typeof envSchema>;
 
+export const payloadConfigEnvSchema = envSchema.pick({
+  DATABASE_URL: true,
+  PAYLOAD_SECRET: true
+});
+
+export type PayloadConfigEnv = z.infer<typeof payloadConfigEnvSchema>;
+
 export function parseEnv(source: Record<string, string | undefined>): Env {
   return envSchema.parse(source);
+}
+
+export function parsePayloadConfigEnv(source: Record<string, string | undefined>): PayloadConfigEnv {
+  return payloadConfigEnvSchema.parse(source);
 }
 
 let cachedEnv: Env | undefined;
@@ -32,4 +43,14 @@ export function getEnv(): Env {
   }
 
   return cachedEnv;
+}
+
+let cachedPayloadConfigEnv: PayloadConfigEnv | undefined;
+
+export function getPayloadConfigEnv(): PayloadConfigEnv {
+  if (!cachedPayloadConfigEnv) {
+    cachedPayloadConfigEnv = parsePayloadConfigEnv(process.env);
+  }
+
+  return cachedPayloadConfigEnv;
 }

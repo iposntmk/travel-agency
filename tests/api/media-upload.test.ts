@@ -1,17 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { z } from "zod";
-
-// Mirror the schema from the route handler (avoids importing server-only modules)
-const ALLOWED_MIME = ["image/jpeg", "image/png", "image/webp"] as const;
-const MAX_SIZE = 20 * 1024 * 1024;
-
-const signedUploadSchema = z.object({
-  filename: z.string().min(1).max(255),
-  mimeType: z.enum(ALLOWED_MIME),
-  fileSize: z.number().int().positive().max(MAX_SIZE),
-  alt: z.string().min(1).max(500),
-  caption: z.string().max(1000).optional(),
-});
+import { maxMediaUploadSize, mediaProcessJobSchema, signedUploadSchema } from "@/schemas/media";
 
 describe("signed-upload request validation", () => {
   const valid = {
@@ -36,12 +24,13 @@ describe("signed-upload request validation", () => {
   });
 
   it("rejects files over 20MB", () => {
-    const result = signedUploadSchema.safeParse({ ...valid, fileSize: MAX_SIZE + 1 });
+    const result = signedUploadSchema.safeParse({ ...valid, fileSize: maxMediaUploadSize + 1 });
     expect(result.success).toBe(false);
   });
 
   it("rejects missing alt text", () => {
-    const { alt: _, ...rest } = valid;
+    const rest: Partial<typeof valid> = { ...valid };
+    delete rest.alt;
     expect(signedUploadSchema.safeParse(rest).success).toBe(false);
   });
 
@@ -63,5 +52,22 @@ describe("media processing idempotency", () => {
     expect(shouldSkip("processing")).toBe(false);
     expect(shouldSkip("uploading")).toBe(false);
     expect(shouldSkip("failed")).toBe(false);
+  });
+
+  it("requires a deterministic media job key", () => {
+    expect(
+      mediaProcessJobSchema.safeParse({
+        mediaId: 42,
+        r2Key: "originals/2026/05/42/original.jpg",
+        jobKey: "media:42:originals/2026/05/42/original.jpg"
+      }).success
+    ).toBe(true);
+
+    expect(
+      mediaProcessJobSchema.safeParse({
+        mediaId: 42,
+        r2Key: "originals/2026/05/42/original.jpg"
+      }).success
+    ).toBe(false);
   });
 });

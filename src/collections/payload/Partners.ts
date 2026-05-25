@@ -1,11 +1,11 @@
 import type { CollectionConfig } from "payload";
-import { adminOnly, adminOnlyField, publicRead, staffOnly } from "./access";
+import { adminOnly, adminOnlyField, publicReadFeatured, staffOnly } from "./access";
 
 export const Partners: CollectionConfig = {
   slug: "partners",
   admin: { useAsTitle: "name" },
   access: {
-    read: publicRead,
+    read: publicReadFeatured,
     create: staffOnly,
     update: staffOnly,
     delete: adminOnly
@@ -31,12 +31,13 @@ export const Partners: CollectionConfig = {
     {
       name: "commissionRate",
       type: "number",
-      min: 0,
-      max: 100,
+      min: 0.2,
+      max: 0.35,
       access: {
         read: adminOnlyField,
         update: adminOnlyField
-      }
+      },
+      admin: { description: "Affiliate commission as a decimal. 0.2 = 20%." }
     },
     { name: "contactPerson", type: "text" },
     { name: "phone", type: "text" },

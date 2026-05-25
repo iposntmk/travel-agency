@@ -8,7 +8,10 @@ describe("partner schema", () => {
       partnerSchema.parse({ name: "Spa Partner", partnerType: "spa", commissionRate: 0.2 })
     ).not.toThrow();
     expect(() =>
-      partnerSchema.parse({ name: "Bad Partner", partnerType: "spa", commissionRate: 0.9 })
+      partnerSchema.parse({ name: "Bad Partner", partnerType: "spa", commissionRate: 0.36 })
+    ).toThrow();
+    expect(() =>
+      partnerSchema.parse({ name: "Bad Partner", partnerType: "spa", commissionRate: 0.19 })
     ).toThrow();
   });
 });

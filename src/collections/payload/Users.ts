@@ -35,7 +35,8 @@ export const Users: CollectionConfig = {
       defaultValue: "editor",
       options: [
         { label: "Admin", value: "admin" },
-        { label: "Editor", value: "editor" }
+        { label: "Editor", value: "editor" },
+        { label: "Sales", value: "sales" }
       ],
       access: {
         create: adminOnlyField,
