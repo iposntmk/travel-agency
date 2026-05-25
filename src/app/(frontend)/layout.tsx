@@ -21,9 +21,11 @@ export default function FrontendLayout({ children }: Readonly<{ children: React.
               <Link className="text-lg font-bold text-brand-blue" href="/">
                 TC Travel Vietnam
               </Link>
-              <div className="flex gap-4 text-sm font-medium text-slate-700">
+              <div className="flex flex-wrap gap-4 text-sm font-medium text-slate-700">
                 <Link href="/tours">Tours</Link>
+                <Link href="/destinations">Destinations</Link>
                 <Link href="/free-tours">Free Tours</Link>
+                <Link href="/blog">Blog</Link>
                 <Link href="/booking/confirmation">Contact</Link>
               </div>
             </nav>

@@ -1,8 +1,21 @@
 import type { NextConfig } from "next";
 import { withPayload } from "@payloadcms/next/withPayload";
+import { getNextConfigEnv } from "./src/config/env";
+
+const env = getNextConfigEnv();
+const devOrigin = env.DEV_ORIGIN ? new URL(env.DEV_ORIGIN) : undefined;
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ["192.168.2.7", "192.168.2.7:3000"],
+  ...(devOrigin
+    ? {
+        allowedDevOrigins: [devOrigin.hostname],
+        experimental: {
+          serverActions: {
+            allowedOrigins: [devOrigin.host]
+          }
+        }
+      }
+    : {}),
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "**.r2.cloudflarestorage.com" },

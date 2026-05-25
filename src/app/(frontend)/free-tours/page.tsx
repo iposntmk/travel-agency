@@ -1,37 +1,39 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { tours } from "@/lib/sample-data";
+import { TourCard } from "@/components/tour-card";
+import { getTours } from "@/lib/cms";
+
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Free Tours",
-  description: "Free walking and cycling tour registrations using the shared inquiry flow."
+  description:
+    "Join our free walking and cycling tours in Hội An, Huế, and Đà Nẵng. Registration uses the same Book Now - Pay Later inquiry flow."
 };
 
-export default function FreeToursPage() {
-  const freeTours = tours.filter((tour) => tour.priceFrom === 0);
+export default async function FreeToursPage() {
+  const freeTours = await getTours({ freeOnly: true, limit: 24 });
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10">
-      <h1 className="text-3xl font-bold text-slate-950">Free Tours</h1>
+    <main className="mx-auto max-w-6xl px-4 py-8 md:py-10">
+      <h1 className="text-3xl font-bold text-slate-950 md:text-4xl">Free Tours</h1>
       <p className="mt-3 max-w-2xl text-slate-600">
         Free to join, tips appreciated. Registration uses the same Book Now - Pay Later
         inquiry engine and is tagged separately for sales follow-up.
       </p>
-      <div className="mt-8 grid gap-4 md:grid-cols-2">
-        {freeTours.map((tour) => (
-          <article key={tour.slug} className="rounded-md border border-slate-200 p-5">
-            <p className="text-sm font-medium text-brand-red">{tour.destination}</p>
-            <h2 className="mt-2 text-xl font-semibold text-slate-950">{tour.title}</h2>
-            <p className="mt-3 text-sm leading-6 text-slate-600">{tour.description}</p>
-            <Link
-              className="mt-5 inline-flex rounded-md bg-brand-blue px-4 py-2 text-sm font-semibold text-white"
-              href="/booking/confirmation"
-            >
-              Register
-            </Link>
-          </article>
-        ))}
-      </div>
+
+      <section className="mt-8">
+        {freeTours.length === 0 ? (
+          <p className="rounded-md border border-dashed border-slate-300 p-6 text-sm text-slate-500">
+            No free tours scheduled right now. Check back soon.
+          </p>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {freeTours.map((tour) => (
+              <TourCard key={tour.id} tour={tour} ctaLabel="Register" />
+            ))}
+          </div>
+        )}
+      </section>
     </main>
   );
 }

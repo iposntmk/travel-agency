@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseEnv, parsePayloadConfigEnv, parsePayloadStorageEnv } from "@/config/env";
+import { parseEnv, parseNextConfigEnv, parsePayloadConfigEnv, parsePayloadStorageEnv } from "@/config/env";
 
 const validEnv = {
   DATABASE_URL: "https://example.com/db",
@@ -36,7 +36,23 @@ describe("env schema", () => {
       })
     ).toEqual({
       DATABASE_URL: validEnv.DATABASE_URL,
-      PAYLOAD_SECRET: validEnv.PAYLOAD_SECRET
+      PAYLOAD_SECRET: validEnv.PAYLOAD_SECRET,
+      NODE_ENV: "development"
+    });
+  });
+
+  it("normalizes optional local dev origins", () => {
+    expect(parseNextConfigEnv({ DEV_ORIGIN: "" })).toEqual({});
+
+    expect(
+      parsePayloadConfigEnv({
+        DATABASE_URL: validEnv.DATABASE_URL,
+        PAYLOAD_SECRET: validEnv.PAYLOAD_SECRET,
+        DEV_ORIGIN: "http://192.168.2.7:3000"
+      })
+    ).toMatchObject({
+      DEV_ORIGIN: "http://192.168.2.7:3000",
+      NODE_ENV: "development"
     });
   });
 

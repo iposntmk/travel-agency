@@ -24,7 +24,12 @@ export const tours = [
     tourType: "paid-private",
     priceFrom: 45,
     duration: "4 hours",
-    description: "A private old town route with market stops, heritage houses, and flexible pacing."
+    description: "A private old town route with market stops, heritage houses, and flexible pacing.",
+    pricingTiers: [
+      { label: "Adult", price: 45, minPax: 1 },
+      { label: "Child (6-12)", price: 20, minPax: 1 },
+      { label: "Private Group (up to 6)", price: 180, minPax: 1, maxPax: 6 }
+    ]
   },
   {
     title: "Hue Imperial Small Group",
@@ -33,7 +38,12 @@ export const tours = [
     tourType: "paid-group",
     priceFrom: 65,
     duration: "1 day",
-    description: "Citadel, tombs, garden houses, and local lunch built for history-focused travelers."
+    description: "Citadel, tombs, garden houses, and local lunch built for history-focused travelers.",
+    pricingTiers: [
+      { label: "Adult", price: 65, minPax: 1 },
+      { label: "Child (6-12)", price: 35, minPax: 1 },
+      { label: "Group (4+)", price: 55, minPax: 4 }
+    ]
   },
   {
     title: "Free Hoi An Lantern Walk",
@@ -51,7 +61,11 @@ export const tours = [
     tourType: "partner",
     priceFrom: 55,
     duration: "5 hours",
-    description: "A partner-operated evening route for seafood, city views, and coastal neighborhoods."
+    description: "A partner-operated evening route for seafood, city views, and coastal neighborhoods.",
+    pricingTiers: [
+      { label: "Adult", price: 55, minPax: 1 },
+      { label: "Child (6-12)", price: 25, minPax: 1 }
+    ]
   }
 ];
 

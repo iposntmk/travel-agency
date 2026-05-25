@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+const optionalUrl = z.preprocess((value) => (value === "" ? undefined : value), z.string().url().optional());
+const nodeEnv = z.enum(["development", "test", "production"]).default("development");
+
 export const envSchema = z.object({
   DATABASE_URL: z.string().url(),
   PAYLOAD_SECRET: z.string().min(32),
@@ -16,17 +19,36 @@ export const envSchema = z.object({
   QSTASH_NEXT_SIGNING_KEY: z.string().min(1),
   RESEND_API_KEY: z.string().min(1),
   SENTRY_DSN: z.string().url().optional().or(z.literal("")),
-  DEV_ORIGIN: z.string().url().optional()
+  DEV_ORIGIN: optionalUrl,
+  NODE_ENV: nodeEnv
 });
 
 export type Env = z.infer<typeof envSchema>;
 
-export const payloadConfigEnvSchema = envSchema.pick({
-  DATABASE_URL: true,
-  PAYLOAD_SECRET: true
-});
+export const payloadConfigEnvSchema = z
+  .object({
+    DATABASE_URL: z.string().url(),
+    PAYLOAD_SECRET: z.string().min(32),
+    NEXT_PUBLIC_SITE_URL: optionalUrl,
+    DEV_ORIGIN: optionalUrl,
+    NODE_ENV: nodeEnv
+  })
+  .superRefine((env, ctx) => {
+    if (env.NODE_ENV === "production" && !env.NEXT_PUBLIC_SITE_URL) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "NEXT_PUBLIC_SITE_URL is required in production"
+      });
+    }
+  });
 
 export type PayloadConfigEnv = z.infer<typeof payloadConfigEnvSchema>;
+
+export const nextConfigEnvSchema = z.object({
+  DEV_ORIGIN: optionalUrl
+});
+
+export type NextConfigEnv = z.infer<typeof nextConfigEnvSchema>;
 
 export const payloadStorageEnvSchema = envSchema.pick({
   R2_ACCOUNT_ID: true,
@@ -44,6 +66,10 @@ export function parseEnv(source: Record<string, string | undefined>): Env {
 
 export function parsePayloadConfigEnv(source: Record<string, string | undefined>): PayloadConfigEnv {
   return payloadConfigEnvSchema.parse(source);
+}
+
+export function parseNextConfigEnv(source: Record<string, string | undefined>): NextConfigEnv {
+  return nextConfigEnvSchema.parse(source);
 }
 
 export function parsePayloadStorageEnv(
@@ -82,6 +108,20 @@ export function getPayloadConfigEnv(): PayloadConfigEnv {
   }
 
   return cachedPayloadConfigEnv;
+}
+
+let cachedNextConfigEnv: NextConfigEnv | undefined;
+
+export function getNextConfigEnv(): NextConfigEnv {
+  if (!cachedNextConfigEnv) {
+    cachedNextConfigEnv = parseNextConfigEnv(process.env);
+  }
+
+  return cachedNextConfigEnv;
+}
+
+export function getSiteUrl(): string {
+  return process.env.NEXT_PUBLIC_SITE_URL!;
 }
 
 let cachedPayloadStorageEnv: PayloadStorageEnv | undefined;

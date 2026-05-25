@@ -25,25 +25,23 @@ const dirname = path.dirname(filename);
 
 const env = getPayloadConfigEnv();
 const storageEnv = getPayloadStorageEnv();
+const originAllowlist = Array.from(
+  new Set(
+    ["http://localhost:3000", env.NEXT_PUBLIC_SITE_URL, env.DEV_ORIGIN].filter(
+      (origin): origin is string => Boolean(origin)
+    )
+  )
+);
 
 export default buildConfig({
-  serverURL: process.env.DEV_ORIGIN ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-  cors: [
-    ...new Set([
-      process.env.DEV_ORIGIN ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-      "http://localhost:3000",
-      ...(process.env.NEXT_PUBLIC_SITE_URL ? [process.env.NEXT_PUBLIC_SITE_URL] : []),
-      ...(process.env.DEV_ORIGIN ? [process.env.DEV_ORIGIN] : [])
-    ])
-  ],
-  csrf: [
-    ...new Set([
-      process.env.DEV_ORIGIN ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-      "http://localhost:3000", 
-      ...(process.env.NEXT_PUBLIC_SITE_URL ? [process.env.NEXT_PUBLIC_SITE_URL] : []),
-      ...(process.env.DEV_ORIGIN ? [process.env.DEV_ORIGIN] : [])
-    ])
-  ],
+  // Leave serverURL empty in dev so the admin panel uses same-origin (relative)
+  // URLs. If we hardcode it to DEV_ORIGIN or NEXT_PUBLIC_SITE_URL, accessing the
+  // admin from the other origin makes API calls cross-origin and the session
+  // cookie doesn't travel — causing "You are not allowed to perform this action"
+  // on uploads and other mutations.
+  serverURL: env.NODE_ENV === "production" ? (env.NEXT_PUBLIC_SITE_URL ?? "") : "",
+  cors: originAllowlist,
+  csrf: originAllowlist,
   admin: {
     user: Users.slug,
     importMap: {

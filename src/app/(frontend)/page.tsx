@@ -1,14 +1,22 @@
 import Link from "next/link";
-import { destinations, tours } from "@/lib/sample-data";
 import { Button } from "@/components/ui/button";
+import { TourCard } from "@/components/tour-card";
+import { getDestinations, getTours } from "@/lib/cms";
 
-export default function HomePage() {
-  const featuredTours = tours.slice(0, 3);
+export const revalidate = 300;
+
+export default async function HomePage() {
+  const [featuredTours, destinations] = await Promise.all([
+    getTours({ featuredOnly: true, limit: 3 }).then((tours) =>
+      tours.length > 0 ? tours : getTours({ limit: 3 })
+    ),
+    getDestinations(6)
+  ]);
 
   return (
     <main>
       <section className="bg-[linear-gradient(135deg,#fff7ed,#eff6ff_55%,#ffffff)]">
-        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-16 md:grid-cols-[1.2fr_0.8fr] md:items-center">
+        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 md:grid-cols-[1.2fr_0.8fr] md:items-center md:py-16">
           <div>
             <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-brand-red">
               Central Vietnam Tours
@@ -16,8 +24,8 @@ export default function HomePage() {
             <h1 className="max-w-3xl text-4xl font-bold leading-tight text-brand-ink md:text-6xl">
               TC Travel Vietnam
             </h1>
-            <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-700">
-              Private, small group, and free walking tours in Hoi An, Hue, and Da Nang.
+            <p className="mt-5 max-w-2xl text-base leading-7 text-slate-700 md:text-lg md:leading-8">
+              Private, small group, and free walking tours in Hội An, Huế, and Đà Nẵng.
               Submit an inquiry now and pay later after the team confirms details.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -30,36 +38,68 @@ export default function HomePage() {
             </div>
           </div>
           <div className="grid gap-3 rounded-md border border-slate-200 bg-white p-4 shadow-sm">
-            {destinations.map((destination) => (
-              <div key={destination.slug} className="rounded-md bg-slate-50 p-4">
-                <h2 className="font-semibold text-slate-900">{destination.name}</h2>
-                <p className="mt-1 text-sm leading-6 text-slate-600">{destination.summary}</p>
-              </div>
-            ))}
+            {destinations.length === 0 ? (
+              <p className="text-sm text-slate-500">Destinations coming soon.</p>
+            ) : (
+              destinations.slice(0, 3).map((destination) => (
+                <Link
+                  key={destination.id}
+                  href={`/destinations/${destination.slug}`}
+                  className="rounded-md bg-slate-50 p-4 transition hover:bg-slate-100"
+                >
+                  <h2 className="font-semibold text-slate-900">{destination.title}</h2>
+                  <p className="mt-1 text-sm leading-6 text-slate-600">
+                    {destination.region === "central"
+                      ? "Central Vietnam"
+                      : destination.region === "north"
+                        ? "Northern Vietnam"
+                        : destination.region === "south"
+                          ? "Southern Vietnam"
+                          : "Vietnam"}
+                  </p>
+                </Link>
+              ))
+            )}
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-12">
+      <section className="mx-auto max-w-6xl px-4 py-10 md:py-12">
         <div className="mb-6 flex items-end justify-between gap-4">
           <div>
             <h2 className="text-2xl font-bold text-slate-950">Featured Tours</h2>
-            <p className="mt-2 text-slate-600">Static seed data now, ready to replace with Payload reads.</p>
+            <p className="mt-2 text-sm text-slate-600 md:text-base">
+              Hand-picked tours for the current season.
+            </p>
           </div>
           <Link className="text-sm font-semibold text-brand-blue" href="/tours">
             View all
           </Link>
         </div>
-        <div className="grid gap-4 md:grid-cols-3">
-          {featuredTours.map((tour) => (
-            <article key={tour.slug} className="rounded-md border border-slate-200 p-5">
-              <p className="text-sm font-medium text-brand-red">{tour.destination}</p>
-              <h3 className="mt-2 text-lg font-semibold text-slate-950">{tour.title}</h3>
-              <p className="mt-3 text-sm leading-6 text-slate-600">{tour.description}</p>
-              <p className="mt-4 font-semibold text-slate-900">
-                {tour.priceFrom === 0 ? "Free to join" : `From $${tour.priceFrom}`}
-              </p>
-            </article>
+        {featuredTours.length === 0 ? (
+          <p className="rounded-md border border-dashed border-slate-300 p-6 text-sm text-slate-500">
+            No tours published yet. Check back soon.
+          </p>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-3">
+            {featuredTours.map((tour) => (
+              <TourCard key={tour.id} tour={tour} />
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="bg-slate-50">
+        <div className="mx-auto grid max-w-6xl gap-6 px-4 py-10 md:grid-cols-3 md:py-12">
+          {[
+            { title: "Book Now, Pay Later", body: "Confirm details with our team, then pay when you meet your guide." },
+            { title: "Local Specialists", body: "Run by guides who live in Hội An, Huế and Đà Nẵng." },
+            { title: "Free Tours Welcome", body: "Walking and cycling tours to introduce the region — tips appreciated." }
+          ].map((item) => (
+            <div key={item.title} className="rounded-md border border-slate-200 bg-white p-5">
+              <h3 className="font-semibold text-slate-900">{item.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{item.body}</p>
+            </div>
           ))}
         </div>
       </section>
