@@ -40,3 +40,10 @@ jobs:
 
       - name: Build
         run: pnpm build
+        env:
+          # Build-time placeholders: payload.config.ts evaluates env at module load
+          # during next build's page-data collection for /api/[...slug]. No real
+          # connection is made — these only satisfy the Zod schema.
+          DATABASE_URL: postgres://ci:ci@localhost:5432/ci
+          PAYLOAD_SECRET: ci-build-placeholder-secret-not-used-in-production
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
