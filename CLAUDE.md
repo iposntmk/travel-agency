@@ -107,6 +107,34 @@ brand-ink   #111827   (headings)
 | Tests | Vitest (node environment, `tests/**/*.test.ts`) |
 | Hosting | Vercel (push to `main` → production) |
 
+## Deployment
+
+### Standard flow (always prefer this)
+
+```
+code → git commit → git push origin master → Vercel auto-deploys production
+```
+
+Push lên `master` là Vercel tự build và deploy. Push lên branch khác tạo Preview URL.
+
+### Data persistence
+
+Database (Neon Postgres), media (Cloudflare R2), và Payload content **không nằm trong deployment** — chúng độc lập với Vercel. Mọi deployment đều kết nối vào cùng một database và bucket. Deploy lại không mất dữ liệu.
+
+### Local deploy (chỉ dùng khi debug khẩn cấp)
+
+```bash
+vercel --prod   # deploy thẳng từ local lên production
+```
+
+Nếu dùng lệnh này, phải `git push` ngay sau để GitHub và Vercel không lệch nhau. Vercel luôn lấy deployment mới nhất làm production — GitHub push sau đó sẽ overwrite local deploy.
+
+### Không làm
+
+- Không deploy từ local cho feature bình thường — dùng git push
+- Không commit thư mục `.vercel/` (đã có trong `.gitignore`)
+- Không có hai người deploy local cùng lúc vào production
+
 ## Development docs
 
 Detailed specs live in `docs/`. Key files before writing code in an area:

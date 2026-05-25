@@ -15,3 +15,5 @@ dev-server.log
 # local API keys — never commit
 API-keys/
 Neno-connnection-string.txt
+
+.vercel
