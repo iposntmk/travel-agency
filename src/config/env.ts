@@ -15,7 +15,8 @@ export const envSchema = z.object({
   QSTASH_CURRENT_SIGNING_KEY: z.string().min(1),
   QSTASH_NEXT_SIGNING_KEY: z.string().min(1),
   RESEND_API_KEY: z.string().min(1),
-  SENTRY_DSN: z.string().url().optional().or(z.literal(""))
+  SENTRY_DSN: z.string().url().optional().or(z.literal("")),
+  DEV_ORIGIN: z.string().url().optional()
 });
 
 export type Env = z.infer<typeof envSchema>;

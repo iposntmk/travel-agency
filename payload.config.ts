@@ -27,18 +27,20 @@ const env = getPayloadConfigEnv();
 const storageEnv = getPayloadStorageEnv();
 
 export default buildConfig({
-  serverURL: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  serverURL: process.env.DEV_ORIGIN ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   cors: [
     ...new Set([
-      process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+      process.env.DEV_ORIGIN ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
       "http://localhost:3000",
+      ...(process.env.NEXT_PUBLIC_SITE_URL ? [process.env.NEXT_PUBLIC_SITE_URL] : []),
       ...(process.env.DEV_ORIGIN ? [process.env.DEV_ORIGIN] : [])
     ])
   ],
   csrf: [
     ...new Set([
-      process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-      "http://localhost:3000",
+      process.env.DEV_ORIGIN ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+      "http://localhost:3000", 
+      ...(process.env.NEXT_PUBLIC_SITE_URL ? [process.env.NEXT_PUBLIC_SITE_URL] : []),
       ...(process.env.DEV_ORIGIN ? [process.env.DEV_ORIGIN] : [])
     ])
   ],
