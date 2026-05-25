@@ -1,6 +1,10 @@
 .aider*
+
+# env files — never commit real values
 .env
+.env.*
 .env*.local
+
 .next/
 node_modules/
 coverage/
@@ -15,5 +19,11 @@ dev-server.log
 # local API keys — never commit
 API-keys/
 Neno-connnection-string.txt
+*.pem
+*.key
+*.p12
+*.pfx
+*secret*
+*credentials*
 
 .vercel
