@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { adminOnly, authenticated, publicRead } from "./access";
+import { adminOnly, adminOnlyField, authenticated } from "./access";
 
 export const Media: CollectionConfig = {
   slug: "media",
@@ -10,7 +10,10 @@ export const Media: CollectionConfig = {
     useAsTitle: "alt"
   },
   access: {
-    read: publicRead,
+    read: ({ req }) => {
+      if (req.user) return true;
+      return { status: { equals: "ready" } };
+    },
     create: authenticated,
     update: authenticated,
     delete: adminOnly
@@ -20,6 +23,10 @@ export const Media: CollectionConfig = {
       name: "alt",
       type: "text",
       required: true
+    },
+    {
+      name: "caption",
+      type: "text"
     },
     {
       name: "status",
@@ -36,16 +43,23 @@ export const Media: CollectionConfig = {
     {
       name: "r2Key",
       type: "text",
-      admin: {
-        readOnly: true
-      }
+      admin: { readOnly: true }
     },
     {
       name: "publicUrl",
       type: "text",
-      admin: {
-        readOnly: true
-      }
+      admin: { readOnly: true }
+    },
+    {
+      name: "variants",
+      type: "json",
+      admin: { readOnly: true }
+    },
+    {
+      name: "processingError",
+      type: "text",
+      access: { read: adminOnlyField },
+      admin: { readOnly: true }
     }
   ]
 };

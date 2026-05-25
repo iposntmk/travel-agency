@@ -167,12 +167,21 @@ export interface User {
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
+export interface MediaVariants {
+  thumb: { avif: string; webp: string };
+  card: { avif: string; webp: string };
+  hero: { avif: string; webp: string };
+  og: string;
+}
 export interface Media {
   id: number;
   alt: string;
+  caption?: string | null;
   status: 'uploading' | 'processing' | 'ready' | 'failed';
   r2Key?: string | null;
   publicUrl?: string | null;
+  variants?: MediaVariants | null;
+  processingError?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -668,9 +677,12 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  caption?: T;
   status?: T;
   r2Key?: T;
   publicUrl?: T;
+  variants?: T;
+  processingError?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
