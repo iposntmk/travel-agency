@@ -36,6 +36,30 @@ describe("resolveImage", () => {
     expect(resolved.isFallback).toBe(false);
     expect(resolved.url).toContain("cdn.example.com");
   });
+
+  it("derives an R2 public URL from filename when publicUrl is missing", () => {
+    const resolved = resolveImage(
+      makeMedia({ filename: "Dai-Noi-Hue-khi-hoang-hon-buong-xuong-1.jpg", publicUrl: null }),
+      undefined,
+      "https://pub.example.r2.dev"
+    );
+
+    expect(resolved.isFallback).toBe(false);
+    expect(resolved.url).toBe("https://pub.example.r2.dev/Dai-Noi-Hue-khi-hoang-hon-buong-xuong-1.jpg");
+  });
+
+  it("does not use Cloudflare dashboard URLs as image sources", () => {
+    const resolved = resolveImage(
+      makeMedia({
+        filename: "hue.jpg",
+        publicUrl: "https://dash.cloudflare.com/account/r2/default/buckets/travel-agency/objects/hue.jpg/details"
+      }),
+      undefined,
+      "https://pub.example.r2.dev"
+    );
+
+    expect(resolved.url).toBe("https://pub.example.r2.dev/hue.jpg");
+  });
 });
 
 describe("resolveOgImage", () => {
