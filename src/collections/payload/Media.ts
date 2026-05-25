@@ -1,5 +1,6 @@
 import type { CollectionConfig } from "payload";
 import { adminOnly, adminOnlyField, staffOnly } from "./access";
+import { normalizeMediaUrlAfterRead } from "./hooks/normalize-media-url";
 
 export const Media: CollectionConfig = {
   slug: "media",
@@ -15,6 +16,9 @@ export const Media: CollectionConfig = {
     create: staffOnly,
     update: staffOnly,
     delete: adminOnly
+  },
+  hooks: {
+    afterRead: [normalizeMediaUrlAfterRead]
   },
   fields: [
     {
