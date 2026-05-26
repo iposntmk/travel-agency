@@ -43,6 +43,22 @@ describe("submitBooking action", () => {
     }
   });
 
+  it("stores special requests as sanitized plain text", async () => {
+    const result = await submitBooking(
+      {
+        ...validInput,
+        idempotencyKey: "booking-key-sanitized",
+        specialRequest: " <strong>Vegan meal</strong><script>alert(1)</script><br>Window seat "
+      },
+      "sanitized-user"
+    );
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.data.booking.specialRequest).toBe("Vegan meal\nWindow seat");
+    }
+  });
+
   it("returns validation errors for bad input", async () => {
     const result = await submitBooking({ ...validInput, email: "bad" }, "test-user");
 

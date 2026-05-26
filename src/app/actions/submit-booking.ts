@@ -1,6 +1,7 @@
 "use server";
 
 import { bookingSubmitSchema, type BookingSubmitInput } from "@/schemas/booking";
+import { sanitizeOptionalPlainText } from "@/lib/sanitize";
 import { createInitialStatusHistory } from "@/services/booking-transitions";
 import { createBookingOnce } from "@/services/booking-repository";
 import { checkRateLimit } from "@/services/rate-limit";
@@ -57,7 +58,7 @@ export async function submitBooking(
       numPax: parsed.data.numPax,
       preferredDate: parsed.data.preferredDate,
       contactChannel: parsed.data.contactChannel,
-      specialRequest: parsed.data.specialRequest || undefined,
+      specialRequest: sanitizeOptionalPlainText(parsed.data.specialRequest),
       source: parsed.data.source,
       status: "Pending",
       idempotencyKey: parsed.data.idempotencyKey,

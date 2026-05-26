@@ -1,9 +1,13 @@
 import type { CollectionConfig } from "payload";
 import { adminOnly, adminOnlyField, staffOnly } from "./access";
+import { hardenBookingBeforeValidate } from "./hooks/booking-hardening";
 
 export const Bookings: CollectionConfig = {
   slug: "bookings",
   admin: { useAsTitle: "idempotencyKey" },
+  hooks: {
+    beforeValidate: [hardenBookingBeforeValidate]
+  },
   access: {
     read: staffOnly,
     create: () => true,

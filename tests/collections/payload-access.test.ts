@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { Access, CollectionConfig, FieldAccess } from "payload";
 import { Bookings } from "@/collections/payload/Bookings";
+import { hardenBookingBeforeValidate } from "@/collections/payload/hooks/booking-hardening";
 import { Destinations } from "@/collections/payload/Destinations";
 import { Media } from "@/collections/payload/Media";
 import { Partners } from "@/collections/payload/Partners";
@@ -101,5 +102,9 @@ describe("Payload collection access", () => {
     expect(Destinations.hooks?.afterDelete).toHaveLength(1);
     expect(Posts.hooks?.afterChange).toHaveLength(1);
     expect(Posts.hooks?.afterDelete).toHaveLength(1);
+  });
+
+  it("registers booking hardening before validation", () => {
+    expect(Bookings.hooks?.beforeValidate).toEqual([hardenBookingBeforeValidate]);
   });
 });
