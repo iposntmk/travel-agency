@@ -1,64 +1,80 @@
 # Repository Guidelines
 
-## Project Structure & Module Organization
+This file is a short handoff for coding agents. The active source of truth is `CLAUDE.md`; read that first.
 
-This repository currently contains planning and specification documents only. There is no scaffolded application, source tree, test suite, or `package.json` yet.
+## Current State
 
-- `PROJECT_BRIEF.md`: business goals, target audience, and MVP scope.
-- `CLAUDE.md`: current agent instructions, target architecture, and bootstrap notes.
-- `DEVELOPMENT_SETUP.md`: local setup prerequisites and initial scaffold steps.
-- `CODING_GUIDELINES.md`: coding expectations for the future app.
-- `DATABASE_SCHEMA.md`, `FEATURE_LIST.md`, `MARKET_SEASONALITY.md`, `RISKS_AND_MITIGATIONS.md`: domain constraints.
-- `TESTING_STRATEGY.md`: test plan, priority cases, and CI expectations for the future app.
-- `EXTENSION_GUIDE.md`: rules for adding markets, destinations, OTA providers, payments, languages, and background jobs.
-- `DOCS_INDEX.md`: documentation map and source-of-truth hierarchy.
+The repository is no longer docs-only. It contains a working Next.js 15 + Payload CMS application.
 
-When scaffolded, place the app in `travel-agency/` unless the team chooses a different root. Expected stack: Next.js 15 App Router, TypeScript, Payload CMS, Tailwind CSS, shadcn/ui, Cloudflare R2, Upstash QStash, Neon, and Vercel.
+Current implementation stage: **Layer 7 - Trust + Engagement started**.
 
-## Build, Test, and Development Commands
+Already implemented:
 
-There are no active build or test commands until the app is generated. Bootstrap:
+- Layer 1 Foundation: Next.js, Payload, Neon, Clerk, Tailwind, shadcn/ui, Vitest, CI, Vercel.
+- Layer 2 Data Models: Payload collections and explicit access rules for users, media, destinations, partners, tours, customers, bookings, posts, comments, reviews, promotions, and payments.
+- Layer 3 Media: Cloudflare R2 signed uploads and QStash Sharp variant processing.
+- Layer 4 Public Pages: Payload-backed tours, destinations, blog, SEO metadata, JSON-LD, sitemap, robots, cached public reads.
+- Layer 5 Booking Lead Engine: Server Action validation, sanitization, public `Pending` enforcement, DB-backed idempotency, Payload/Postgres persistence.
+- Layer 7 started: Clerk webhook sync into Payload `customers`.
+
+Immediate production config still pending:
+
+- Set `CLERK_WEBHOOK_SIGNING_SECRET` in Vercel Production.
+- Configure Clerk webhook endpoint for `user.created` and `user.updated`.
+- Redeploy and verify Payload customer sync.
+
+## Files To Read Before Continuing
+
+Read in this order:
+
+1. `CLAUDE.md`
+2. `docs/CURRENT_STATUS.md`
+3. `docs/DEVELOPMENT_APPROACH.md`
+4. `docs/CODING_GUIDELINES.md`
+5. Relevant domain docs for the area being touched:
+   - Booking: `docs/BOOKING_FLOW.md`, `docs/DATABASE_SCHEMA.md`
+   - Media: `docs/MEDIA_STRATEGY.md`
+   - Performance/SEO/security backlog: `toiuu.md`
+   - Stack snapshot: `techStack.md` if present
+
+## Commands
+
+Use `pnpm` only:
 
 ```bash
-npx create-payload-app@latest travel-agency
-cd travel-agency
-pnpm install
-cp .env.example .env
+pnpm dev
+pnpm build
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm payload:generate-types
+pnpm payload:migrate:create
+pnpm payload:migrate
 ```
 
-After scaffolding, treat `travel-agency/package.json` as the source of truth:
+Before writing code, run:
 
 ```bash
-pnpm dev      # local development server
-pnpm build    # production build
-pnpm lint     # lint checks, if configured
-pnpm test     # tests, if configured
+pnpm typecheck
+pnpm test
 ```
 
-Use `pnpm` only. Do not add npm or yarn lockfiles.
+Before committing, run:
 
-## Coding Style & Naming Conventions
+```bash
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
+```
 
-Use TypeScript strict mode. Prefer Server Components; add Client Components only for required interactivity. Use Server Actions for internal mutations such as booking submissions. Use Route Handlers only for external webhooks, QStash/background callbacks, signed upload URLs, health checks, or technical endpoints that do not fit Server Actions. Follow shadcn/ui conventions and Tailwind utilities. Use `react-hook-form`, `@hookform/resolvers/zod`, and Zod for forms and validation. Comment only business-critical logic, especially booking, payment, idempotency, audit trails, and access control.
+## Guardrails
 
-Payload collections should use plural lowercase names such as `tours`, `destinations`, `bookings`, `customers`, `payments`, and `reviews`. Every collection must define explicit access control.
-
-Booking submissions must start as `Pending`, then move through `Confirmed - Pay Later`, `Confirmed - Paid`, and finally `Completed` or `Cancelled`. Booking submit, payment webhook processing, and background jobs must be idempotent. Status changes and important admin actions must append audit history.
-
-All environment variables must be validated through one central Zod schema. Public routes, slugs, content fields, and SEO metadata should be i18n-ready with English as the default locale.
-
-## Testing Guidelines
-
-No testing framework is configured yet. Once code exists, place tests under `tests/schemas`, `tests/services`, `tests/actions`, and `tests/collections`, then wire them through `pnpm test`. Prioritize booking status transitions, Zod schemas for booking/customer/payment-ready/partner commission fields, Payload access control, pricing tiers, `currentPax`/`minPax`, add-on commission, and Server Action smoke tests for valid, invalid, rate-limited, and duplicate submits.
-
-Use `TESTING_STRATEGY.md` as the source of truth for test priorities and add Vitest by default unless the scaffolded starter already includes a stronger project-specific setup.
-
-## Commit & Pull Request Guidelines
-
-No project-specific commit convention is documented yet. Use concise imperative messages, for example `Add booking schema draft` or `Document Neon deployment risks`.
-
-Pull requests should include a short summary, affected docs or modules, linked issue when applicable, screenshots for UI changes, and notes for environment or migration changes. Validate Vercel Preview before merging app changes to `main`.
-
-## Security & Configuration Tips
-
-Never commit `.env` files or secrets. Production should use Neon Singapore, Vercel, Cloudflare R2 for media storage, and QStash for background jobs. Keep Neon Scale-to-Zero disabled in production and set spending limits for Vercel, Neon, R2, and QStash. GA4/GTM/Facebook/TikTok Pixel and social embeds must load only after cookie consent.
+- Do not modify `src/app/(payload)/` unless the task is specifically about Payload admin.
+- Do not read `process.env` outside `src/config/env.ts` helpers.
+- Use Server Actions for internal mutations.
+- Use Route Handlers only for external webhooks, QStash callbacks, signed upload URLs, health checks, and similar technical endpoints.
+- New booking inquiries always start as `Pending`.
+- Every booking status change must append history.
+- Do not add npm/yarn lockfiles.
+- Do not commit `.vercel/`, `.env*.local`, or files under `API-keys/`.

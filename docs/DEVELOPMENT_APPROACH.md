@@ -40,6 +40,17 @@ Layer 10 Polish + Production
 
 Nếu chỉ có 1-2 dev, đi tuần tự theo đúng thứ tự trên. Không đẩy social, OTA, payment hoặc analytics nâng cao lên trước khi booking engine ổn định.
 
+### Trạng thái hiện tại
+
+**Cập nhật 2026-05-26:** dự án đang ở **Layer 7 - Trust + Engagement started**.
+
+- Layer 1-4 đã có implementation chạy được: app scaffold, Payload collections, media pipeline, public pages, SEO/canonical/JSON-LD, robots/sitemap, cache và public payload optimization.
+- Layer 5 Booking Lead Engine đã landed cho luồng MVP: Server Action validation, plain-text sanitization, public create forced `Pending`, DB-backed idempotency, Payload/Postgres persistence.
+- Layer 7 đã bắt đầu bằng Clerk webhook sync `customers.clerkUserId`: `src/app/api/webhooks/clerk/route.ts` và `src/services/clerk-customer-sync.ts`.
+- Production còn thiếu cấu hình ngoài code: set `CLERK_WEBHOOK_SIGNING_SECRET` trên Vercel, tạo Clerk webhook endpoint cho `user.created` / `user.updated`, rồi redeploy và verify live sync.
+
+Dev tiếp theo nên đọc `docs/CURRENT_STATUS.md` sau `CLAUDE.md` để biết điểm dừng chính xác, rồi mới chọn task tiếp theo trong roadmap này.
+
 ---
 
 ## 3. Layer 1 - Foundation

@@ -70,7 +70,7 @@ Admin reversal requires an explicit audit reason. Every status change appends a 
 
 **File size limits** — UI components: 150 lines max. Server Actions and Services: 250 lines max. Payload collection configs: 200 lines max. Extract complex Payload lifecycle hooks into a `/hooks` subdirectory.
 
-### Current build state (Layer 1–4 in progress)
+### Current build state (Layer 7 started)
 
 - Foundation scaffolded: Next.js 15, Payload CMS, Neon Postgres, Clerk auth, Tailwind CSS, shadcn/ui, Vitest CI
 - Core domain types and Zod schemas exist and are tested
@@ -79,8 +79,12 @@ Admin reversal requires an explicit audit reason. Every status change appends a 
 - Payload collection configs are wired for users, media, destinations, partners, tours, customers, bookings, posts, comments, reviews, promotions, and payments
 - Media upload and QStash Sharp variant processing are implemented against Cloudflare R2
 - `booking-repository.ts` persists booking leads through Payload/Postgres with DB-backed idempotency
+- Public booking creates are hardened: server sanitizes plain-text special requests and forces public creates into `Pending`
+- Clerk customer sync route exists at `src/app/api/webhooks/clerk/route.ts`, backed by `src/services/clerk-customer-sync.ts`
 
-Next layer: harden Payload-backed public pages, persist booking leads to Postgres, and wire email follow-up via Resend.
+Current stage: Layer 7 Trust + Engagement has started after the Layer 5 booking lead engine landed. Before relying on Clerk sync in production, set `CLERK_WEBHOOK_SIGNING_SECRET` in Vercel and configure the Clerk webhook endpoint for `user.created` and `user.updated`.
+
+Next work: finish production readiness gaps before online payment: external Redis/KV-backed rate limiting, booking capacity/slot transaction locking if capacity affects inventory, media variant rendering/focal point polish, customer email follow-up via Resend, then Layer 8/9 monetization and payment provider work.
 
 ### Tailwind brand palette
 
@@ -141,6 +145,7 @@ Nếu dùng lệnh này, phải `git push` ngay sau để GitHub và Vercel khô
 Detailed specs live in `docs/`. Key files before writing code in an area:
 
 - `docs/BOOKING_FLOW.md` — customer journey and status transitions
+- `docs/CURRENT_STATUS.md` — exact current layer/stage, last shipped commits, and next-dev handoff
 - `docs/DATABASE_SCHEMA.md` — full Payload collection field reference
 - `docs/CODING_GUIDELINES.md` — architectural guardrails (authoritative)
 - `docs/TESTING_STRATEGY.md` — test plan and priority cases
