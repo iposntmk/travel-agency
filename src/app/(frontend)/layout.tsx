@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import Link from "next/link";
-import { getSeoEnv } from "@/config/env";
+import { getNextConfigEnv, getSeoEnv, getSiteUrl } from "@/config/env";
 import "../globals.css";
 
 const indexingAllowed = getSeoEnv().ALLOW_INDEXING;
+const siteUrl = getSiteUrl();
+const r2PublicUrl = getNextConfigEnv().R2_PUBLIC_URL;
+const r2Origin = r2PublicUrl ? new URL(r2PublicUrl).origin : undefined;
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     default: "TC Travel Vietnam",
     template: "%s | TC Travel Vietnam"
@@ -22,6 +26,7 @@ export default function FrontendLayout({ children }: Readonly<{ children: React.
   return (
     <ClerkProvider>
       <html lang="en">
+        <head>{r2Origin ? <link rel="preconnect" href={r2Origin} crossOrigin="anonymous" /> : null}</head>
         <body>
           <header className="border-b border-slate-200 bg-white">
             <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">

@@ -1,7 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { validateDimensions, variantKey, generateVariants } from "@/services/media-processor";
+import { r2PutObject } from "@/lib/r2";
 
 vi.mock("@/lib/r2", () => ({
+  IMMUTABLE_CACHE_CONTROL: "public, max-age=31536000, immutable",
   r2GetObject: vi.fn().mockResolvedValue(Buffer.from("fake-image-data")),
   r2PutObject: vi.fn().mockResolvedValue(undefined),
   r2PublicUrl: (key: string) => `https://cdn.example.com/${key}`,
@@ -91,5 +93,16 @@ describe("generateVariants", () => {
     const variants = await generateVariants("42", "originals/2026/05/42/original.jpg");
     expect(variants.thumb.avif).toBe("https://cdn.example.com/variants/42/thumb.avif");
     expect(variants.og).toBe("https://cdn.example.com/variants/42/og.jpg");
+  });
+
+  it("uploads generated variants with immutable cache headers", async () => {
+    await generateVariants("42", "originals/2026/05/42/original.jpg");
+
+    expect(r2PutObject).toHaveBeenCalledWith(
+      expect.stringContaining("variants/42/"),
+      expect.any(Buffer),
+      expect.stringMatching(/^image\//),
+      "public, max-age=31536000, immutable"
+    );
   });
 });

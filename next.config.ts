@@ -5,6 +5,27 @@ import { getNextConfigEnv } from "./src/config/env";
 const env = getNextConfigEnv();
 const devOrigin = env.DEV_ORIGIN ? new URL(env.DEV_ORIGIN) : undefined;
 const robotsHeader = "noindex, nofollow, noarchive, nosnippet";
+const cspReportOnly = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.clerk.accounts.dev https://*.clerk.com https://challenges.cloudflare.com",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https:",
+  "font-src 'self' data:",
+  "connect-src 'self' https: wss:",
+  "frame-src 'self' https://*.clerk.accounts.dev https://*.clerk.com https://challenges.cloudflare.com",
+  "media-src 'self' https: blob:",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'self'",
+  "upgrade-insecure-requests"
+].join("; ");
+const securityHeaders = [
+  { key: "Content-Security-Policy-Report-Only", value: cspReportOnly },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" }
+];
 
 function buildRemotePatterns() {
   const patterns: { protocol: "https"; hostname: string }[] = [
@@ -46,14 +67,13 @@ const nextConfig: NextConfig = {
     remotePatterns: buildRemotePatterns()
   },
   async headers() {
-    if (env.ALLOW_INDEXING) {
-      return [];
-    }
-
     return [
       {
         source: "/:path*",
-        headers: [{ key: "X-Robots-Tag", value: robotsHeader }]
+        headers: [
+          ...securityHeaders,
+          ...(env.ALLOW_INDEXING ? [] : [{ key: "X-Robots-Tag", value: robotsHeader }])
+        ]
       }
     ];
   }

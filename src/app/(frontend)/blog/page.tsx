@@ -30,7 +30,7 @@ export default async function BlogPage() {
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {posts.map((post) => {
-              const image = resolveImage(post.featuredImage, post.title);
+              const image = resolveImage(post.featuredImage, post.title, { variant: "card" });
               const destination =
                 post.destination && typeof post.destination === "object"
                   ? (post.destination as Destination).title

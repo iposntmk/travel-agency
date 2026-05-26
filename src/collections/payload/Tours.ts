@@ -1,5 +1,6 @@
 import type { CollectionConfig } from "payload";
 import { adminOnly, publicReadActive, staffOnly } from "./access";
+import { revalidateTourAfterChange, revalidateTourAfterDelete } from "./hooks/revalidate-content";
 
 export const Tours: CollectionConfig = {
   slug: "tours",
@@ -9,6 +10,10 @@ export const Tours: CollectionConfig = {
     create: staffOnly,
     update: staffOnly,
     delete: adminOnly
+  },
+  hooks: {
+    afterChange: [revalidateTourAfterChange],
+    afterDelete: [revalidateTourAfterDelete]
   },
   fields: [
     { name: "title", type: "text", required: true },
@@ -21,6 +26,7 @@ export const Tours: CollectionConfig = {
       name: "operationType",
       type: "select",
       required: true,
+      index: true,
       defaultValue: "self-operated",
       options: [
         { label: "Self-Operated", value: "self-operated" },
@@ -35,6 +41,7 @@ export const Tours: CollectionConfig = {
       name: "tourType",
       type: "select",
       required: true,
+      index: true,
       options: [
         { label: "Free Walking", value: "free-walking" },
         { label: "Free Cycling", value: "free-cycling" },
@@ -48,17 +55,19 @@ export const Tours: CollectionConfig = {
     {
       name: "season",
       type: "select",
+      index: true,
       options: [
         { label: "Summer", value: "summer" },
         { label: "Winter", value: "winter" },
         { label: "Year-Round", value: "year-round" }
       ]
     },
-    { name: "isFeaturedInSeason", type: "checkbox", defaultValue: false },
+    { name: "isFeaturedInSeason", type: "checkbox", defaultValue: false, index: true },
     {
       name: "status",
       type: "select",
       required: true,
+      index: true,
       defaultValue: "active",
       options: [
         { label: "Active", value: "active" },
@@ -67,7 +76,7 @@ export const Tours: CollectionConfig = {
         { label: "Paused", value: "paused" }
       ]
     },
-    { name: "priceFrom", type: "number", min: 0 },
+    { name: "priceFrom", type: "number", min: 0, index: true },
     { name: "currency", type: "text", defaultValue: "USD" },
     {
       name: "pricingTiers",

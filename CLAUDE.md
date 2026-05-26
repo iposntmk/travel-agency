@@ -70,16 +70,17 @@ Admin reversal requires an explicit audit reason. Every status change appends a 
 
 **File size limits** — UI components: 150 lines max. Server Actions and Services: 250 lines max. Payload collection configs: 200 lines max. Extract complex Payload lifecycle hooks into a `/hooks` subdirectory.
 
-### Current build state (Layer 1–2 complete)
+### Current build state (Layer 1–4 in progress)
 
 - Foundation scaffolded: Next.js 15, Payload CMS, Neon Postgres, Clerk auth, Tailwind CSS, shadcn/ui, Vitest CI
 - Core domain types and Zod schemas exist and are tested
 - Booking transition state machine is implemented and tested
-- Frontend pages (`/`, `/tours`, `/free-tours`, `/booking/confirmation`) render from static `sample-data.ts` — Payload data reads are **not yet wired**
-- Payload has only `Users` and `Media` collections live; all other planned collections (destinations, tours, bookings, etc.) exist in `src/collections/contracts.ts` as access contracts but are not yet Payload collection configs
+- Frontend public pages read tours, destinations, and posts from Payload with static fallback timing via Next revalidation
+- Payload collection configs are wired for users, media, destinations, partners, tours, customers, bookings, posts, comments, reviews, promotions, and payments
+- Media upload and QStash Sharp variant processing are implemented against Cloudflare R2
 - `booking-repository.ts` is an in-memory placeholder — not persisted to Postgres yet
 
-Next layer: Layer 3 (Media Pipeline — Cloudflare R2 + QStash Sharp variants) → Layer 4 (Public Pages reading from Payload) → Layer 5 (Booking Lead Engine with email via Resend).
+Next layer: harden Payload-backed public pages, persist booking leads to Postgres, and wire email follow-up via Resend.
 
 ### Tailwind brand palette
 

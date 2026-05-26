@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { Access, CollectionConfig, FieldAccess } from "payload";
 import { Bookings } from "@/collections/payload/Bookings";
+import { Destinations } from "@/collections/payload/Destinations";
 import { Media } from "@/collections/payload/Media";
 import { Partners } from "@/collections/payload/Partners";
 import { Posts } from "@/collections/payload/Posts";
@@ -83,5 +84,22 @@ describe("Payload collection access", () => {
   it("keeps admin media uploads usable without a storage adapter", () => {
     expect(Media.upload).toBe(true);
     expect(namedField(Media, "status")).toMatchObject({ defaultValue: "ready" });
+  });
+
+  it("keeps performance indexes on public content filters", () => {
+    for (const field of ["status", "tourType", "season", "operationType", "isFeaturedInSeason", "priceFrom"]) {
+      expect(namedField(Tours, field)).toMatchObject({ index: true });
+    }
+
+    expect(namedField(Posts, "status")).toMatchObject({ index: true });
+  });
+
+  it("registers cache invalidation hooks for public content collections", () => {
+    expect(Tours.hooks?.afterChange).toHaveLength(1);
+    expect(Tours.hooks?.afterDelete).toHaveLength(1);
+    expect(Destinations.hooks?.afterChange).toHaveLength(1);
+    expect(Destinations.hooks?.afterDelete).toHaveLength(1);
+    expect(Posts.hooks?.afterChange).toHaveLength(1);
+    expect(Posts.hooks?.afterDelete).toHaveLength(1);
   });
 });

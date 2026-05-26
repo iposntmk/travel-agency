@@ -25,6 +25,10 @@ const dirname = path.dirname(filename);
 
 const env = getPayloadConfigEnv();
 const storageEnv = getPayloadStorageEnv();
+const migrationConnectionString =
+  env.PAYLOAD_COMMAND?.startsWith("migrate") || process.argv.some((arg) => arg.includes("migrate"))
+    ? (env.DATABASE_URL_UNPOOLED ?? env.DATABASE_URL)
+    : env.DATABASE_URL;
 const originAllowlist = Array.from(
   new Set(
     ["http://localhost:3000", env.NEXT_PUBLIC_SITE_URL, env.DEV_ORIGIN].filter(
@@ -66,7 +70,10 @@ export default buildConfig({
   db: postgresAdapter({
     migrationDir: path.resolve(dirname, "src/migrations"),
     pool: {
-      connectionString: env.DATABASE_URL
+      connectionString: migrationConnectionString,
+      max: 5,
+      idleTimeoutMillis: 10000,
+      connectionTimeoutMillis: 5000
     },
     prodMigrations: migrations,
     push: false

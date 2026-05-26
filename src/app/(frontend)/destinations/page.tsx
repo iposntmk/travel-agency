@@ -30,7 +30,7 @@ export default async function DestinationsPage() {
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {destinations.map((destination) => {
-              const image = resolveImage(destination.featuredImage, destination.title);
+              const image = resolveImage(destination.featuredImage, destination.title, { variant: "card" });
               const summary = lexicalToPlainText(destination.description, 140);
               return (
                 <Link

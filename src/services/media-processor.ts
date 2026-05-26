@@ -1,5 +1,7 @@
+import "server-only";
+
 import sharp from "sharp";
-import { r2GetObject, r2PutObject, r2PublicUrl } from "@/lib/r2";
+import { IMMUTABLE_CACHE_CONTROL, r2GetObject, r2PutObject, r2PublicUrl } from "@/lib/r2";
 
 export interface MediaVariants {
   thumb: { avif: string; webp: string };
@@ -56,7 +58,7 @@ export async function generateVariants(mediaId: string, originalKey: string): Pr
         .resize(preset.width, preset.height, { fit: "cover", position: "attention", withoutEnlargement: true })
         .avif({ quality: preset.avifQ, effort: 4 })
         .toBuffer();
-      await r2PutObject(key, buf, "image/avif");
+      await r2PutObject(key, buf, "image/avif", IMMUTABLE_CACHE_CONTROL);
       variants[name].avif = r2PublicUrl(key);
     });
 
@@ -66,7 +68,7 @@ export async function generateVariants(mediaId: string, originalKey: string): Pr
         .resize(preset.width, preset.height, { fit: "cover", position: "attention", withoutEnlargement: true })
         .webp({ quality: preset.webpQ })
         .toBuffer();
-      await r2PutObject(key, buf, "image/webp");
+      await r2PutObject(key, buf, "image/webp", IMMUTABLE_CACHE_CONTROL);
       variants[name].webp = r2PublicUrl(key);
     });
   }
@@ -77,7 +79,7 @@ export async function generateVariants(mediaId: string, originalKey: string): Pr
       .resize(1200, 630, { fit: "cover", position: "attention", withoutEnlargement: true })
       .jpeg({ quality: 82, mozjpeg: true })
       .toBuffer();
-    await r2PutObject(key, buf, "image/jpeg");
+    await r2PutObject(key, buf, "image/jpeg", IMMUTABLE_CACHE_CONTROL);
     variants.og = r2PublicUrl(key);
   });
 

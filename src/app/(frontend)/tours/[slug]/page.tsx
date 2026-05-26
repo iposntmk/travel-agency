@@ -80,7 +80,7 @@ export default async function TourDetailPage({ params }: PageProps) {
   const related = destination ? await getToursForDestination(destination.id, 4) : [];
   const relatedTours = related.filter((t) => t.id !== tour.id).slice(0, 3);
 
-  const heroImage = resolveImage(tour.featuredImage, tour.title);
+  const heroImage = resolveImage(tour.featuredImage, tour.title, { variant: "hero" });
   const gallery: Media[] = Array.isArray(tour.gallery)
     ? (tour.gallery.filter((entry) => entry && typeof entry === "object") as Media[])
     : [];
@@ -138,7 +138,7 @@ export default async function TourDetailPage({ params }: PageProps) {
           {gallery.length > 0 ? (
             <div className="grid grid-cols-3 gap-2">
               {gallery.slice(0, 6).map((media) => {
-                const img = resolveImage(media);
+                const img = resolveImage(media, undefined, { variant: "thumb" });
                 return (
                   <div key={media.id} className="relative aspect-square overflow-hidden rounded-md bg-slate-100">
                     <Image src={img.url} alt={img.alt} fill sizes="20vw" className="object-cover" unoptimized />

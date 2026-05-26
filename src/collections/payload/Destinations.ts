@@ -1,5 +1,6 @@
 import type { CollectionConfig } from "payload";
 import { adminOnly, publicRead, staffOnly } from "./access";
+import { revalidateDestinationAfterChange, revalidateDestinationAfterDelete } from "./hooks/revalidate-content";
 
 export const Destinations: CollectionConfig = {
   slug: "destinations",
@@ -9,6 +10,10 @@ export const Destinations: CollectionConfig = {
     create: staffOnly,
     update: staffOnly,
     delete: adminOnly
+  },
+  hooks: {
+    afterChange: [revalidateDestinationAfterChange],
+    afterDelete: [revalidateDestinationAfterDelete]
   },
   fields: [
     { name: "title", type: "text", required: true },

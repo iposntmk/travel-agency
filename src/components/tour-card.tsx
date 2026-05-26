@@ -10,7 +10,7 @@ interface TourCardProps {
 }
 
 export function TourCard({ tour, ctaHref, ctaLabel }: TourCardProps) {
-  const image = resolveImage(tour.featuredImage, tour.title);
+  const image = resolveImage(tour.featuredImage, tour.title, { variant: "card" });
   const destination =
     tour.destination && typeof tour.destination === "object"
       ? (tour.destination as Destination).title

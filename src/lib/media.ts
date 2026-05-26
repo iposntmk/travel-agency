@@ -13,6 +13,18 @@ const FALLBACK_URL = "/og-fallback.svg";
 const FALLBACK_ALT = "TC Travel Vietnam";
 
 type MaybeMedia = number | Media | null | undefined;
+type ImageVariant = "thumb" | "card" | "hero";
+type VariantRecord = {
+  avif?: unknown;
+  webp?: unknown;
+  jpg?: unknown;
+  url?: unknown;
+};
+
+interface ResolveImageOptions {
+  variant?: ImageVariant;
+  publicBaseUrl?: string;
+}
 
 function encodeKey(key: string): string {
   return key
@@ -47,7 +59,48 @@ function isUsableRemoteUrl(url: string | null | undefined): url is string {
   }
 }
 
-export function resolveImage(input: MaybeMedia, fallbackAlt?: string, publicBaseUrl = getR2PublicBaseUrl()): ResolvedImage {
+function asVariantRecord(value: unknown): VariantRecord | undefined {
+  return value && typeof value === "object" && !Array.isArray(value) ? (value as VariantRecord) : undefined;
+}
+
+function variantsRecord(input: Media): Record<string, unknown> | undefined {
+  return input.variants && typeof input.variants === "object" && !Array.isArray(input.variants)
+    ? (input.variants as Record<string, unknown>)
+    : undefined;
+}
+
+function variantValueUrl(value: unknown, publicBaseUrl: string | undefined): string | undefined {
+  if (typeof value !== "string" || value.length === 0) return undefined;
+  return isUsableRemoteUrl(value) ? value : publicR2Url(value, publicBaseUrl);
+}
+
+function variantUrl(input: Media, variant: ImageVariant | undefined, publicBaseUrl: string | undefined): string | undefined {
+  if (!variant) return undefined;
+
+  const variants = variantsRecord(input);
+  const selected = variants ? asVariantRecord(variants[variant]) : undefined;
+
+  return (
+    variantValueUrl(selected?.avif, publicBaseUrl) ??
+    variantValueUrl(selected?.webp, publicBaseUrl) ??
+    variantValueUrl(selected?.url, publicBaseUrl)
+  );
+}
+
+function ogVariantUrl(input: Media, publicBaseUrl: string | undefined): string | undefined {
+  const og = variantsRecord(input)?.og;
+  const selected = asVariantRecord(og);
+
+  return (
+    variantValueUrl(og, publicBaseUrl) ??
+    variantValueUrl(selected?.jpg, publicBaseUrl) ??
+    variantValueUrl(selected?.url, publicBaseUrl)
+  );
+}
+
+export function resolveImage(input: MaybeMedia, fallbackAlt?: string, options: ResolveImageOptions = {}): ResolvedImage {
+  const publicBaseUrl = options.publicBaseUrl ?? getR2PublicBaseUrl();
+
   if (!input || typeof input === "number") {
     return { url: FALLBACK_URL, alt: fallbackAlt ?? FALLBACK_ALT, isFallback: true };
   }
@@ -57,6 +110,7 @@ export function resolveImage(input: MaybeMedia, fallbackAlt?: string, publicBase
   }
 
   const url =
+    variantUrl(input, options.variant, publicBaseUrl) ??
     (isUsableRemoteUrl(input.publicUrl) ? input.publicUrl : undefined) ??
     publicR2Url(input.r2Key, publicBaseUrl) ??
     publicR2Url(input.filename, publicBaseUrl) ??
@@ -73,7 +127,14 @@ export function resolveImage(input: MaybeMedia, fallbackAlt?: string, publicBase
 }
 
 export function resolveOgImage(input: MaybeMedia, siteUrl: string): string {
-  const resolved = resolveImage(input);
+  const publicBaseUrl = getR2PublicBaseUrl();
+  if (input && typeof input === "object" && input.status === "ready") {
+    const ogUrl = ogVariantUrl(input, publicBaseUrl);
+    if (ogUrl) return ogUrl;
+  }
+
+  const resolved = resolveImage(input, undefined, { publicBaseUrl });
+
   if (resolved.isFallback) {
     return `${siteUrl.replace(/\/$/, "")}${FALLBACK_URL}`;
   }

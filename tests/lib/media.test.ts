@@ -37,11 +37,45 @@ describe("resolveImage", () => {
     expect(resolved.url).toContain("cdn.example.com");
   });
 
+  it("prefers the requested AVIF variant before WebP and original URLs", () => {
+    const resolved = resolveImage(
+      makeMedia({
+        variants: {
+          card: {
+            avif: "https://cdn.example.com/variants/1/card.avif",
+            webp: "https://cdn.example.com/variants/1/card.webp"
+          }
+        }
+      }),
+      "Tour",
+      { variant: "card" }
+    );
+
+    expect(resolved.isFallback).toBe(false);
+    expect(resolved.url).toBe("https://cdn.example.com/variants/1/card.avif");
+  });
+
+  it("falls back to WebP when the requested AVIF variant is unavailable", () => {
+    const resolved = resolveImage(
+      makeMedia({
+        variants: {
+          thumb: {
+            webp: "https://cdn.example.com/variants/1/thumb.webp"
+          }
+        }
+      }),
+      "Tour",
+      { variant: "thumb" }
+    );
+
+    expect(resolved.url).toBe("https://cdn.example.com/variants/1/thumb.webp");
+  });
+
   it("derives an R2 public URL from filename when publicUrl is missing", () => {
     const resolved = resolveImage(
       makeMedia({ filename: "Dai-Noi-Hue-khi-hoang-hon-buong-xuong-1.jpg", publicUrl: null }),
       undefined,
-      "https://pub.example.r2.dev"
+      { publicBaseUrl: "https://pub.example.r2.dev" }
     );
 
     expect(resolved.isFallback).toBe(false);
@@ -55,7 +89,7 @@ describe("resolveImage", () => {
         publicUrl: "https://dash.cloudflare.com/account/r2/default/buckets/travel-agency/objects/hue.jpg/details"
       }),
       undefined,
-      "https://pub.example.r2.dev"
+      { publicBaseUrl: "https://pub.example.r2.dev" }
     );
 
     expect(resolved.url).toBe("https://pub.example.r2.dev/hue.jpg");
@@ -73,5 +107,15 @@ describe("resolveOgImage", () => {
 
   it("uses the media publicUrl when ready", () => {
     expect(resolveOgImage(makeMedia(), "https://example.com")).toContain("cdn.example.com");
+  });
+
+  it("prefers the OG variant when ready", () => {
+    const media = makeMedia({
+      variants: {
+        og: "https://cdn.example.com/variants/1/og.jpg"
+      }
+    });
+
+    expect(resolveOgImage(media, "https://example.com")).toBe("https://cdn.example.com/variants/1/og.jpg");
   });
 });

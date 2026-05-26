@@ -1,6 +1,10 @@
+import "server-only";
+
 import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { getEnv } from "@/config/env";
+
+export const IMMUTABLE_CACHE_CONTROL = "public, max-age=31536000, immutable";
 
 let _client: S3Client | undefined;
 
@@ -28,7 +32,12 @@ export function r2PublicUrl(key: string): string {
 }
 
 export async function createSignedPutUrl(key: string, mimeType: string, expiresIn = 300): Promise<string> {
-  const cmd = new PutObjectCommand({ Bucket: r2Bucket(), Key: key, ContentType: mimeType });
+  const cmd = new PutObjectCommand({
+    Bucket: r2Bucket(),
+    Key: key,
+    ContentType: mimeType,
+    CacheControl: IMMUTABLE_CACHE_CONTROL
+  });
   return getSignedUrl(getClient(), cmd, { expiresIn });
 }
 
@@ -39,7 +48,18 @@ export async function r2GetObject(key: string): Promise<Buffer> {
   return Buffer.from(await res.Body.transformToByteArray());
 }
 
-export async function r2PutObject(key: string, body: Buffer, contentType: string): Promise<void> {
-  const cmd = new PutObjectCommand({ Bucket: r2Bucket(), Key: key, Body: body, ContentType: contentType });
+export async function r2PutObject(
+  key: string,
+  body: Buffer,
+  contentType: string,
+  cacheControl = IMMUTABLE_CACHE_CONTROL
+): Promise<void> {
+  const cmd = new PutObjectCommand({
+    Bucket: r2Bucket(),
+    Key: key,
+    Body: body,
+    ContentType: contentType,
+    CacheControl: cacheControl
+  });
   await getClient().send(cmd);
 }

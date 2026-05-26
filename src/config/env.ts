@@ -9,6 +9,7 @@ const booleanFlag = z.preprocess(
 
 export const envSchema = z.object({
   DATABASE_URL: z.string().url(),
+  DATABASE_URL_UNPOOLED: optionalUrl,
   PAYLOAD_SECRET: z.string().min(32),
   NEXT_PUBLIC_SITE_URL: z.string().url(),
   CLERK_SECRET_KEY: z.string().min(1),
@@ -33,9 +34,11 @@ export type Env = z.infer<typeof envSchema>;
 export const payloadConfigEnvSchema = z
   .object({
     DATABASE_URL: z.string().url(),
+    DATABASE_URL_UNPOOLED: optionalUrl,
     PAYLOAD_SECRET: z.string().min(32),
     NEXT_PUBLIC_SITE_URL: optionalUrl,
     DEV_ORIGIN: optionalUrl,
+    PAYLOAD_COMMAND: z.string().optional(),
     NODE_ENV: nodeEnv
   })
   .superRefine((env, ctx) => {
@@ -64,6 +67,12 @@ export const seoEnvSchema = z.object({
 
 export type SeoEnv = z.infer<typeof seoEnvSchema>;
 
+export const healthEnvSchema = z.object({
+  VERCEL_REGION: z.string().optional()
+});
+
+export type HealthEnv = z.infer<typeof healthEnvSchema>;
+
 export const payloadStorageEnvSchema = envSchema.pick({
   R2_ACCOUNT_ID: true,
   R2_BUCKET: true,
@@ -88,6 +97,10 @@ export function parseNextConfigEnv(source: Record<string, string | undefined>): 
 
 export function parseSeoEnv(source: Record<string, string | undefined>): SeoEnv {
   return seoEnvSchema.parse(source);
+}
+
+export function parseHealthEnv(source: Record<string, string | undefined>): HealthEnv {
+  return healthEnvSchema.parse(source);
 }
 
 export function parsePayloadStorageEnv(
@@ -150,6 +163,16 @@ export function getSeoEnv(): SeoEnv {
 
 export function getSiteUrl(): string {
   return getSeoEnv().NEXT_PUBLIC_SITE_URL!;
+}
+
+let cachedHealthEnv: HealthEnv | undefined;
+
+export function getHealthEnv(): HealthEnv {
+  if (!cachedHealthEnv) {
+    cachedHealthEnv = parseHealthEnv(process.env);
+  }
+
+  return cachedHealthEnv;
 }
 
 let cachedPayloadStorageEnv: PayloadStorageEnv | undefined;

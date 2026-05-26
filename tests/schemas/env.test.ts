@@ -47,6 +47,23 @@ describe("env schema", () => {
     });
   });
 
+  it("accepts an optional unpooled database URL for migrations", () => {
+    const directUrl = "https://example.com/direct-db";
+
+    expect(parseEnv({ ...validEnv, DATABASE_URL_UNPOOLED: directUrl })).toMatchObject({
+      DATABASE_URL_UNPOOLED: directUrl
+    });
+    expect(
+      parsePayloadConfigEnv({
+        DATABASE_URL: validEnv.DATABASE_URL,
+        DATABASE_URL_UNPOOLED: directUrl,
+        PAYLOAD_SECRET: validEnv.PAYLOAD_SECRET
+      })
+    ).toMatchObject({
+      DATABASE_URL_UNPOOLED: directUrl
+    });
+  });
+
   it("normalizes optional local dev origins", () => {
     expect(parseNextConfigEnv({ DEV_ORIGIN: "" })).toEqual({ ALLOW_INDEXING: false });
     expect(parseNextConfigEnv({ R2_PUBLIC_URL: validEnv.R2_PUBLIC_URL })).toEqual({

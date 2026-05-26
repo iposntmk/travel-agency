@@ -1,5 +1,6 @@
 import type { CollectionConfig } from "payload";
 import { adminOnly, publicReadPublished, staffOnly } from "./access";
+import { revalidatePostAfterChange, revalidatePostAfterDelete } from "./hooks/revalidate-content";
 
 export const Posts: CollectionConfig = {
   slug: "posts",
@@ -10,6 +11,10 @@ export const Posts: CollectionConfig = {
     update: staffOnly,
     delete: adminOnly
   },
+  hooks: {
+    afterChange: [revalidatePostAfterChange],
+    afterDelete: [revalidatePostAfterDelete]
+  },
   fields: [
     { name: "title", type: "text", required: true },
     { name: "slug", type: "text", required: true, unique: true },
@@ -19,6 +24,7 @@ export const Posts: CollectionConfig = {
       name: "status",
       type: "select",
       required: true,
+      index: true,
       defaultValue: "draft",
       options: [
         { label: "Draft", value: "draft" },

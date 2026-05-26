@@ -48,7 +48,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   const post = await getPostBySlug(slug);
   if (!post) notFound();
 
-  const image = resolveImage(post.featuredImage, post.title);
+  const image = resolveImage(post.featuredImage, post.title, { variant: "hero" });
   const html = lexicalToHtml(post.content);
   const destination =
     post.destination && typeof post.destination === "object" ? (post.destination as Destination) : null;

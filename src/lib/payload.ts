@@ -1,3 +1,5 @@
+import "server-only";
+
 import { getPayload, type Payload } from "payload";
 import configPromise from "@payload-config";
 

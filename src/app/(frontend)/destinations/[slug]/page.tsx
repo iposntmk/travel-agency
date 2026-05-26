@@ -60,7 +60,7 @@ export default async function DestinationDetailPage({ params }: PageProps) {
   if (!destination) notFound();
 
   const tours = await getToursForDestination(destination.id, 6);
-  const image = resolveImage(destination.featuredImage, destination.title);
+  const image = resolveImage(destination.featuredImage, destination.title, { variant: "hero" });
   const html = lexicalToHtml(destination.description);
   const bestSeason = destination.region ? REGION_BEST_SEASON[destination.region] : undefined;
 
