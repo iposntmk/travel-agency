@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   parseEnv,
+  parseClerkWebhookEnv,
   parseNextConfigEnv,
   parsePayloadConfigEnv,
   parsePayloadStorageEnv,
@@ -62,6 +63,16 @@ describe("env schema", () => {
     ).toMatchObject({
       DATABASE_URL_UNPOOLED: directUrl
     });
+  });
+
+  it("validates the Clerk webhook signing secret separately", () => {
+    expect(parseEnv({ ...validEnv, CLERK_WEBHOOK_SIGNING_SECRET: "whsec_test" })).toMatchObject({
+      CLERK_WEBHOOK_SIGNING_SECRET: "whsec_test"
+    });
+    expect(parseClerkWebhookEnv({ CLERK_WEBHOOK_SIGNING_SECRET: "whsec_test" })).toEqual({
+      CLERK_WEBHOOK_SIGNING_SECRET: "whsec_test"
+    });
+    expect(() => parseClerkWebhookEnv({})).toThrow();
   });
 
   it("normalizes optional local dev origins", () => {

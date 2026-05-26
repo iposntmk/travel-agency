@@ -14,6 +14,7 @@ export const envSchema = z.object({
   NEXT_PUBLIC_SITE_URL: z.string().url(),
   CLERK_SECRET_KEY: z.string().min(1),
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
+  CLERK_WEBHOOK_SIGNING_SECRET: z.string().min(1).optional(),
   R2_ACCOUNT_ID: z.string().min(1),
   R2_BUCKET: z.string().min(1),
   R2_ACCESS_KEY_ID: z.string().min(1),
@@ -73,6 +74,12 @@ export const healthEnvSchema = z.object({
 
 export type HealthEnv = z.infer<typeof healthEnvSchema>;
 
+export const clerkWebhookEnvSchema = z.object({
+  CLERK_WEBHOOK_SIGNING_SECRET: z.string().min(1)
+});
+
+export type ClerkWebhookEnv = z.infer<typeof clerkWebhookEnvSchema>;
+
 export const payloadStorageEnvSchema = envSchema.pick({
   R2_ACCOUNT_ID: true,
   R2_BUCKET: true,
@@ -101,6 +108,10 @@ export function parseSeoEnv(source: Record<string, string | undefined>): SeoEnv 
 
 export function parseHealthEnv(source: Record<string, string | undefined>): HealthEnv {
   return healthEnvSchema.parse(source);
+}
+
+export function parseClerkWebhookEnv(source: Record<string, string | undefined>): ClerkWebhookEnv {
+  return clerkWebhookEnvSchema.parse(source);
 }
 
 export function parsePayloadStorageEnv(
@@ -173,6 +184,16 @@ export function getHealthEnv(): HealthEnv {
   }
 
   return cachedHealthEnv;
+}
+
+let cachedClerkWebhookEnv: ClerkWebhookEnv | undefined;
+
+export function getClerkWebhookEnv(): ClerkWebhookEnv {
+  if (!cachedClerkWebhookEnv) {
+    cachedClerkWebhookEnv = parseClerkWebhookEnv(process.env);
+  }
+
+  return cachedClerkWebhookEnv;
 }
 
 let cachedPayloadStorageEnv: PayloadStorageEnv | undefined;
