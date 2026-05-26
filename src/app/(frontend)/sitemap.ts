@@ -1,20 +1,21 @@
 import type { MetadataRoute } from "next";
 import { getSiteUrl } from "@/config/env";
 import {
-  getDestinations,
-  getPublishedPosts,
-  getTours
-} from "@/lib/cms";
+  getDestinationSitemapEntries,
+  getPostSitemapEntries,
+  getTourSitemapEntries
+} from "@/lib/cms-sitemap";
 
 const STATIC_ROUTES = ["/", "/tours", "/free-tours", "/destinations", "/blog"] as const;
+export const revalidate = 86400;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getSiteUrl().replace(/\/$/, "");
 
   const [tours, destinations, posts] = await Promise.all([
-    getTours({ limit: 200 }),
-    getDestinations(100),
-    getPublishedPosts(200)
+    getTourSitemapEntries(200),
+    getDestinationSitemapEntries(100),
+    getPostSitemapEntries(200)
   ]);
 
   const entries: MetadataRoute.Sitemap = STATIC_ROUTES.map((path) => ({

@@ -4,13 +4,25 @@ import Link from "next/link";
 import { getDestinations } from "@/lib/cms";
 import { lexicalToPlainText } from "@/lib/lexical";
 import { resolveImage } from "@/lib/media";
+import { hasSearchParams, type SearchParamValue } from "../tours/query";
 
 export const revalidate = 300;
 
-export const metadata: Metadata = {
-  title: "Destinations",
-  description: "Hội An, Huế, Đà Nẵng and more — Central Vietnam destinations covered by TC Travel Vietnam."
-};
+interface DestinationsPageProps {
+  searchParams?: Promise<Record<string, SearchParamValue>>;
+}
+
+export async function generateMetadata({ searchParams }: DestinationsPageProps): Promise<Metadata> {
+  const params = (await searchParams) ?? {};
+  const hasParams = hasSearchParams(params);
+
+  return {
+    title: "Destinations",
+    description: "Hội An, Huế, Đà Nẵng and more — Central Vietnam destinations covered by TC Travel Vietnam.",
+    alternates: { canonical: "/destinations" },
+    robots: hasParams ? { index: false, follow: true } : undefined
+  };
+}
 
 export default async function DestinationsPage() {
   const destinations = await getDestinations();

@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getTourBySlug, getTours } from "@/lib/cms";
+import { getToursForList } from "@/lib/cms-list";
 import { buildToursWhere } from "@/lib/cms-filters";
 import { getPayloadClient } from "@/lib/payload";
+import { getTourSitemapEntries } from "@/lib/cms-sitemap";
 
 vi.mock("next/cache", () => ({
   unstable_cache:
@@ -85,5 +87,38 @@ describe("CMS getters", () => {
     } as unknown as Awaited<ReturnType<typeof getPayloadClient>>);
 
     await expect(getTourBySlug("missing-tour")).resolves.toBeNull();
+  });
+
+  it("uses a narrow select for tour list cards", async () => {
+    const find = vi.fn().mockResolvedValue({ docs: [] });
+    mockedGetPayloadClient.mockResolvedValue({ find } as unknown as Awaited<ReturnType<typeof getPayloadClient>>);
+
+    await getToursForList({ limit: 3 });
+
+    const call = find.mock.calls[0]?.[0];
+    expect(call).toMatchObject({
+      collection: "tours",
+      depth: 1,
+      limit: 3,
+      select: expect.objectContaining({ title: true, slug: true, featuredImage: true })
+    });
+    expect(Object.keys(call.select)).not.toContain("description");
+    expect(Object.keys(call.select)).not.toContain("itinerary");
+  });
+
+  it("uses slug and updatedAt only for tour sitemap entries", async () => {
+    const find = vi.fn().mockResolvedValue({ docs: [] });
+    mockedGetPayloadClient.mockResolvedValue({ find } as unknown as Awaited<ReturnType<typeof getPayloadClient>>);
+
+    await getTourSitemapEntries(10);
+
+    expect(find).toHaveBeenCalledWith(
+      expect.objectContaining({
+        collection: "tours",
+        depth: 0,
+        limit: 10,
+        select: { slug: true, updatedAt: true }
+      })
+    );
   });
 });

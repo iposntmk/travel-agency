@@ -36,6 +36,13 @@ export function readPriceMax(value: SearchParamValue): number | undefined {
   return Number.isFinite(num) && num > 0 ? num : undefined;
 }
 
+export function hasSearchParams(params: Record<string, SearchParamValue>): boolean {
+  return Object.values(params).some((value) => {
+    if (Array.isArray(value)) return value.length > 0;
+    return Boolean(value);
+  });
+}
+
 export function queryString(query: ToursPageQuery, overrides: Record<string, string | undefined>): string {
   const merged: Record<string, string | undefined> = {
     destination: query.destination,

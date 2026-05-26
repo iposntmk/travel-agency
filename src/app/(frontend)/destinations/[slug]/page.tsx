@@ -2,15 +2,17 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { JsonLd } from "@/components/json-ld";
 import { TourCard } from "@/components/tour-card";
 import { getSiteUrl } from "@/config/env";
 import {
   getDestinationBySlug,
-  getDestinations,
-  getToursForDestination
+  getDestinations
 } from "@/lib/cms";
+import { getToursForDestinationList } from "@/lib/cms-list";
 import { lexicalToHtml, lexicalToPlainText } from "@/lib/lexical";
 import { resolveImage, resolveOgImage } from "@/lib/media";
+import { absoluteUrl, breadcrumbJsonLd, touristDestinationJsonLd } from "@/lib/structured-data";
 
 export const revalidate = 300;
 export const dynamicParams = true;
@@ -39,6 +41,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: destination.seo?.metaTitle ?? destination.title,
     description,
+    alternates: { canonical: `/destinations/${destination.slug}` },
     openGraph: {
       title: destination.seo?.metaTitle ?? destination.title,
       description,
@@ -59,13 +62,34 @@ export default async function DestinationDetailPage({ params }: PageProps) {
   const destination = await getDestinationBySlug(slug);
   if (!destination) notFound();
 
-  const tours = await getToursForDestination(destination.id, 6);
+  const tours = await getToursForDestinationList(destination.id, 6);
   const image = resolveImage(destination.featuredImage, destination.title, { variant: "hero" });
   const html = lexicalToHtml(destination.description);
+  const description =
+    destination.seo?.metaDescription?.trim() ||
+    lexicalToPlainText(destination.description) ||
+    `Tours in ${destination.title}.`;
+  const siteUrl = getSiteUrl().replace(/\/$/, "");
+  const destinationUrl = absoluteUrl(siteUrl, `/destinations/${destination.slug}`);
   const bestSeason = destination.region ? REGION_BEST_SEASON[destination.region] : undefined;
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-6 md:py-10">
+      <JsonLd
+        data={[
+          breadcrumbJsonLd([
+            { name: "Home", url: siteUrl },
+            { name: "Destinations", url: absoluteUrl(siteUrl, "/destinations") },
+            { name: destination.title, url: destinationUrl }
+          ]),
+          touristDestinationJsonLd({
+            title: destination.title,
+            url: destinationUrl,
+            description,
+            image: image.isFallback ? undefined : image.url
+          })
+        ]}
+      />
       <nav className="text-sm text-slate-500">
         <Link className="hover:underline" href="/destinations">Destinations</Link>
       </nav>

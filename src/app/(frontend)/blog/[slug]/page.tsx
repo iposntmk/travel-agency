@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { JsonLd } from "@/components/json-ld";
 import { getSiteUrl } from "@/config/env";
 import { getPostBySlug, getPublishedPosts } from "@/lib/cms";
 import { lexicalToHtml, lexicalToPlainText } from "@/lib/lexical";
 import { resolveImage, resolveOgImage } from "@/lib/media";
+import { absoluteUrl, blogPostingJsonLd, breadcrumbJsonLd } from "@/lib/structured-data";
 import type { Destination, Post, Tour } from "@/payload-types";
 
 export const revalidate = 300;
@@ -33,6 +35,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: post.seo?.metaTitle ?? post.title,
     description,
+    alternates: { canonical: `/blog/${post.slug}` },
     openGraph: {
       title: post.seo?.metaTitle ?? post.title,
       description,
@@ -57,9 +60,29 @@ export default async function BlogPostPage({ params }: PageProps) {
   const relatedPosts = (Array.isArray(post.relatedPosts) ? post.relatedPosts : []).filter(
     (entry): entry is Post => Boolean(entry) && typeof entry === "object"
   );
+  const description = post.seo?.metaDescription?.trim() || lexicalToPlainText(post.content) || post.title;
+  const siteUrl = getSiteUrl().replace(/\/$/, "");
+  const postUrl = absoluteUrl(siteUrl, `/blog/${post.slug}`);
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-6 md:py-10">
+      <JsonLd
+        data={[
+          breadcrumbJsonLd([
+            { name: "Home", url: siteUrl },
+            { name: "Blog", url: absoluteUrl(siteUrl, "/blog") },
+            { name: post.title, url: postUrl }
+          ]),
+          blogPostingJsonLd({
+            title: post.title,
+            url: postUrl,
+            description,
+            image: image.isFallback ? undefined : image.url,
+            datePublished: post.createdAt,
+            dateModified: post.updatedAt
+          })
+        ]}
+      />
       <nav className="text-sm text-slate-500">
         <Link className="hover:underline" href="/blog">Blog</Link>
       </nav>

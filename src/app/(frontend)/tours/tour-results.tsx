@@ -1,10 +1,14 @@
 import Link from "next/link";
+import { JsonLd } from "@/components/json-ld";
 import { TourCard } from "@/components/tour-card";
-import { getTours } from "@/lib/cms";
+import { getSiteUrl } from "@/config/env";
+import { getToursForList } from "@/lib/cms-list";
+import { absoluteUrl, breadcrumbJsonLd, itemListJsonLd } from "@/lib/structured-data";
 import type { ToursPageQuery } from "./query";
 
 export async function TourResults({ query }: { query: ToursPageQuery }) {
-  const tours = await getTours({
+  const siteUrl = getSiteUrl().replace(/\/$/, "");
+  const tours = await getToursForList({
     destinationSlug: query.destination,
     tourType: query.type,
     season: query.season,
@@ -15,6 +19,15 @@ export async function TourResults({ query }: { query: ToursPageQuery }) {
 
   return (
     <section className="mt-6">
+      <JsonLd
+        data={[
+          breadcrumbJsonLd([
+            { name: "Home", url: siteUrl },
+            { name: "Tours", url: absoluteUrl(siteUrl, "/tours") }
+          ]),
+          itemListJsonLd(tours.map((tour) => ({ name: tour.title, url: absoluteUrl(siteUrl, `/tours/${tour.slug}`) })))
+        ]}
+      />
       {tours.length === 0 ? (
         <div className="rounded-md border border-dashed border-slate-300 p-6 text-sm text-slate-500">
           No tours match these filters.{" "}

@@ -9,7 +9,8 @@ export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Travel Blog",
-  description: "Stories, guides, and tips for visiting Central Vietnam."
+  description: "Stories, guides, and tips for visiting Central Vietnam.",
+  alternates: { canonical: "/blog" }
 };
 
 export default async function BlogPage() {

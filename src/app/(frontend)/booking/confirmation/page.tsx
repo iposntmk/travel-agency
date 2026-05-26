@@ -1,14 +1,31 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { JsonLd } from "@/components/json-ld";
+import { getSiteUrl } from "@/config/env";
+import { absoluteUrl, bookingConfirmationJsonLd, breadcrumbJsonLd } from "@/lib/structured-data";
 
 export const metadata: Metadata = {
   title: "Booking Confirmation",
-  description: "Contact details and next steps after submitting a travel inquiry."
+  description: "Contact details and next steps after submitting a travel inquiry.",
+  alternates: { canonical: "/booking/confirmation" },
+  robots: { index: false, follow: true }
 };
 
 export default function ConfirmationPage() {
+  const siteUrl = getSiteUrl().replace(/\/$/, "");
+  const pageUrl = absoluteUrl(siteUrl, "/booking/confirmation");
+
   return (
     <main className="mx-auto max-w-3xl px-4 py-12">
+      <JsonLd
+        data={[
+          breadcrumbJsonLd([
+            { name: "Home", url: siteUrl },
+            { name: "Booking Confirmation", url: pageUrl }
+          ]),
+          bookingConfirmationJsonLd(pageUrl)
+        ]}
+      />
       <h1 className="text-3xl font-bold text-slate-950">Thanks. Our team will contact you within 24h.</h1>
       <p className="mt-4 leading-7 text-slate-600">
         This MVP keeps payment offline. Paid tour inquiries and free tour registrations start as

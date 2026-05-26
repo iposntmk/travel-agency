@@ -72,7 +72,7 @@ async function fetchTourBySlug(slug: string): Promise<Tour | null> {
     collection: "tours",
     where: { and: [{ slug: { equals: slug } }, { status: { equals: "active" } }] },
     limit: 1,
-    depth: 2
+    depth: 1
   });
   return result.docs[0] ?? null;
 }
@@ -180,7 +180,7 @@ async function fetchPostBySlug(slug: string): Promise<Post | null> {
     collection: "posts",
     where: { and: [{ slug: { equals: slug } }, { status: { equals: "published" } }] },
     limit: 1,
-    depth: 2
+    depth: 1
   });
   return result.docs[0] ?? null;
 }

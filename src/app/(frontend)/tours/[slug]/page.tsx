@@ -2,12 +2,15 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { JsonLd } from "@/components/json-ld";
 import { TourCard } from "@/components/tour-card";
 import { getSiteUrl } from "@/config/env";
 import { getPayloadClient } from "@/lib/payload";
-import { getTourBySlug, getToursForDestination } from "@/lib/cms";
+import { getTourBySlug } from "@/lib/cms";
+import { getToursForDestinationList } from "@/lib/cms-list";
 import { lexicalToHtml, lexicalToPlainText } from "@/lib/lexical";
 import { resolveImage, resolveOgImage } from "@/lib/media";
+import { absoluteUrl, breadcrumbJsonLd, tourProductJsonLd } from "@/lib/structured-data";
 import type { Destination, Media, Partner, Tour } from "@/payload-types";
 
 export const revalidate = 300;
@@ -46,6 +49,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: tour.seo?.metaTitle ?? tour.title,
     description,
+    alternates: { canonical: `/tours/${tour.slug}` },
     openGraph: {
       title: tour.seo?.metaTitle ?? tour.title,
       description,
@@ -77,7 +81,7 @@ export default async function TourDetailPage({ params }: PageProps) {
   if (!tour) notFound();
 
   const destination = destinationOf(tour);
-  const related = destination ? await getToursForDestination(destination.id, 4) : [];
+  const related = destination ? await getToursForDestinationList(destination.id, 4) : [];
   const relatedTours = related.filter((t) => t.id !== tour.id).slice(0, 3);
 
   const heroImage = resolveImage(tour.featuredImage, tour.title, { variant: "hero" });
@@ -90,9 +94,31 @@ export default async function TourDetailPage({ params }: PageProps) {
   const isFree = !tour.priceFrom || tour.priceFrom === 0;
   const badges = badgesFor(tour);
   const descriptionHtml = lexicalToHtml(tour.description);
+  const description =
+    tour.seo?.metaDescription?.trim() || lexicalToPlainText(tour.description) || `Book ${tour.title} in Central Vietnam.`;
+  const siteUrl = getSiteUrl().replace(/\/$/, "");
+  const tourUrl = absoluteUrl(siteUrl, `/tours/${tour.slug}`);
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-6 md:py-10">
+      <JsonLd
+        data={[
+          breadcrumbJsonLd([
+            { name: "Home", url: siteUrl },
+            { name: "Tours", url: absoluteUrl(siteUrl, "/tours") },
+            { name: tour.title, url: tourUrl }
+          ]),
+          tourProductJsonLd({
+            title: tour.title,
+            url: tourUrl,
+            description,
+            image: heroImage.isFallback ? undefined : heroImage.url,
+            priceFrom: tour.priceFrom,
+            currency: tour.currency,
+            tourType: tour.tourType
+          })
+        ]}
+      />
       <nav className="text-sm text-slate-500">
         <Link className="hover:underline" href="/tours">Tours</Link>
         {destination ? (

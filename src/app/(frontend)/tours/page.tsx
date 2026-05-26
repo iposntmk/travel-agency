@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getDestinations } from "@/lib/cms";
 import {
+  hasSearchParams,
   readParam,
   readPriceMax,
   resultsKey,
@@ -14,10 +15,17 @@ import { TourResultsSkeleton } from "./tour-results-skeleton";
 
 export const revalidate = 300;
 
-export const metadata: Metadata = {
-  title: "Tours",
-  description: "Browse paid and free tours in Hội An, Huế, and Đà Nẵng. Filter by destination, type, season, and price."
-};
+export async function generateMetadata({ searchParams }: ToursPageProps): Promise<Metadata> {
+  const params = (await searchParams) ?? {};
+  const hasFilters = hasSearchParams(params);
+
+  return {
+    title: "Tours",
+    description: "Browse paid and free tours in Hội An, Huế, and Đà Nẵng. Filter by destination, type, season, and price.",
+    alternates: { canonical: "/tours" },
+    robots: hasFilters ? { index: false, follow: true } : undefined
+  };
+}
 
 interface ToursPageProps {
   searchParams?: Promise<{

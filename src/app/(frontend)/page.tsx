@@ -1,20 +1,31 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
+import { JsonLd } from "@/components/json-ld";
+import { getSiteUrl } from "@/config/env";
 import { TourCard } from "@/components/tour-card";
-import { getDestinations, getTours } from "@/lib/cms";
+import { getDestinations } from "@/lib/cms";
+import { getToursForList } from "@/lib/cms-list";
+import { organizationJsonLd, webSiteJsonLd } from "@/lib/structured-data";
 
 export const revalidate = 300;
 
+export const metadata: Metadata = {
+  alternates: { canonical: "/" }
+};
+
 export default async function HomePage() {
+  const siteUrl = getSiteUrl().replace(/\/$/, "");
   const [featuredTours, destinations] = await Promise.all([
-    getTours({ featuredOnly: true, limit: 3 }).then((tours) =>
-      tours.length > 0 ? tours : getTours({ limit: 3 })
+    getToursForList({ featuredOnly: true, limit: 3 }).then((tours) =>
+      tours.length > 0 ? tours : getToursForList({ limit: 3 })
     ),
     getDestinations(6)
   ]);
 
   return (
     <main>
+      <JsonLd data={[organizationJsonLd(siteUrl), webSiteJsonLd(siteUrl)]} />
       <section className="bg-[linear-gradient(135deg,#fff7ed,#eff6ff_55%,#ffffff)]">
         <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 md:grid-cols-[1.2fr_0.8fr] md:items-center md:py-16">
           <div>

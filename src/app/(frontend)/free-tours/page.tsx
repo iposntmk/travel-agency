@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
 import { TourCard } from "@/components/tour-card";
-import { getTours } from "@/lib/cms";
+import { getToursForList } from "@/lib/cms-list";
 
 export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Free Tours",
   description:
-    "Join our free walking and cycling tours in Hội An, Huế, and Đà Nẵng. Registration uses the same Book Now - Pay Later inquiry flow."
+    "Join our free walking and cycling tours in Hội An, Huế, and Đà Nẵng. Registration uses the same Book Now - Pay Later inquiry flow.",
+  alternates: { canonical: "/free-tours" }
 };
 
 export default async function FreeToursPage() {
-  const freeTours = await getTours({ freeOnly: true, limit: 24 });
+  const freeTours = await getToursForList({ freeOnly: true, limit: 24 });
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 md:py-10">
