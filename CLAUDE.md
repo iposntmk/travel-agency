@@ -78,7 +78,7 @@ Admin reversal requires an explicit audit reason. Every status change appends a 
 - Frontend public pages read tours, destinations, and posts from Payload with static fallback timing via Next revalidation
 - Payload collection configs are wired for users, media, destinations, partners, tours, customers, bookings, posts, comments, reviews, promotions, and payments
 - Media upload and QStash Sharp variant processing are implemented against Cloudflare R2
-- `booking-repository.ts` is an in-memory placeholder — not persisted to Postgres yet
+- `booking-repository.ts` persists booking leads through Payload/Postgres with DB-backed idempotency
 
 Next layer: harden Payload-backed public pages, persist booking leads to Postgres, and wire email follow-up via Resend.
 

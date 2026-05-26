@@ -1,7 +1,14 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { submitBooking } from "@/app/actions/submit-booking";
-import { resetBookings } from "@/services/booking-repository";
+import { createBookingOnce } from "@/services/booking-repository";
 import { resetRateLimit } from "@/services/rate-limit";
+import type { BookingRecord } from "@/types/domain";
+
+vi.mock("@/services/booking-repository", () => ({
+  createBookingOnce: vi.fn()
+}));
+
+const mockedCreateBookingOnce = vi.mocked(createBookingOnce);
 
 const validInput = {
   name: "Jane Doe",
@@ -17,8 +24,9 @@ const validInput = {
 
 describe("submitBooking action", () => {
   beforeEach(() => {
-    resetBookings();
     resetRateLimit();
+    mockedCreateBookingOnce.mockReset();
+    mockedCreateBookingOnce.mockImplementation(async (booking) => ({ booking, duplicate: false }));
   });
 
   it("creates a Pending booking for valid input", async () => {
@@ -32,6 +40,11 @@ describe("submitBooking action", () => {
   });
 
   it("does not create duplicates for the same idempotency key", async () => {
+    const storedBooking = bookingRecord();
+    mockedCreateBookingOnce
+      .mockResolvedValueOnce({ booking: storedBooking, duplicate: false })
+      .mockResolvedValueOnce({ booking: storedBooking, duplicate: true });
+
     const first = await submitBooking(validInput, "test-user");
     const second = await submitBooking(validInput, "test-user");
 
@@ -84,3 +97,25 @@ describe("submitBooking action", () => {
     }
   });
 });
+
+function bookingRecord(overrides: Partial<BookingRecord> = {}): BookingRecord {
+  const now = new Date().toISOString();
+
+  return {
+    id: "booking-1",
+    customerName: validInput.name,
+    email: validInput.email,
+    phone: validInput.phone,
+    tourSlug: validInput.tourSlug,
+    numPax: validInput.numPax,
+    preferredDate: validInput.preferredDate,
+    contactChannel: validInput.contactChannel,
+    source: validInput.source,
+    status: "Pending",
+    idempotencyKey: validInput.idempotencyKey,
+    statusHistory: [{ from: "New", to: "Pending", actor: "public", source: "server-action", createdAt: now }],
+    createdAt: now,
+    updatedAt: now,
+    ...overrides
+  };
+}
