@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { parseEnv, parseNextConfigEnv, parsePayloadConfigEnv, parsePayloadStorageEnv } from "@/config/env";
+import {
+  parseEnv,
+  parseNextConfigEnv,
+  parsePayloadConfigEnv,
+  parsePayloadStorageEnv,
+  parseSeoEnv
+} from "@/config/env";
 
 const validEnv = {
   DATABASE_URL: "https://example.com/db",
@@ -20,7 +26,7 @@ const validEnv = {
 
 describe("env schema", () => {
   it("accepts the required MVP environment", () => {
-    expect(parseEnv(validEnv)).toMatchObject(validEnv);
+    expect(parseEnv(validEnv)).toMatchObject({ ...validEnv, ALLOW_INDEXING: false });
   });
 
   it("fails fast when required values are missing", () => {
@@ -42,8 +48,9 @@ describe("env schema", () => {
   });
 
   it("normalizes optional local dev origins", () => {
-    expect(parseNextConfigEnv({ DEV_ORIGIN: "" })).toEqual({});
+    expect(parseNextConfigEnv({ DEV_ORIGIN: "" })).toEqual({ ALLOW_INDEXING: false });
     expect(parseNextConfigEnv({ R2_PUBLIC_URL: validEnv.R2_PUBLIC_URL })).toEqual({
+      ALLOW_INDEXING: false,
       R2_PUBLIC_URL: validEnv.R2_PUBLIC_URL
     });
 
@@ -56,6 +63,15 @@ describe("env schema", () => {
     ).toMatchObject({
       DEV_ORIGIN: "http://192.168.2.7:3000",
       NODE_ENV: "development"
+    });
+  });
+
+  it("keeps indexing disabled unless explicitly allowed", () => {
+    expect(parseSeoEnv({})).toEqual({ ALLOW_INDEXING: false });
+    expect(parseSeoEnv({ ALLOW_INDEXING: "true" })).toEqual({ ALLOW_INDEXING: true });
+    expect(parseSeoEnv({ ALLOW_INDEXING: "false", NEXT_PUBLIC_SITE_URL: validEnv.NEXT_PUBLIC_SITE_URL })).toEqual({
+      ALLOW_INDEXING: false,
+      NEXT_PUBLIC_SITE_URL: validEnv.NEXT_PUBLIC_SITE_URL
     });
   });
 

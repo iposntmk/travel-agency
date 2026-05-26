@@ -2,6 +2,10 @@ import { z } from "zod";
 
 const optionalUrl = z.preprocess((value) => (value === "" ? undefined : value), z.string().url().optional());
 const nodeEnv = z.enum(["development", "test", "production"]).default("development");
+const booleanFlag = z.preprocess(
+  (value) => (value === "" ? undefined : value),
+  z.enum(["true", "false"]).default("false").transform((value) => value === "true")
+);
 
 export const envSchema = z.object({
   DATABASE_URL: z.string().url(),
@@ -19,6 +23,7 @@ export const envSchema = z.object({
   QSTASH_NEXT_SIGNING_KEY: z.string().min(1),
   RESEND_API_KEY: z.string().min(1),
   SENTRY_DSN: z.string().url().optional().or(z.literal("")),
+  ALLOW_INDEXING: booleanFlag,
   DEV_ORIGIN: optionalUrl,
   NODE_ENV: nodeEnv
 });
@@ -45,11 +50,19 @@ export const payloadConfigEnvSchema = z
 export type PayloadConfigEnv = z.infer<typeof payloadConfigEnvSchema>;
 
 export const nextConfigEnvSchema = z.object({
+  ALLOW_INDEXING: booleanFlag,
   DEV_ORIGIN: optionalUrl,
   R2_PUBLIC_URL: optionalUrl
 });
 
 export type NextConfigEnv = z.infer<typeof nextConfigEnvSchema>;
+
+export const seoEnvSchema = z.object({
+  ALLOW_INDEXING: booleanFlag,
+  NEXT_PUBLIC_SITE_URL: optionalUrl
+});
+
+export type SeoEnv = z.infer<typeof seoEnvSchema>;
 
 export const payloadStorageEnvSchema = envSchema.pick({
   R2_ACCOUNT_ID: true,
@@ -71,6 +84,10 @@ export function parsePayloadConfigEnv(source: Record<string, string | undefined>
 
 export function parseNextConfigEnv(source: Record<string, string | undefined>): NextConfigEnv {
   return nextConfigEnvSchema.parse(source);
+}
+
+export function parseSeoEnv(source: Record<string, string | undefined>): SeoEnv {
+  return seoEnvSchema.parse(source);
 }
 
 export function parsePayloadStorageEnv(
@@ -121,8 +138,18 @@ export function getNextConfigEnv(): NextConfigEnv {
   return cachedNextConfigEnv;
 }
 
+let cachedSeoEnv: SeoEnv | undefined;
+
+export function getSeoEnv(): SeoEnv {
+  if (!cachedSeoEnv) {
+    cachedSeoEnv = parseSeoEnv(process.env);
+  }
+
+  return cachedSeoEnv;
+}
+
 export function getSiteUrl(): string {
-  return process.env.NEXT_PUBLIC_SITE_URL!;
+  return getSeoEnv().NEXT_PUBLIC_SITE_URL!;
 }
 
 let cachedPayloadStorageEnv: PayloadStorageEnv | undefined;

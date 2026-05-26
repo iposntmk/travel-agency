@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import Link from "next/link";
+import { getSeoEnv } from "@/config/env";
 import "../globals.css";
+
+const indexingAllowed = getSeoEnv().ALLOW_INDEXING;
 
 export const metadata: Metadata = {
   title: {
@@ -11,7 +14,8 @@ export const metadata: Metadata = {
   description: "Private, small group, and free walking tours in Hội An, Huế, and Đà Nẵng. Book now, pay later — TC Travel Vietnam.",
   icons: {
     icon: "/favicon.svg"
-  }
+  },
+  robots: indexingAllowed ? { index: true, follow: true } : { index: false, follow: false }
 };
 
 export default function FrontendLayout({ children }: Readonly<{ children: React.ReactNode }>) {

@@ -4,6 +4,7 @@ import { getNextConfigEnv } from "./src/config/env";
 
 const env = getNextConfigEnv();
 const devOrigin = env.DEV_ORIGIN ? new URL(env.DEV_ORIGIN) : undefined;
+const robotsHeader = "noindex, nofollow, noarchive, nosnippet";
 
 function buildRemotePatterns() {
   const patterns: { protocol: "https"; hostname: string }[] = [
@@ -43,6 +44,18 @@ const nextConfig: NextConfig = {
     : {}),
   images: {
     remotePatterns: buildRemotePatterns()
+  },
+  async headers() {
+    if (env.ALLOW_INDEXING) {
+      return [];
+    }
+
+    return [
+      {
+        source: "/:path*",
+        headers: [{ key: "X-Robots-Tag", value: robotsHeader }]
+      }
+    ];
   }
 };
 
