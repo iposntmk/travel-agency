@@ -88,6 +88,26 @@ Current stage: Layer 7 Trust + Engagement has started after the Layer 5 booking 
 
 Next work: finish production readiness gaps before online payment: live Clerk webhook verification, live booking/email/Redis QA, booking capacity/slot transaction locking if capacity affects inventory, remaining media/performance backlog in `docs/toiuu.md`, then Layer 8/9 monetization and payment provider work.
 
+### Indexing policy (production)
+
+The site is currently configured to be **invisible to all search engines and bots** — Google, Bing, Yandex, AI crawlers, everything. This is intentional during MVP shake-out, not a bug.
+
+How it is enforced:
+
+- `ALLOW_INDEXING` is **not set** on Vercel (defaults to `false` via the Zod schema in `src/config/env.ts`).
+- `next.config.ts` sends `X-Robots-Tag: noindex, nofollow, noarchive, nosnippet` on every response when `ALLOW_INDEXING` is falsy.
+- `src/app/(frontend)/layout.tsx` sets `<meta robots>` to `noindex, nofollow` for the same reason.
+- `src/app/robots.ts` only disallows `/admin`, `/api`, `/booking/`, and `/*?*` — but with the noindex header above it doesn't matter, both layers must agree before any indexing is allowed.
+
+Do **not** flip `ALLOW_INDEXING=true` on Vercel until all of these are signed off:
+
+1. Live booking submission + Resend customer email + sales notification verified end-to-end on production.
+2. Live Clerk webhook verified end-to-end (`user.created` → Payload `customers` row).
+3. Content (tours, destinations, blog) is final-ready, not seed data.
+4. Domain has correct canonical + sitemap reachable, and the `noindex` headers are confirmed to drop after the flip.
+
+When the time comes: set `ALLOW_INDEXING=true` on Vercel Production, redeploy, and `curl -I https://<domain>/` to confirm the `X-Robots-Tag` header is gone before submitting to Search Console.
+
 ### Tailwind brand palette
 
 ```

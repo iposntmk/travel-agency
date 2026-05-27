@@ -6,6 +6,8 @@
 
 > **Việc còn cần làm ngay:** verify Vercel Production envs + redeploy, cấu hình Clerk webhook live, submit thử booking production để kiểm tra Payload booking `Pending`, customer/internal email, Redis rate limit, và customer sync `clerkUserId`.
 
+> **⚠️ Lưu ý SEO/indexing — đang cố ý tắt hoàn toàn:** site đang `noindex,nofollow,noarchive,nosnippet` cho mọi bot (Google, Bing, AI crawler). Lý do: chưa launch chính thức, không muốn Google index bản MVP với content seed. Cơ chế: `ALLOW_INDEXING` chưa set trên Vercel → `next.config.ts` gửi `X-Robots-Tag: noindex...` + `(frontend)/layout.tsx` set `<meta robots="noindex">`. **KHÔNG bật `ALLOW_INDEXING=true`** khi tối ưu SEO ở Section 9-10 trừ khi đã pass checklist trong `docs/CURRENT_STATUS.md → "Search Engine Indexing — Currently Disabled"`. JSON-LD, canonical, sitemap, hreflang vẫn nên triển khai sẵn để khi mở indexing là Google crawl ngon ngay.
+
 ---
 
 ## 1. Tổng quan

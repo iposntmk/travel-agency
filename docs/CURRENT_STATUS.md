@@ -67,6 +67,32 @@ Production still needs dashboard-level configuration and live verification:
 
 Do not invent this secret. It must come from the Clerk Dashboard webhook endpoint signing secret.
 
+## Search Engine Indexing — Currently Disabled
+
+The production site is **fully closed to search engines and AI crawlers** by design while we finish MVP shake-out. This is not an oversight — leave it as is until the criteria below are met.
+
+Mechanics:
+
+- `ALLOW_INDEXING` is not set on Vercel; the Zod schema in `src/config/env.ts` defaults it to `false`.
+- When `ALLOW_INDEXING` is falsy, `next.config.ts` emits `X-Robots-Tag: noindex, nofollow, noarchive, nosnippet` on every response.
+- `src/app/(frontend)/layout.tsx` also emits `<meta robots="noindex, nofollow">`.
+- `src/app/robots.ts` blocks `/admin`, `/api`, `/booking/`, and any URL with a query string (`/*?*`).
+
+Do **not** enable indexing until all of these are signed off:
+
+1. Live booking submission + Resend customer/sales email verified on production.
+2. Live Clerk webhook verified — Payload `customers` row created on `user.created`.
+3. Content is final (no `[Sample]` rows, no placeholder copy, no test bookings).
+4. Canonical, sitemap, and JSON-LD checked on the production domain.
+5. Domain decision made — `tc-travel-vietnam.vercel.app` should not be the canonical search target; pick the real domain first.
+
+When ready to allow indexing:
+
+1. Set `ALLOW_INDEXING=true` on Vercel Production via the dashboard or `vercel env add ALLOW_INDEXING production`.
+2. Redeploy production.
+3. `curl -I https://<production-domain>/` — confirm there is no `X-Robots-Tag: noindex` header.
+4. Submit sitemap to Google Search Console + Bing Webmaster Tools.
+
 ## What The Next Dev Should Read First
 
 Read in this order:
