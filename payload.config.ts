@@ -5,6 +5,7 @@ import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { s3Storage } from "@payloadcms/storage-s3";
 import { buildConfig } from "payload";
 import sharp from "sharp";
+import { AffiliateClicks } from "@/collections/payload/AffiliateClicks";
 import { Bookings } from "@/collections/payload/Bookings";
 import { Comments } from "@/collections/payload/Comments";
 import { Customers } from "@/collections/payload/Customers";
@@ -65,7 +66,8 @@ export default buildConfig({
     Comments,
     Reviews,
     Promotions,
-    Payments
+    Payments,
+    AffiliateClicks
   ],
   db: postgresAdapter({
     migrationDir: path.resolve(dirname, "src/migrations"),

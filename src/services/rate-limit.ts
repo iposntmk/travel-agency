@@ -12,6 +12,7 @@ type Fetcher = typeof fetch;
 type RateLimitOptions = {
   limit?: number;
   windowMs?: number;
+  keyPrefix?: string;
   env?: BookingRateLimitEnv | null;
   fetcher?: Fetcher;
 };
@@ -26,17 +27,18 @@ const buckets = new Map<string, Bucket>();
 export async function checkRateLimit(key: string, options: RateLimitOptions = {}): Promise<boolean> {
   const limit = options.limit ?? 5;
   const windowMs = options.windowMs ?? 60_000;
+  const keyPrefix = options.keyPrefix ?? "booking-submit";
   const env = options.env === undefined ? getBookingRateLimitEnv() : options.env;
   const normalizedKey = normalizeKey(key);
 
   if (!env) {
-    return checkLocalRateLimit(normalizedKey, limit, windowMs);
+    return checkLocalRateLimit(`${keyPrefix}:${normalizedKey}`, limit, windowMs);
   }
 
   try {
-    return await checkRedisRateLimit(normalizedKey, limit, windowMs, env, options.fetcher ?? fetch);
+    return await checkRedisRateLimit(normalizedKey, limit, windowMs, keyPrefix, env, options.fetcher ?? fetch);
   } catch {
-    return checkLocalRateLimit(`redis-fallback:${normalizedKey}`, limit, windowMs);
+    return checkLocalRateLimit(`redis-fallback:${keyPrefix}:${normalizedKey}`, limit, windowMs);
   }
 }
 
@@ -65,10 +67,11 @@ async function checkRedisRateLimit(
   key: string,
   limit: number,
   windowMs: number,
+  keyPrefix: string,
   env: BookingRateLimitEnv,
   fetcher: Fetcher
 ): Promise<boolean> {
-  const redisKey = `rate-limit:booking-submit:${key}`;
+  const redisKey = `rate-limit:${keyPrefix}:${key}`;
   const expiresInSeconds = Math.max(1, Math.ceil(windowMs / 1000));
   const response = await fetcher(`${trimTrailingSlash(env.UPSTASH_REDIS_REST_URL)}/pipeline`, {
     method: "POST",

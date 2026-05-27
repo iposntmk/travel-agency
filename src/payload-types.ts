@@ -79,6 +79,7 @@ export interface Config {
     reviews: Review;
     promotions: Promotion;
     payments: Payment;
+    'affiliate-clicks': AffiliateClick;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -98,6 +99,7 @@ export interface Config {
     reviews: ReviewsSelect<false> | ReviewsSelect<true>;
     promotions: PromotionsSelect<false> | PromotionsSelect<true>;
     payments: PaymentsSelect<false> | PaymentsSelect<true>;
+    'affiliate-clicks': AffiliateClicksSelect<false> | AffiliateClicksSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -541,6 +543,28 @@ export interface Payment {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "affiliate-clicks".
+ */
+export interface AffiliateClick {
+  id: number;
+  targetType: 'addon' | 'ota';
+  targetId: string;
+  targetUrl: string;
+  /**
+   * Path of the page where the click happened
+   */
+  source: string;
+  referrer?: string | null;
+  userAgent?: string | null;
+  /**
+   * One-way SHA-256 hash of the client IP (salted with PAYLOAD_SECRET)
+   */
+  ipHash?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -610,6 +634,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'payments';
         value: number | Payment;
+      } | null)
+    | ({
+        relationTo: 'affiliate-clicks';
+        value: number | AffiliateClick;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -931,6 +959,21 @@ export interface PaymentsSelect<T extends boolean = true> {
   providerEventId?: T;
   providerPaymentId?: T;
   metadata?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "affiliate-clicks_select".
+ */
+export interface AffiliateClicksSelect<T extends boolean = true> {
+  targetType?: T;
+  targetId?: T;
+  targetUrl?: T;
+  source?: T;
+  referrer?: T;
+  userAgent?: T;
+  ipHash?: T;
   updatedAt?: T;
   createdAt?: T;
 }

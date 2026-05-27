@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/json-ld";
 import { ShareButtons } from "@/components/share-buttons";
 import { TourCard } from "@/components/tour-card";
+import { TrackedLink } from "@/components/tracked-link";
 import { getSiteUrl } from "@/config/env";
 import { getPayloadClient } from "@/lib/payload";
 import { getTourBySlug } from "@/lib/cms";
@@ -213,16 +214,40 @@ export default async function TourDetailPage({ params }: PageProps) {
           {addOns.length > 0 ? (
             <section>
               <h2 className="text-xl font-semibold text-slate-950">Add-on services</h2>
+              <p className="mt-1 text-xs text-slate-500">
+                External partners — clicking opens the partner&rsquo;s site in a new tab.
+              </p>
               <ul className="mt-3 grid gap-3 sm:grid-cols-2">
-                {addOns.map((addOn) => (
-                  <li key={addOn.id} className="rounded-md border border-slate-200 p-3">
-                    <p className="font-semibold text-slate-900">{addOn.name}</p>
-                    <p className="mt-1 text-xs uppercase tracking-wide text-slate-500">{addOn.partnerType}</p>
-                    {addOn.description ? (
-                      <p className="mt-2 text-sm text-slate-600">{addOn.description}</p>
-                    ) : null}
-                  </li>
-                ))}
+                {addOns.map((addOn) => {
+                  const url = addOn.inquiryFormUrl?.trim();
+                  const body = (
+                    <>
+                      <p className="font-semibold text-slate-900">{addOn.name}</p>
+                      <p className="mt-1 text-xs uppercase tracking-wide text-slate-500">{addOn.partnerType}</p>
+                      {addOn.description ? (
+                        <p className="mt-2 text-sm text-slate-600">{addOn.description}</p>
+                      ) : null}
+                    </>
+                  );
+                  return (
+                    <li key={addOn.id} className="rounded-md border border-slate-200 p-3">
+                      {url ? (
+                        <TrackedLink
+                          href={url}
+                          targetType="addon"
+                          targetId={String(addOn.id)}
+                          source={`/tours/${tour.slug}`}
+                          className="block"
+                        >
+                          {body}
+                          <p className="mt-2 text-xs font-semibold text-brand-blue">View on partner site →</p>
+                        </TrackedLink>
+                      ) : (
+                        body
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             </section>
           ) : null}
