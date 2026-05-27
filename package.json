@@ -14,7 +14,8 @@
     "payload:generate-types": "payload generate:types",
     "payload:migrate:create": "payload migrate:create",
     "seed": "node --env-file=.env --import=tsx/esm scripts/seed.ts",
-    "payload:migrate": "payload migrate"
+    "payload:migrate": "payload migrate",
+    "r2:backfill-cache-control": "node --env-file=.env --import=tsx/esm scripts/backfill-r2-cache-control.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1053.0",
