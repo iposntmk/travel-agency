@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Breadcrumb } from "@/components/breadcrumb";
+import { EmptyState, PageHero } from "@/components/section";
 import { TourCard } from "@/components/tour-card";
 import { getToursForList } from "@/lib/cms-list";
 
@@ -15,30 +17,40 @@ export default async function FreeToursPage() {
   const freeTours = await getToursForList({ freeOnly: true, limit: 24 });
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8 md:py-10">
-      <h1 className="text-3xl font-bold text-slate-950 md:text-4xl">Free Tours</h1>
-      <p className="mt-3 max-w-2xl text-slate-600">
-        Free to join, tips appreciated. Registration uses the same Book Now - Pay Later
-        inquiry engine and is tagged separately for sales follow-up.
-      </p>
+    <main>
+      <PageHero
+        eyebrow="Tips appreciated"
+        title="Free Tours"
+        subtitle="Free walking and cycling tours led by locals. Registration uses the same Book Now · Pay Later inquiry — tagged separately for sales follow-up."
+      >
+        <div className="mt-6">
+          <Breadcrumb
+            variant="on-dark"
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Free Tours" }
+            ]}
+          />
+        </div>
+      </PageHero>
 
-      <section className="mt-8">
-        {freeTours.length === 0 ? (
-          <p className="rounded-md border border-dashed border-slate-300 p-6 text-sm text-slate-500">
-            No free tours scheduled right now. Check back soon.
-          </p>
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {freeTours.map((tour) => (
-              <TourCard
-                key={tour.id}
-                tour={tour}
-                ctaLabel="Register"
-                ctaHref={`/booking/${tour.slug}?source=free-tour-upsell`}
-              />
-            ))}
-          </div>
-        )}
+      <section className="bg-mist py-12 md:py-16">
+        <div className="mx-auto max-w-page px-4">
+          {freeTours.length === 0 ? (
+            <EmptyState>No free tours scheduled right now. Check back soon.</EmptyState>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {freeTours.map((tour) => (
+                <TourCard
+                  key={tour.id}
+                  tour={tour}
+                  ctaLabel="Register"
+                  ctaHref={`/booking/${tour.slug}?source=free-tour-upsell`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </section>
     </main>
   );

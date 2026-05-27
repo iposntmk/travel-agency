@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { Breadcrumb } from "@/components/breadcrumb";
+import { PageHero } from "@/components/section";
 import { getDestinations } from "@/lib/cms";
 import {
   hasSearchParams,
@@ -49,16 +51,31 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
   const destinations = await getDestinations();
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8 md:py-10">
-      <h1 className="text-3xl font-bold text-slate-950 md:text-4xl">Tours</h1>
-      <p className="mt-3 max-w-2xl text-slate-600">
-        Private, small group, partner, and free tours across Central Vietnam.
-      </p>
+    <main>
+      <PageHero
+        eyebrow="Central Vietnam"
+        title="Tours"
+        subtitle="Private, small group, partner, and free tours across Central Vietnam. Curated by local guides."
+      >
+        <div className="mt-6">
+          <Breadcrumb
+            variant="on-dark"
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Tours" }
+            ]}
+          />
+        </div>
+      </PageHero>
 
-      <TourFilterPanel destinations={destinations} query={query} />
-      <Suspense key={resultsKey(query)} fallback={<TourResultsSkeleton />}>
-        <TourResults query={query} />
-      </Suspense>
+      <section className="bg-mist py-12 md:py-16">
+        <div className="mx-auto max-w-page px-4">
+          <TourFilterPanel destinations={destinations} query={query} />
+          <Suspense key={resultsKey(query)} fallback={<TourResultsSkeleton />}>
+            <TourResults query={query} />
+          </Suspense>
+        </div>
+      </section>
     </main>
   );
 }

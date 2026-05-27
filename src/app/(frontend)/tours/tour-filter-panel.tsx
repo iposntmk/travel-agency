@@ -11,10 +11,11 @@ function Chip({ href, label, active }: { href: string; label: string; active: bo
   return (
     <Link
       href={href}
+      aria-pressed={active}
       className={
         active
-          ? "rounded-full bg-brand-blue px-3 py-1 text-xs font-semibold text-white"
-          : "rounded-full border border-slate-300 px-3 py-1 text-xs font-medium text-slate-700 hover:border-brand-blue hover:text-brand-blue"
+          ? "inline-flex items-center rounded-full bg-navy-900 px-3.5 py-1.5 text-xs font-semibold text-white shadow-card"
+          : "inline-flex items-center rounded-full border border-navy-100 bg-white px-3.5 py-1.5 text-xs font-medium text-slate-700 transition hover:border-navy-300 hover:bg-navy-50 hover:text-navy-900"
       }
     >
       {label}
@@ -22,58 +23,79 @@ function Chip({ href, label, active }: { href: string; label: string; active: bo
   );
 }
 
+function FilterGroup({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-navy-500">{label}</p>
+      <div className="mt-3 flex flex-wrap gap-2">{children}</div>
+    </div>
+  );
+}
+
 export function TourFilterPanel({ destinations, query }: TourFilterPanelProps) {
-  const hasFilters = Boolean(query.destination || query.type || query.season || query.operation || query.priceMax);
+  const hasFilters = Boolean(
+    query.destination || query.type || query.season || query.operation || query.priceMax
+  );
 
   return (
-    <section className="mt-6 space-y-4 rounded-md border border-slate-200 bg-white p-4">
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Destination</p>
-        <div className="mt-2 flex flex-wrap gap-2">
-          <Chip href={`/tours${queryString(query, { destination: undefined })}`} label="All" active={!query.destination} />
-          {destinations.map((d) => (
-            <Chip
-              key={d.id}
-              href={`/tours${queryString(query, { destination: d.slug })}`}
-              label={d.title}
-              active={query.destination === d.slug}
-            />
-          ))}
-        </div>
-      </div>
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Tour type</p>
-        <div className="mt-2 flex flex-wrap gap-2">
-          <Chip href={`/tours${queryString(query, { type: undefined })}`} label="All" active={!query.type} />
-          {TOUR_TYPES.map((t) => (
-            <Chip
-              key={t.value}
-              href={`/tours${queryString(query, { type: t.value })}`}
-              label={t.label}
-              active={query.type === t.value}
-            />
-          ))}
-        </div>
-      </div>
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Season</p>
-        <div className="mt-2 flex flex-wrap gap-2">
-          <Chip href={`/tours${queryString(query, { season: undefined })}`} label="All" active={!query.season} />
-          {SEASONS.map((s) => (
-            <Chip
-              key={s.value}
-              href={`/tours${queryString(query, { season: s.value })}`}
-              label={s.label}
-              active={query.season === s.value}
-            />
-          ))}
-        </div>
-      </div>
+    <section
+      aria-label="Filter tours"
+      className="space-y-5 rounded-2xl border border-navy-100 bg-white p-5 shadow-card md:p-6"
+    >
+      <FilterGroup label="Destination">
+        <Chip
+          href={`/tours${queryString(query, { destination: undefined })}`}
+          label="All"
+          active={!query.destination}
+        />
+        {destinations.map((d) => (
+          <Chip
+            key={d.id}
+            href={`/tours${queryString(query, { destination: d.slug })}`}
+            label={d.title}
+            active={query.destination === d.slug}
+          />
+        ))}
+      </FilterGroup>
+
+      <FilterGroup label="Tour type">
+        <Chip
+          href={`/tours${queryString(query, { type: undefined })}`}
+          label="All"
+          active={!query.type}
+        />
+        {TOUR_TYPES.map((t) => (
+          <Chip
+            key={t.value}
+            href={`/tours${queryString(query, { type: t.value })}`}
+            label={t.label}
+            active={query.type === t.value}
+          />
+        ))}
+      </FilterGroup>
+
+      <FilterGroup label="Season">
+        <Chip
+          href={`/tours${queryString(query, { season: undefined })}`}
+          label="All"
+          active={!query.season}
+        />
+        {SEASONS.map((s) => (
+          <Chip
+            key={s.value}
+            href={`/tours${queryString(query, { season: s.value })}`}
+            label={s.label}
+            active={query.season === s.value}
+          />
+        ))}
+      </FilterGroup>
+
       {hasFilters ? (
-        <div>
+        <div className="flex items-center justify-between border-t border-navy-100 pt-4">
+          <p className="text-xs text-slate-500">Showing filtered results.</p>
           <Link
             href="/tours"
-            className="inline-flex rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+            className="inline-flex items-center gap-1 rounded-full border border-navy-100 bg-white px-3 py-1.5 text-xs font-semibold text-navy-700 transition hover:bg-navy-50"
           >
             Clear filters
           </Link>

@@ -18,7 +18,7 @@ export async function TourResults({ query }: { query: ToursPageQuery }) {
   });
 
   return (
-    <section className="mt-6">
+    <section className="mt-8">
       <JsonLd
         data={[
           breadcrumbJsonLd([
@@ -29,19 +29,24 @@ export async function TourResults({ query }: { query: ToursPageQuery }) {
         ]}
       />
       {tours.length === 0 ? (
-        <div className="rounded-md border border-dashed border-slate-300 p-6 text-sm text-slate-500">
+        <div className="rounded-2xl border border-dashed border-navy-100 bg-white p-8 text-center text-sm text-slate-500">
           No tours match these filters.{" "}
-          <Link className="text-brand-blue underline" href="/tours">
+          <Link className="font-semibold text-navy-700 underline-offset-2 hover:underline" href="/tours">
             Clear filters
           </Link>
           .
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {tours.map((tour) => (
-            <TourCard key={tour.id} tour={tour} />
-          ))}
-        </div>
+        <>
+          <p className="mb-4 text-xs font-medium uppercase tracking-wide text-navy-500">
+            {tours.length} tour{tours.length === 1 ? "" : "s"}
+          </p>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {tours.map((tour) => (
+              <TourCard key={tour.id} tour={tour} />
+            ))}
+          </div>
+        </>
       )}
     </section>
   );
