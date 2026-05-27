@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTourBySlug } from "@/lib/cms";
+import { bookingSourceSchema } from "@/schemas/booking";
 import { BookingForm } from "./booking-form";
 
 export const dynamicParams = true;
@@ -9,6 +10,7 @@ export const revalidate = 300;
 
 interface PageProps {
   params: Promise<{ tourSlug: string }>;
+  searchParams?: Promise<{ source?: string | string[] }>;
 }
 
 export const metadata: Metadata = {
@@ -17,10 +19,15 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false }
 };
 
-export default async function BookingFormPage({ params }: PageProps) {
+export default async function BookingFormPage({ params, searchParams }: PageProps) {
   const { tourSlug } = await params;
   const tour = await getTourBySlug(tourSlug);
   if (!tour) notFound();
+
+  const sp = (await searchParams) ?? {};
+  const sourceParam = Array.isArray(sp.source) ? sp.source[0] : sp.source;
+  const parsedSource = bookingSourceSchema.safeParse(sourceParam);
+  const source = parsedSource.success ? parsedSource.data : "direct";
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-8 md:py-10">
@@ -36,7 +43,7 @@ export default async function BookingFormPage({ params }: PageProps) {
         Tell us a few details. Sales will reach you within 24 hours on your preferred channel — no online payment now.
       </p>
       <section className="mt-8 rounded-md border border-slate-200 bg-white p-5 md:p-6">
-        <BookingForm tourSlug={tour.slug} tourTitle={tour.title} />
+        <BookingForm tourSlug={tour.slug} tourTitle={tour.title} source={source} />
       </section>
     </main>
   );

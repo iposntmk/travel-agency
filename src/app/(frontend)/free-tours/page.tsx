@@ -30,7 +30,12 @@ export default async function FreeToursPage() {
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {freeTours.map((tour) => (
-              <TourCard key={tour.id} tour={tour} ctaLabel="Register" />
+              <TourCard
+                key={tour.id}
+                tour={tour}
+                ctaLabel="Register"
+                ctaHref={`/booking/${tour.slug}?source=free-tour-upsell`}
+              />
             ))}
           </div>
         )}

@@ -122,10 +122,10 @@ export default async function BlogPostPage({ params }: PageProps) {
         <div className="mt-4 flex flex-wrap gap-3">
           {relatedTour ? (
             <Link
-              href={`/tours/${relatedTour.slug}`}
+              href={`/booking/${relatedTour.slug}?source=blog-cta`}
               className="rounded-md bg-brand-blue px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800"
             >
-              {relatedTour.title}
+              Book {relatedTour.title}
             </Link>
           ) : (
             <Link

@@ -16,10 +16,11 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   const siteUrl = getSiteUrl().replace(/\/$/, "");
-  const [featuredTours, destinations] = await Promise.all([
+  const [featuredTours, freeTours, destinations] = await Promise.all([
     getToursForList({ featuredOnly: true, limit: 3 }).then((tours) =>
       tours.length > 0 ? tours : getToursForList({ limit: 3 })
     ),
+    getToursForList({ freeOnly: true, limit: 3 }),
     getDestinations(6)
   ]);
 
@@ -99,6 +100,36 @@ export default async function HomePage() {
           </div>
         )}
       </section>
+
+      {freeTours.length > 0 ? (
+        <section className="bg-amber-50/60">
+          <div className="mx-auto max-w-6xl px-4 py-10 md:py-12">
+            <div className="mb-6 flex items-end justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-brand-red">Lead with experience</p>
+                <h2 className="mt-2 text-2xl font-bold text-slate-950">Join Our Free Tours</h2>
+                <p className="mt-2 max-w-2xl text-sm text-slate-600 md:text-base">
+                  Free walking and cycling tours in Central Vietnam. Tips appreciated — registration uses
+                  the same Book Now - Pay Later inquiry flow.
+                </p>
+              </div>
+              <Link className="text-sm font-semibold text-brand-blue" href="/free-tours">
+                View all
+              </Link>
+            </div>
+            <div className="grid gap-4 md:grid-cols-3">
+              {freeTours.map((tour) => (
+                <TourCard
+                  key={tour.id}
+                  tour={tour}
+                  ctaLabel="Register"
+                  ctaHref={`/booking/${tour.slug}?source=free-tour-upsell`}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       <section className="bg-slate-50">
         <div className="mx-auto grid max-w-6xl gap-6 px-4 py-10 md:grid-cols-3 md:py-12">
