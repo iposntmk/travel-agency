@@ -1,6 +1,6 @@
 # Current Status
 
-**Updated:** 2026-05-27 (Layer 8 monetization UI shipped)
+**Updated:** 2026-05-27 (Layer 8 L internal affiliate-clicks dashboard shipped)
 
 ## Current Layer / Stage
 
@@ -23,6 +23,7 @@ Layer 8 implementation status:
 - **OTA widget (done)** — `src/components/ota-widget.tsx` server component, renders provider label + "More things to do in {city}" + external-partner disclosure + `<TrackedLink>` to the provider search.
 - **OTA surfaces live (done)** — homepage Featured Experiences strip (3 destination cards × GetYourGuide), destination detail `Top things to do in {city}` (GetYourGuide + Viator pair), tour detail `Similar experiences in {destination}` (GetYourGuide + Viator pair). Each surface passes a distinct `source` for attribution.
 - **Affiliate IDs (pending)** — partner accounts not yet registered. Revenue = 0 until partner IDs are appended to `buildUrl()` per provider. See `docs/OTA_INTEGRATIONS.md` § "Adding affiliate IDs".
+- **Internal clicks dashboard (done)** — `/internal/affiliate-clicks` (admin-only, Payload session gate) renders totals, top targets, top sources, OTA provider breakdown, day-by-day bar chart, and recent rows. Range selector `?range=7|30|90`. Aggregation lives in `src/services/affiliate-stats.ts` (pure aggregator + Payload loader). Disallowed in `robots.txt` and noindex'd via the internal layout. Verified with `pnpm test` (13 new tests) + `pnpm build`.
 
 Latest production-readiness verification:
 
@@ -33,6 +34,7 @@ Latest production-readiness verification:
 
 Last shipped commits (top to bottom = newest to oldest):
 
+- (pending) Layer 8 L internal affiliate-clicks dashboard
 - `d1cda72 Show OTA Featured Experiences on home + destination pages`
 - `c75fd9d Add OTA widget scaffold on tour detail (no affiliate IDs yet)`
 - `198c1aa Track add-on partner clicks as affiliate events`
@@ -121,7 +123,7 @@ For the current Clerk handoff, also inspect:
 **Dev tasks — in order:**
 
 1. **Layer 8 K** — Move OTA partner IDs into Payload `partners` (or new `ota-partners`) collection so revenue switches on without a redeploy. Loading order: extend collection → migration → switch `src/lib/ota-providers.ts` to read partner ID from CMS at request time (cache-friendly). Documented in `docs/OTA_INTEGRATIONS.md`.
-2. **Layer 8 L** — Internal `/admin` affiliate-clicks dashboard: aggregate by `targetType`, `targetId`, `source`, day. Pure read view; underlying data is already being collected.
+2. ~~**Layer 8 L** — Internal `/admin` affiliate-clicks dashboard.~~ **Done** — `/internal/affiliate-clicks` (admin-only Payload session gate), see `src/app/(internal)/internal/affiliate-clicks/page.tsx` + `affiliate-dashboard.tsx` + `src/services/affiliate-stats.ts`.
 3. Booking slot/capacity transaction locking if bookings mutate availability or `currentPax`.
 4. Production booking submit QA on the real domain — covered functionally by the Resend pass, but worth running once on the canonical hostname before indexing flips.
 5. Media/performance backlog in `docs/toiuu.md` (remaining P0/P1 items: Vercel function region pinning, Neon pooler tuning, R2 cache-control/preconnect audit, image strategy reconciliation).
@@ -132,8 +134,8 @@ For the current Clerk handoff, also inspect:
 Latest local verification before this status update:
 
 - `pnpm typecheck` passed.
-- `pnpm test` passed: 21 files, 110 tests.
-- `pnpm lint` passed.
-- `pnpm build` passed after `.env` was updated and env schema validation passed.
+- `pnpm test` passed: 22 files, 123 tests (Layer 8 L added 13 aggregator tests).
+- `pnpm lint` passed (4 pre-existing migration warnings unchanged).
+- `pnpm build` passed; new `/internal/affiliate-clicks` route registered as Dynamic.
 
 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, and `pnpm build` before committing code changes.
