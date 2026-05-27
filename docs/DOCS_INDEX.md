@@ -1,6 +1,6 @@
 # Documentation Index
 
-Repository hiện là docs-only. Khi app được scaffold, đặt code trong `travel-agency/`.
+Repository hiện có ứng dụng Next.js 15 + Payload CMS đang hoạt động. Đọc `CURRENT_STATUS.md` trước khi chọn task mới.
 
 ## Nguồn chính
 
@@ -12,6 +12,8 @@ Repository hiện là docs-only. Khi app được scaffold, đặt code trong `t
 - `CODING_GUIDELINES.md`: architecture guardrails, source layout, code rules.
 - `TESTING_STRATEGY.md`: test plan theo layer và priority cases.
 - `EXTENSION_GUIDE.md`: cách mở rộng payment, OTA, language, market, add-ons.
+- `CURRENT_STATUS.md`: handoff hiện tại, việc đã land, production follow-up còn lại.
+- `docs/toiuu.md`: backlog hiệu suất, SEO, security, media, production readiness.
 
 ## Product & operations
 
@@ -30,7 +32,6 @@ Repository hiện là docs-only. Khi app được scaffold, đặt code trong `t
 ## Setup & deployment
 
 - `DEVELOPMENT_SETUP.md`: local setup, env, required scripts.
-- `LAYER_1_FOUNDATION_STATUS.md`: current Layer 1 completion status, verification commands, and remaining external setup blockers.
 - `DEPLOYMENT_GUIDE.md`: production env and deploy rules.
 - `AGENTS.md`: repository guidance for coding agents.
 - `CLAUDE.md`: Claude Code-specific working context.

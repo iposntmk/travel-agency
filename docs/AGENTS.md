@@ -16,12 +16,14 @@ Already implemented:
 - Layer 4 Public Pages: Payload-backed tours, destinations, blog, SEO metadata, JSON-LD, sitemap, robots, cached public reads.
 - Layer 5 Booking Lead Engine: Server Action validation, sanitization, public `Pending` enforcement, DB-backed idempotency, Payload/Postgres persistence.
 - Layer 7 started: Clerk webhook sync into Payload `customers`.
+- Production booking readiness: Upstash Redis REST rate limiting and Resend booking emails.
+- Media polish: public cropped images respect Payload `focalX` / `focalY`.
 
 Immediate production config still pending:
 
-- Set `CLERK_WEBHOOK_SIGNING_SECRET` in Vercel Production.
+- Confirm Vercel Production envs match local `.env`, including Clerk webhook, Upstash Redis REST, and Resend booking email routing.
 - Configure Clerk webhook endpoint for `user.created` and `user.updated`.
-- Redeploy and verify Payload customer sync.
+- Redeploy and verify Payload customer sync plus one production booking/email flow.
 
 ## Files To Read Before Continuing
 
@@ -34,8 +36,8 @@ Read in this order:
 5. Relevant domain docs for the area being touched:
    - Booking: `docs/BOOKING_FLOW.md`, `docs/DATABASE_SCHEMA.md`
    - Media: `docs/MEDIA_STRATEGY.md`
-   - Performance/SEO/security backlog: `toiuu.md`
-   - Stack snapshot: `techStack.md` if present
+   - Performance/SEO/security backlog: `docs/toiuu.md`
+   - Stack snapshot: `docs/TECH_STACK.md`
 
 ## Commands
 

@@ -47,7 +47,7 @@ Nếu chỉ có 1-2 dev, đi tuần tự theo đúng thứ tự trên. Không đ
 - Layer 1-4 đã có implementation chạy được: app scaffold, Payload collections, media pipeline, public pages, SEO/canonical/JSON-LD, robots/sitemap, cache và public payload optimization.
 - Layer 5 Booking Lead Engine đã landed cho luồng MVP: Server Action validation, plain-text sanitization, public create forced `Pending`, DB-backed idempotency, Payload/Postgres persistence.
 - Layer 7 đã bắt đầu bằng Clerk webhook sync `customers.clerkUserId`: `src/app/api/webhooks/clerk/route.ts` và `src/services/clerk-customer-sync.ts`.
-- Production còn thiếu cấu hình ngoài code: set `CLERK_WEBHOOK_SIGNING_SECRET` trên Vercel, tạo Clerk webhook endpoint cho `user.created` / `user.updated`, rồi redeploy và verify live sync.
+- Production còn thiếu cấu hình/QA ngoài code: verify Vercel Production envs cho Clerk webhook, Upstash Redis REST, Resend booking email routing; tạo Clerk webhook endpoint cho `user.created` / `user.updated`; redeploy; verify live Clerk sync và một booking/email flow thật.
 
 Dev tiếp theo nên đọc `docs/CURRENT_STATUS.md` sau `CLAUDE.md` để biết điểm dừng chính xác, rồi mới chọn task tiếp theo trong roadmap này.
 

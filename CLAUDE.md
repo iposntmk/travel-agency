@@ -80,11 +80,13 @@ Admin reversal requires an explicit audit reason. Every status change appends a 
 - Media upload and QStash Sharp variant processing are implemented against Cloudflare R2
 - `booking-repository.ts` persists booking leads through Payload/Postgres with DB-backed idempotency
 - Public booking creates are hardened: server sanitizes plain-text special requests and forces public creates into `Pending`
+- Booking submissions use Upstash Redis REST rate limiting and send Resend customer/internal booking emails after idempotent create
+- Public cropped images use Payload media focal points (`focalX` / `focalY`) and prefer generated R2 variants
 - Clerk customer sync route exists at `src/app/api/webhooks/clerk/route.ts`, backed by `src/services/clerk-customer-sync.ts`
 
-Current stage: Layer 7 Trust + Engagement has started after the Layer 5 booking lead engine landed. Before relying on Clerk sync in production, set `CLERK_WEBHOOK_SIGNING_SECRET` in Vercel and configure the Clerk webhook endpoint for `user.created` and `user.updated`.
+Current stage: Layer 7 Trust + Engagement has started after the Layer 5 booking lead engine landed. Before relying on Clerk sync in production, verify Vercel Production has the Clerk webhook, Upstash Redis REST, and Resend booking email env vars; configure the Clerk webhook endpoint for `user.created` and `user.updated`; redeploy; then run live Clerk and booking/email QA.
 
-Next work: finish production readiness gaps before online payment: external Redis/KV-backed rate limiting, booking capacity/slot transaction locking if capacity affects inventory, media variant rendering/focal point polish, customer email follow-up via Resend, then Layer 8/9 monetization and payment provider work.
+Next work: finish production readiness gaps before online payment: live Clerk webhook verification, live booking/email/Redis QA, booking capacity/slot transaction locking if capacity affects inventory, remaining media/performance backlog in `docs/toiuu.md`, then Layer 8/9 monetization and payment provider work.
 
 ### Tailwind brand palette
 
@@ -152,3 +154,4 @@ Detailed specs live in `docs/`. Key files before writing code in an area:
 - `docs/EXTENSION_GUIDE.md` — how to add markets, payment providers, OTA integrations, languages
 - `docs/MEDIA_STRATEGY.md` — R2 upload and Sharp variant pipeline
 - `docs/DEVELOPMENT_APPROACH.md` — layer-by-layer build roadmap
+- `docs/toiuu.md` — performance, SEO, security, and production readiness backlog
