@@ -2,69 +2,10 @@ import "server-only";
 
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
-import type { Where } from "payload";
-import { buildToursWhere, type ToursQuery } from "@/lib/cms-filters";
 import { getPayloadClient } from "@/lib/payload";
 import type { Destination, Post, Tour } from "@/payload-types";
 
-export { buildToursWhere };
-export type { ToursQuery };
-
 const DEFAULT_LIMIT = 24;
-
-function stableToursQuery(input: ToursQuery = {}): ToursQuery {
-  return {
-    destinationSlug: input.destinationSlug,
-    featuredOnly: input.featuredOnly,
-    freeOnly: input.freeOnly,
-    limit: input.limit,
-    operationType: input.operationType,
-    priceMax: input.priceMax,
-    season: input.season,
-    tourType: input.tourType
-  };
-}
-
-async function fetchTours(input: ToursQuery): Promise<Tour[]> {
-  const payload = await getPayloadClient();
-  const baseWhere = buildToursWhere(input);
-  let where: Where = baseWhere as Where;
-
-  if (input.destinationSlug) {
-    const destinations = await payload.find({
-      collection: "destinations",
-      where: { slug: { equals: input.destinationSlug } },
-      limit: 1,
-      depth: 0
-    });
-    const destination = destinations.docs[0];
-    if (!destination) return [];
-    where = {
-      and: [...baseWhere.and, { destination: { equals: destination.id } }]
-    } as Where;
-  }
-
-  const result = await payload.find({
-    collection: "tours",
-    where,
-    limit: input.limit ?? DEFAULT_LIMIT,
-    depth: 1,
-    sort: "-isFeaturedInSeason"
-  });
-  return result.docs;
-}
-
-const getToursCached = cache((cacheKey: string) =>
-  unstable_cache(
-    () => fetchTours(JSON.parse(cacheKey) as ToursQuery),
-    ["cms", "tours", cacheKey],
-    { tags: ["tours"] }
-  )()
-);
-
-export function getTours(input: ToursQuery = {}): Promise<Tour[]> {
-  return getToursCached(JSON.stringify(stableToursQuery(input)));
-}
 
 async function fetchTourBySlug(slug: string): Promise<Tour | null> {
   const payload = await getPayloadClient();
@@ -136,29 +77,6 @@ const getDestinationBySlugCached = cache((slug: string) =>
 
 export function getDestinationBySlug(slug: string): Promise<Destination | null> {
   return getDestinationBySlugCached(slug);
-}
-
-async function fetchToursForDestination(destinationId: number, limit: number): Promise<Tour[]> {
-  const payload = await getPayloadClient();
-  const result = await payload.find({
-    collection: "tours",
-    where: { and: [{ destination: { equals: destinationId } }, { status: { equals: "active" } }] },
-    limit,
-    depth: 1
-  });
-  return result.docs;
-}
-
-const getToursForDestinationCached = cache((destinationId: number, limit: number) =>
-  unstable_cache(
-    () => fetchToursForDestination(destinationId, limit),
-    ["cms", "tours-for-destination", String(destinationId), String(limit)],
-    { tags: ["tours"] }
-  )()
-);
-
-export function getToursForDestination(destinationId: number, limit = 6): Promise<Tour[]> {
-  return getToursForDestinationCached(destinationId, limit);
 }
 
 const POST_LIST_SELECT = {

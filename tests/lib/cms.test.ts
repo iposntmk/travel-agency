@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { getTourBySlug, getTours } from "@/lib/cms";
+import { getTourBySlug } from "@/lib/cms";
 import { getToursForList } from "@/lib/cms-list";
 import { buildToursWhere } from "@/lib/cms-filters";
 import { getPayloadClient } from "@/lib/payload";
@@ -78,7 +78,7 @@ describe("CMS getters", () => {
     const error = new Error("database unavailable");
     mockedGetPayloadClient.mockRejectedValue(error);
 
-    await expect(getTours({ limit: 7 })).rejects.toThrow("database unavailable");
+    await expect(getToursForList({ limit: 7 })).rejects.toThrow("database unavailable");
   });
 
   it("returns null when a slug lookup has no matching document", async () => {
