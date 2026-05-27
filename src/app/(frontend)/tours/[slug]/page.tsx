@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/json-ld";
+import { OtaWidget } from "@/components/ota-widget";
 import { ShareButtons } from "@/components/share-buttons";
 import { TourCard } from "@/components/tour-card";
 import { TrackedLink } from "@/components/tracked-link";
@@ -307,6 +308,21 @@ export default async function TourDetailPage({ params }: PageProps) {
             {relatedTours.map((t) => (
               <TourCard key={t.id} tour={t} />
             ))}
+          </div>
+        </section>
+      ) : null}
+
+      {destination ? (
+        <section className="mt-12">
+          <h2 className="text-xl font-semibold text-slate-950">
+            Similar experiences in {destination.title}
+          </h2>
+          <p className="mt-1 text-xs text-slate-500">
+            From external partners — not booked through TC Travel.
+          </p>
+          <div className="mt-4 grid gap-4 md:grid-cols-2">
+            <OtaWidget provider="getyourguide" city={destination.title} source={`/tours/${tour.slug}`} />
+            <OtaWidget provider="viator" city={destination.title} source={`/tours/${tour.slug}`} />
           </div>
         </section>
       ) : null}

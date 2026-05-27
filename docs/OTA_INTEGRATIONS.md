@@ -2,6 +2,32 @@
 
 **Phạm vi:** Chiến lược tích hợp các Online Travel Agency để bổ sung doanh thu affiliate, đa dạng sản phẩm cho khách, và tăng tính chuyên nghiệp. Dùng để align sales/marketing/dev về phương án hợp tác.
 
+## Trạng thái triển khai (2026-05-27)
+
+Layer 8 đã có **scaffold + click tracking sẵn sàng**, **chưa có affiliate account**:
+
+- `<OtaWidget provider city source />` render card link sang trang search của provider, đã wire trên tour detail (section "Similar experiences in {destination}").
+- Click → `/api/events/click` ghi `affiliate-clicks` row với `targetType: "ota"`, `targetId: "{provider}:{citySlug}"`, `source`, `ipHash` ẩn danh.
+- URL hiện tại trỏ trang search chung của provider — **revenue = 0 cho tới khi affiliate ID được thêm**.
+
+### Adding affiliate IDs khi có account
+
+Khi đã ký GetYourGuide / Viator / Klook / Civitatis / GuruWalk partner program:
+
+1. Lấy partner ID / partner param từ dashboard của provider (ví dụ GetYourGuide: `partner_id`, Viator: `pid`, Klook: `aid`).
+2. Mở `src/lib/ota-providers.ts`. Mỗi provider có `buildUrl(city)` trả URL — thêm partner param vào URL trả về:
+   ```ts
+   getyourguide: {
+     label: "GetYourGuide",
+     buildUrl: (city) =>
+       `https://www.getyourguide.com/s/?q=${encodeURIComponent(city)}&partner_id=YOUR_ID`
+   }
+   ```
+3. Nếu partner ID là secret, đưa vào `src/config/env.ts` schema (optional) rồi đọc qua helper, không hardcode.
+4. Commit + push — Vercel rebuild, click cũ giữ nguyên log, click mới sẽ kèm partner param và tính commission.
+
+Không cần đổi UI, không cần migration. Click tracking infra (`affiliate-clicks` collection + `<TrackedLink>` + `<OtaWidget>`) đã ổn định.
+
 ## 1. Mục tiêu
 
 - Tăng doanh thu qua **commission** từ OTA.
