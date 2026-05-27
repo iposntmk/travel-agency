@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Breadcrumb } from "@/components/breadcrumb";
 import { JsonLd } from "@/components/json-ld";
 import { ShareButtons } from "@/components/share-buttons";
 import { getSiteUrl } from "@/config/env";
@@ -66,7 +67,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   const postUrl = absoluteUrl(siteUrl, `/blog/${post.slug}`);
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-6 md:py-10">
+    <main className="bg-mist pb-20">
       <JsonLd
         data={[
           breadcrumbJsonLd([
@@ -84,85 +85,101 @@ export default async function BlogPostPage({ params }: PageProps) {
           })
         ]}
       />
-      <nav className="text-sm text-slate-500">
-        <Link className="hover:underline" href="/blog">Blog</Link>
-      </nav>
 
-      <header className="mt-4 space-y-3">
-        {destination ? (
-          <p className="text-xs font-semibold uppercase tracking-wide text-brand-red">{destination.title}</p>
-        ) : null}
-        <h1 className="text-3xl font-bold leading-tight text-slate-950 md:text-4xl">{post.title}</h1>
-        {post.readingTime ? <p className="text-xs text-slate-500">{post.readingTime} min read</p> : null}
-      </header>
-
-      <div className="relative mt-6 aspect-[16/9] w-full overflow-hidden rounded-md bg-slate-100">
-        <Image
-          src={image.url}
-          alt={image.alt}
-          fill
-          priority
-          sizes="(min-width: 768px) 60vw, 100vw"
-          className="object-cover"
-          style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined}
+      <article className="mx-auto max-w-3xl px-4 pt-8">
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Blog", href: "/blog" },
+            { label: post.title }
+          ]}
         />
-      </div>
 
-      {html ? (
-        <article
-          className="prose prose-slate mt-6 max-w-none prose-headings:text-slate-950"
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
-      ) : null}
+        <header className="mt-6 space-y-4">
+          {destination ? (
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-navy-500">
+              {destination.title}
+            </p>
+          ) : null}
+          <h1 className="font-display text-4xl font-bold leading-tight tracking-tight text-navy-950 md:text-5xl">
+            {post.title}
+          </h1>
+          {post.readingTime ? (
+            <p className="text-sm text-slate-500">{post.readingTime} min read</p>
+          ) : null}
+        </header>
 
-      <div className="mt-8">
-        <ShareButtons url={postUrl} title={post.title} medium="blog" campaignId={post.slug} />
-      </div>
-
-      <section className="mt-10 rounded-md bg-slate-50 p-5">
-        <h2 className="text-lg font-semibold text-slate-950">Plan your trip</h2>
-        <p className="mt-2 text-sm text-slate-600">
-          Book Now - Pay Later. Submit an inquiry and our team confirms details by WhatsApp or email.
-        </p>
-        <div className="mt-4 flex flex-wrap gap-3">
-          {relatedTour ? (
-            <Link
-              href={`/booking/${relatedTour.slug}?source=blog-cta`}
-              className="rounded-md bg-brand-blue px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800"
-            >
-              Book {relatedTour.title}
-            </Link>
-          ) : (
-            <Link
-              href="/tours"
-              className="rounded-md bg-brand-blue px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800"
-            >
-              Browse tours
-            </Link>
-          )}
-          <Link
-            href="/free-tours"
-            className="rounded-md border border-brand-blue px-4 py-2 text-sm font-semibold text-brand-blue hover:bg-blue-50"
-          >
-            Join free tours
-          </Link>
+        <div className="relative mt-8 aspect-[16/9] w-full overflow-hidden rounded-2xl bg-navy-50 shadow-card">
+          <Image
+            src={image.url}
+            alt={image.alt}
+            fill
+            priority
+            sizes="(min-width: 768px) 60vw, 100vw"
+            className="object-cover"
+            style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined}
+          />
         </div>
-      </section>
 
-      {relatedPosts.length > 0 ? (
-        <section className="mt-10">
-          <h2 className="text-lg font-semibold text-slate-950">More reads</h2>
-          <ul className="mt-3 space-y-2 text-sm">
-            {relatedPosts.slice(0, 4).map((related) => (
-              <li key={related.id}>
-                <Link className="text-brand-blue hover:underline" href={`/blog/${related.slug}`}>
-                  {related.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
+        {html ? (
+          <div
+            className="prose prose-slate mt-10 max-w-none prose-headings:font-display prose-headings:tracking-tight prose-headings:text-navy-950 prose-a:text-navy-700 prose-strong:text-navy-900 prose-p:leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
+        ) : null}
+
+        <div className="mt-10">
+          <ShareButtons url={postUrl} title={post.title} medium="blog" campaignId={post.slug} />
+        </div>
+
+        <section className="mt-12 rounded-2xl border border-navy-100 bg-white p-6 shadow-card md:p-8">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-gold">Plan your trip</p>
+          <h2 className="mt-2 font-display text-2xl font-bold tracking-tight text-navy-950">
+            Book now — pay when you meet your guide.
+          </h2>
+          <p className="mt-3 text-sm leading-7 text-slate-600">
+            Submit an inquiry and our team confirms details by WhatsApp or email — no prepayment required.
+          </p>
+          <div className="mt-5 flex flex-wrap gap-3">
+            {relatedTour ? (
+              <Link
+                href={`/booking/${relatedTour.slug}?source=blog-cta`}
+                className="inline-flex items-center gap-2 rounded-full bg-navy-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-navy-800"
+              >
+                Book {relatedTour.title}
+              </Link>
+            ) : (
+              <Link
+                href="/tours"
+                className="inline-flex items-center gap-2 rounded-full bg-navy-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-navy-800"
+              >
+                Browse tours
+              </Link>
+            )}
+            <Link
+              href="/free-tours"
+              className="inline-flex items-center gap-2 rounded-full border border-navy-200 bg-white px-5 py-3 text-sm font-semibold text-navy-900 transition hover:bg-navy-50"
+            >
+              Join free tours
+            </Link>
+          </div>
         </section>
-      ) : null}
+
+        {relatedPosts.length > 0 ? (
+          <section className="mt-10">
+            <h2 className="text-lg font-semibold tracking-tight text-navy-950">More reads</h2>
+            <ul className="mt-4 space-y-2 text-sm">
+              {relatedPosts.slice(0, 4).map((related) => (
+                <li key={related.id}>
+                  <Link className="text-navy-700 hover:underline" href={`/blog/${related.slug}`}>
+                    {related.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+      </article>
     </main>
   );
 }

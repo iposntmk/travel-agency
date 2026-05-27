@@ -2,14 +2,13 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Breadcrumb } from "@/components/breadcrumb";
 import { JsonLd } from "@/components/json-ld";
 import { OtaWidget } from "@/components/ota-widget";
+import { SectionHead } from "@/components/section";
 import { TourCard } from "@/components/tour-card";
 import { getSiteUrl } from "@/config/env";
-import {
-  getDestinationBySlug,
-  getDestinations
-} from "@/lib/cms";
+import { getDestinationBySlug, getDestinations } from "@/lib/cms";
 import { getToursForDestinationList } from "@/lib/cms-list";
 import { lexicalToHtml, lexicalToPlainText } from "@/lib/lexical";
 import { resolveImage, resolveOgImage } from "@/lib/media";
@@ -53,9 +52,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 const REGION_BEST_SEASON: Record<string, string> = {
-  central: "February to August — dry season is best for beaches and old town walks. Heaviest rain falls from October to early December.",
+  central:
+    "February to August — dry season is best for beaches and old town walks. Heaviest rain falls from October to early December.",
   north: "October to April — cooler, drier months ideal for trekking and city exploration.",
   south: "December to April — dry season; rest of the year sees afternoon showers."
+};
+
+const REGION_LABEL: Record<string, string> = {
+  central: "Central Vietnam",
+  north: "Northern Vietnam",
+  south: "Southern Vietnam"
 };
 
 export default async function DestinationDetailPage({ params }: PageProps) {
@@ -73,9 +79,10 @@ export default async function DestinationDetailPage({ params }: PageProps) {
   const siteUrl = getSiteUrl().replace(/\/$/, "");
   const destinationUrl = absoluteUrl(siteUrl, `/destinations/${destination.slug}`);
   const bestSeason = destination.region ? REGION_BEST_SEASON[destination.region] : undefined;
+  const regionLabel = destination.region ? REGION_LABEL[destination.region] : null;
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-6 md:py-10">
+    <main className="bg-mist pb-20">
       <JsonLd
         data={[
           breadcrumbJsonLd([
@@ -91,93 +98,111 @@ export default async function DestinationDetailPage({ params }: PageProps) {
           })
         ]}
       />
-      <nav className="text-sm text-slate-500">
-        <Link className="hover:underline" href="/destinations">Destinations</Link>
-      </nav>
 
-      <header className="mt-4 space-y-3">
-        <h1 className="text-3xl font-bold text-slate-950 md:text-4xl">{destination.title}</h1>
-        {destination.region ? (
-          <p className="text-sm text-slate-500">
-            {destination.region === "central"
-              ? "Central Vietnam"
-              : destination.region === "north"
-                ? "Northern Vietnam"
-                : "Southern Vietnam"}
-          </p>
-        ) : null}
-      </header>
+      <div className="mx-auto max-w-page px-4 pt-8">
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Destinations", href: "/destinations" },
+            { label: destination.title }
+          ]}
+        />
 
-      <div className="mt-6 grid gap-6 md:grid-cols-[1.4fr_0.6fr]">
-        <div className="space-y-6">
-          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-md bg-slate-100">
-            <Image
-              src={image.url}
-              alt={image.alt}
-              fill
-              priority
-              sizes="(min-width: 768px) 60vw, 100vw"
-              className="object-cover"
-              style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined}
-            />
+        <header className="mt-5 space-y-3">
+          {regionLabel ? (
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-navy-500">{regionLabel}</p>
+          ) : null}
+          <h1 className="font-display text-4xl font-bold tracking-tight text-navy-950 md:text-5xl">
+            {destination.title}
+          </h1>
+        </header>
+
+        <div className="mt-8 grid gap-8 md:grid-cols-[1.4fr_0.6fr]">
+          <div className="space-y-6">
+            <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl bg-navy-50 shadow-card">
+              <Image
+                src={image.url}
+                alt={image.alt}
+                fill
+                priority
+                sizes="(min-width: 768px) 60vw, 100vw"
+                className="object-cover"
+                style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined}
+              />
+            </div>
+            {html ? (
+              <section
+                className="prose prose-slate max-w-none prose-headings:font-display prose-headings:tracking-tight prose-headings:text-navy-950 prose-a:text-navy-700 prose-strong:text-navy-900"
+                dangerouslySetInnerHTML={{ __html: html }}
+              />
+            ) : null}
           </div>
-          {html ? (
-            <section
-              className="prose prose-slate max-w-none"
-              dangerouslySetInnerHTML={{ __html: html }}
-            />
+
+          {bestSeason ? (
+            <aside className="self-start rounded-2xl border border-navy-100 bg-white p-6 shadow-card">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-gold">
+                Best Time to Visit
+              </p>
+              <p className="mt-3 text-sm leading-7 text-slate-700">{bestSeason}</p>
+              <Link
+                href={`/tours?destination=${destination.slug}`}
+                className="mt-5 inline-flex items-center gap-1 rounded-full bg-navy-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-navy-800"
+              >
+                See tours
+                <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" aria-hidden="true">
+                  <path
+                    d="M5 12h14M13 6l6 6-6 6"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </Link>
+            </aside>
           ) : null}
         </div>
 
-        {bestSeason ? (
-          <aside className="self-start rounded-md border border-slate-200 bg-white p-5">
-            <p className="text-xs font-semibold uppercase tracking-wide text-brand-red">Best Time to Visit</p>
-            <p className="mt-2 text-sm leading-6 text-slate-700">{bestSeason}</p>
-            <Link
-              href={`/tours?destination=${destination.slug}`}
-              className="mt-4 inline-flex rounded-md bg-brand-blue px-3 py-2 text-sm font-semibold text-white hover:bg-blue-800"
-            >
-              See tours
-            </Link>
-          </aside>
-        ) : null}
-      </div>
+        <section className="mt-16">
+          <SectionHead
+            eyebrow="Tour catalogue"
+            title={`Tours in ${destination.title}`}
+            actionHref={`/tours?destination=${destination.slug}`}
+            actionLabel="See all"
+          />
+          {tours.length === 0 ? (
+            <p className="rounded-2xl border border-dashed border-navy-100 bg-white p-8 text-center text-sm text-slate-500">
+              No tours published yet for this destination.
+            </p>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {tours.map((tour) => (
+                <TourCard key={tour.id} tour={tour} />
+              ))}
+            </div>
+          )}
+        </section>
 
-      <section className="mt-10">
-        <h2 className="text-xl font-semibold text-slate-950">Tours in {destination.title}</h2>
-        {tours.length === 0 ? (
-          <p className="mt-4 rounded-md border border-dashed border-slate-300 p-6 text-sm text-slate-500">
-            No tours published yet for this destination.
-          </p>
-        ) : (
-          <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {tours.map((tour) => (
-              <TourCard key={tour.id} tour={tour} />
-            ))}
+        <section className="mt-16">
+          <SectionHead
+            eyebrow="External partners"
+            title={`Top things to do in ${destination.title}`}
+            subtitle="From trusted travel partners — booked externally, not through TC Travel."
+          />
+          <div className="grid gap-6 md:grid-cols-2">
+            <OtaWidget
+              provider="getyourguide"
+              city={destination.title}
+              source={`/destinations/${destination.slug}`}
+            />
+            <OtaWidget
+              provider="viator"
+              city={destination.title}
+              source={`/destinations/${destination.slug}`}
+            />
           </div>
-        )}
-      </section>
-
-      <section className="mt-12">
-        <h2 className="text-xl font-semibold text-slate-950">
-          Top things to do in {destination.title}
-        </h2>
-        <p className="mt-1 text-xs text-slate-500">
-          From external partners — not booked through TC Travel.
-        </p>
-        <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <OtaWidget
-            provider="getyourguide"
-            city={destination.title}
-            source={`/destinations/${destination.slug}`}
-          />
-          <OtaWidget
-            provider="viator"
-            city={destination.title}
-            source={`/destinations/${destination.slug}`}
-          />
-        </div>
-      </section>
+        </section>
+      </div>
     </main>
   );
 }
