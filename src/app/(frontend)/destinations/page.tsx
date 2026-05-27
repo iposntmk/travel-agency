@@ -57,6 +57,7 @@ export default async function DestinationsPage() {
                       fill
                       sizes="(min-width: 768px) 33vw, 100vw"
                       className="object-cover"
+                      style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined}
                       unoptimized
                     />
                   </div>

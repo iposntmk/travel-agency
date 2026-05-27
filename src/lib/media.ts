@@ -6,6 +6,7 @@ export interface ResolvedImage {
   alt: string;
   width?: number;
   height?: number;
+  objectPosition?: string;
   isFallback: boolean;
 }
 
@@ -98,6 +99,15 @@ function ogVariantUrl(input: Media, publicBaseUrl: string | undefined): string |
   );
 }
 
+function focalPoint(input: Media): string | undefined {
+  if (typeof input.focalX !== "number" || typeof input.focalY !== "number") return undefined;
+  return `${clampPercent(input.focalX)}% ${clampPercent(input.focalY)}%`;
+}
+
+function clampPercent(value: number): number {
+  return Math.min(100, Math.max(0, Math.round(value)));
+}
+
 export function resolveImage(input: MaybeMedia, fallbackAlt?: string, options: ResolveImageOptions = {}): ResolvedImage {
   const publicBaseUrl = options.publicBaseUrl ?? getR2PublicBaseUrl();
 
@@ -122,6 +132,7 @@ export function resolveImage(input: MaybeMedia, fallbackAlt?: string, options: R
     alt: input.alt ?? fallbackAlt ?? FALLBACK_ALT,
     width: input.width ?? undefined,
     height: input.height ?? undefined,
+    objectPosition: focalPoint(input),
     isFallback: url === FALLBACK_URL
   };
 }

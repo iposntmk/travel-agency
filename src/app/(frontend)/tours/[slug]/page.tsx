@@ -157,6 +157,7 @@ export default async function TourDetailPage({ params }: PageProps) {
               priority
               sizes="(min-width: 768px) 60vw, 100vw"
               className="object-cover"
+              style={heroImage.objectPosition ? { objectPosition: heroImage.objectPosition } : undefined}
               unoptimized
             />
           </div>
@@ -167,7 +168,15 @@ export default async function TourDetailPage({ params }: PageProps) {
                 const img = resolveImage(media, undefined, { variant: "thumb" });
                 return (
                   <div key={media.id} className="relative aspect-square overflow-hidden rounded-md bg-slate-100">
-                    <Image src={img.url} alt={img.alt} fill sizes="20vw" className="object-cover" unoptimized />
+                    <Image
+                      src={img.url}
+                      alt={img.alt}
+                      fill
+                      sizes="20vw"
+                      className="object-cover"
+                      style={img.objectPosition ? { objectPosition: img.objectPosition } : undefined}
+                      unoptimized
+                    />
                   </div>
                 );
               })}

@@ -94,6 +94,18 @@ describe("resolveImage", () => {
 
     expect(resolved.url).toBe("https://pub.example.r2.dev/hue.jpg");
   });
+
+  it("returns focal point object positioning for cropped renders", () => {
+    const resolved = resolveImage(makeMedia({ focalX: 24.4, focalY: 78.6 }));
+
+    expect(resolved.objectPosition).toBe("24% 79%");
+  });
+
+  it("clamps invalid focal points to the image bounds", () => {
+    const resolved = resolveImage(makeMedia({ focalX: -10, focalY: 140 }));
+
+    expect(resolved.objectPosition).toBe("0% 100%");
+  });
 });
 
 describe("resolveOgImage", () => {

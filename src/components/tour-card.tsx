@@ -29,6 +29,7 @@ export function TourCard({ tour, ctaHref, ctaLabel }: TourCardProps) {
           fill
           sizes="(min-width: 768px) 33vw, 100vw"
           className="object-cover"
+          style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined}
           unoptimized
         />
       </Link>
