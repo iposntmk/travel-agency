@@ -87,15 +87,24 @@ export function getTourBySlug(slug: string): Promise<Tour | null> {
   return getTourBySlugCached(slug);
 }
 
+const DESTINATION_LIST_SELECT = {
+  title: true,
+  slug: true,
+  featuredImage: true,
+  description: true,
+  updatedAt: true
+} as const;
+
 async function fetchDestinations(limit: number): Promise<Destination[]> {
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "destinations",
     limit,
     depth: 1,
-    sort: "title"
+    sort: "title",
+    select: DESTINATION_LIST_SELECT
   });
-  return result.docs;
+  return result.docs as Destination[];
 }
 
 const getDestinationsCached = cache((limit: number) =>
@@ -152,6 +161,17 @@ export function getToursForDestination(destinationId: number, limit = 6): Promis
   return getToursForDestinationCached(destinationId, limit);
 }
 
+const POST_LIST_SELECT = {
+  title: true,
+  slug: true,
+  featuredImage: true,
+  destination: true,
+  readingTime: true,
+  status: true,
+  createdAt: true,
+  updatedAt: true
+} as const;
+
 async function fetchPublishedPosts(limit: number): Promise<Post[]> {
   const payload = await getPayloadClient();
   const result = await payload.find({
@@ -159,9 +179,10 @@ async function fetchPublishedPosts(limit: number): Promise<Post[]> {
     where: { status: { equals: "published" } },
     limit,
     depth: 1,
-    sort: "-createdAt"
+    sort: "-createdAt",
+    select: POST_LIST_SELECT
   });
-  return result.docs;
+  return result.docs as Post[];
 }
 
 const getPublishedPostsCached = cache((limit: number) =>
