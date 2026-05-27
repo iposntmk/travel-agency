@@ -15,7 +15,8 @@
     "payload:migrate:create": "payload migrate:create",
     "seed": "node --env-file=.env --import=tsx/esm scripts/seed.ts",
     "payload:migrate": "payload migrate",
-    "r2:backfill-cache-control": "node --env-file=.env --import=tsx/esm scripts/backfill-r2-cache-control.ts"
+    "r2:backfill-cache-control": "node --env-file=.env --import=tsx/esm scripts/backfill-r2-cache-control.ts",
+    "qa:clerk-sync": "node --env-file=.env --import=tsx/esm scripts/verify-clerk-sync.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1053.0",

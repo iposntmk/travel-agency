@@ -48,18 +48,11 @@ Last shipped commits:
 
 Production still needs dashboard-level configuration and live verification:
 
-1. Ensure Vercel Production has the same required envs now present locally:
-   - `CLERK_WEBHOOK_SIGNING_SECRET`
-   - `UPSTASH_REDIS_REST_URL`
-   - `UPSTASH_REDIS_REST_TOKEN`
-   - `RESEND_FROM_EMAIL`
-   - `BOOKING_SALES_EMAIL`
-   - Existing Neon, Payload, Clerk, R2, QStash, and Resend vars.
-2. Configure Clerk webhook endpoint: `https://<production-domain>/api/webhooks/clerk`.
-3. Subscribe to `user.created` and `user.updated`.
-4. Redeploy after adding/changing env vars.
-5. Create/update a Clerk user and verify the Payload `customers` collection is linked by `clerkUserId`.
-6. Submit one real booking inquiry and verify:
+1. ~~Ensure Vercel Production has the same required envs now present locally.~~ **Done** — `CLERK_WEBHOOK_SIGNING_SECRET`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `RESEND_FROM_EMAIL`, `BOOKING_SALES_EMAIL` synced via `vercel env add` on 2026-05-27 and production redeployed.
+2. ~~Configure Clerk webhook endpoint and subscribe to `user.created` / `user.updated`.~~ **Done** on Clerk Dashboard 2026-05-27.
+3. ~~Disable Vercel Deployment Protection (was blocking the webhook with 401).~~ **Done** — `ssoProtection` patched to `null` via `vercel api PATCH /v9/projects/...` on 2026-05-27.
+4. ~~Verify Clerk → Payload customer sync end-to-end.~~ **Done** — `pnpm qa:clerk-sync` creates a throwaway Clerk user, waits for the webhook, asserts the matching Payload `customers` row, and cleans up. Last run 2026-05-27: sync working.
+5. Submit one real booking inquiry and verify:
    - Booking is created once with status `Pending`.
    - Customer receives confirmation email.
    - Sales/admin receives internal notification.
