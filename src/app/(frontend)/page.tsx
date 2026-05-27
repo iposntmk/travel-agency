@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/json-ld";
+import { OtaWidget } from "@/components/ota-widget";
 import { getSiteUrl } from "@/config/env";
 import { TourCard } from "@/components/tour-card";
 import { getDestinations } from "@/lib/cms";
@@ -127,6 +128,31 @@ export default async function HomePage() {
                 />
               ))}
             </div>
+          </div>
+        </section>
+      ) : null}
+
+      {destinations.length > 0 ? (
+        <section className="mx-auto max-w-6xl px-4 py-10 md:py-12">
+          <div className="mb-6 flex items-end justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-brand-red">External partners</p>
+              <h2 className="mt-2 text-2xl font-bold text-slate-950">Featured Experiences</h2>
+              <p className="mt-2 max-w-2xl text-sm text-slate-600 md:text-base">
+                Day tours, tickets, and activities curated by trusted travel partners — booked
+                externally, not through TC Travel.
+              </p>
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            {destinations.slice(0, 3).map((destination) => (
+              <OtaWidget
+                key={destination.id}
+                provider="getyourguide"
+                city={destination.title}
+                source="/"
+              />
+            ))}
           </div>
         </section>
       ) : null}

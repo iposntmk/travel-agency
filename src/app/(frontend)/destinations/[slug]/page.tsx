@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/json-ld";
+import { OtaWidget } from "@/components/ota-widget";
 import { TourCard } from "@/components/tour-card";
 import { getSiteUrl } from "@/config/env";
 import {
@@ -155,6 +156,27 @@ export default async function DestinationDetailPage({ params }: PageProps) {
             ))}
           </div>
         )}
+      </section>
+
+      <section className="mt-12">
+        <h2 className="text-xl font-semibold text-slate-950">
+          Top things to do in {destination.title}
+        </h2>
+        <p className="mt-1 text-xs text-slate-500">
+          From external partners — not booked through TC Travel.
+        </p>
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <OtaWidget
+            provider="getyourguide"
+            city={destination.title}
+            source={`/destinations/${destination.slug}`}
+          />
+          <OtaWidget
+            provider="viator"
+            city={destination.title}
+            source={`/destinations/${destination.slug}`}
+          />
+        </div>
       </section>
     </main>
   );
