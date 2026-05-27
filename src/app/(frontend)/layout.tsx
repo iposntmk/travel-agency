@@ -1,8 +1,16 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Inter } from "next/font/google";
 import { ConsentBanner } from "@/components/consent-banner";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
 import { getNextConfigEnv, getSeoEnv, getSiteUrl } from "@/config/env";
 import "../globals.css";
+
+const inter = Inter({
+  subsets: ["latin", "vietnamese"],
+  variable: "--font-inter",
+  display: "swap"
+});
 
 const indexingAllowed = getSeoEnv().ALLOW_INDEXING;
 const siteUrl = getSiteUrl();
@@ -24,31 +32,15 @@ export const metadata: Metadata = {
 
 export default function FrontendLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={inter.variable}>
       <head>{r2Origin ? <link rel="preconnect" href={r2Origin} crossOrigin="anonymous" /> : null}</head>
-      <body>
-        <header className="border-b border-slate-200 bg-white">
-          <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-            <Link className="text-lg font-bold text-brand-blue" href="/">
-              TC Travel Vietnam
-            </Link>
-            <div className="flex flex-wrap gap-4 text-sm font-medium text-slate-700">
-              <Link href="/tours">Tours</Link>
-              <Link href="/destinations">Destinations</Link>
-              <Link href="/free-tours">Free Tours</Link>
-              <Link href="/blog">Blog</Link>
-              <Link href="/booking/confirmation">Contact</Link>
-            </div>
-          </nav>
-        </header>
-        {children}
-        <footer className="border-t border-slate-200 bg-slate-50">
-          <div className="mx-auto grid max-w-6xl gap-2 px-4 py-8 text-sm text-slate-600 md:grid-cols-3">
-            <p>Book Now - Pay Later for paid and free tour inquiries.</p>
-            <p>WhatsApp: +84 000 000 000</p>
-            <p>Email: sales@example.com</p>
-          </div>
-        </footer>
+      <body className="bg-mist text-slate-800">
+        <a className="skip-link sr-only" href="#main-content">
+          Skip to content
+        </a>
+        <SiteHeader />
+        <div id="main-content">{children}</div>
+        <SiteFooter />
         <ConsentBanner />
       </body>
     </html>
