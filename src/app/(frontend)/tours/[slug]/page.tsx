@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/json-ld";
+import { ShareButtons } from "@/components/share-buttons";
 import { TourCard } from "@/components/tour-card";
 import { getSiteUrl } from "@/config/env";
 import { getPayloadClient } from "@/lib/payload";
@@ -256,6 +257,10 @@ export default async function TourDetailPage({ params }: PageProps) {
           >
             {isFree ? "Register" : "Request this tour"}
           </Link>
+
+          <div className="border-t border-slate-100 pt-4">
+            <ShareButtons url={tourUrl} title={tour.title} medium="tour" campaignId={tour.slug} />
+          </div>
 
           {tour.availableDates && tour.availableDates.length > 0 ? (
             <div>

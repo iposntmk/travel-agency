@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/json-ld";
+import { ShareButtons } from "@/components/share-buttons";
 import { getSiteUrl } from "@/config/env";
 import { getPostBySlug, getPublishedPosts } from "@/lib/cms";
 import { lexicalToHtml, lexicalToPlainText } from "@/lib/lexical";
@@ -113,6 +114,10 @@ export default async function BlogPostPage({ params }: PageProps) {
           dangerouslySetInnerHTML={{ __html: html }}
         />
       ) : null}
+
+      <div className="mt-8">
+        <ShareButtons url={postUrl} title={post.title} medium="blog" campaignId={post.slug} />
+      </div>
 
       <section className="mt-10 rounded-md bg-slate-50 p-5">
         <h2 className="text-lg font-semibold text-slate-950">Plan your trip</h2>

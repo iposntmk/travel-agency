@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ConsentBanner } from "@/components/consent-banner";
 import { getNextConfigEnv, getSeoEnv, getSiteUrl } from "@/config/env";
 import "../globals.css";
 
@@ -48,6 +49,7 @@ export default function FrontendLayout({ children }: Readonly<{ children: React.
             <p>Email: sales@example.com</p>
           </div>
         </footer>
+        <ConsentBanner />
       </body>
     </html>
   );
