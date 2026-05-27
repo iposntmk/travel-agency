@@ -14,42 +14,67 @@ export function TourCard({ tour, ctaHref, ctaLabel }: TourCardProps) {
   const destination =
     tour.destination && typeof tour.destination === "object"
       ? (tour.destination as Destination).title
-      : "Vietnam";
+      : null;
   const isFree = !tour.priceFrom || tour.priceFrom === 0;
 
   const href = ctaHref ?? `/tours/${tour.slug}`;
   const label = ctaLabel ?? (isFree ? "Register" : "View details");
 
   return (
-    <article className="flex flex-col overflow-hidden rounded-md border border-slate-200 bg-white">
-      <Link href={href} className="relative block aspect-[16/10] bg-slate-100">
+    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-navy-100 bg-white shadow-card transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-elevated">
+      <Link href={href} className="relative block aspect-[4/3] overflow-hidden bg-navy-50">
         <Image
           src={image.url}
           alt={image.alt}
           fill
-          sizes="(min-width: 768px) 33vw, 100vw"
-          className="object-cover"
+          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+          className="object-cover transition-transform duration-500 ease-out-soft group-hover:scale-[1.04]"
           style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined}
         />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy-950/30 via-navy-950/0 to-navy-950/0" />
+        {destination ? (
+          <span className="absolute left-3 top-3 inline-flex items-center rounded-full bg-white/95 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-navy-900 shadow-card backdrop-blur">
+            {destination}
+          </span>
+        ) : null}
+        <span
+          className={
+            isFree
+              ? "absolute right-3 top-3 inline-flex items-center rounded-full bg-brand-gold px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-navy-950 shadow-card"
+              : "absolute right-3 top-3 inline-flex items-center rounded-full bg-navy-900 px-3 py-1 text-[11px] font-semibold text-white shadow-card"
+          }
+        >
+          {isFree ? "Free" : `From $${tour.priceFrom}`}
+        </span>
       </Link>
-      <div className="flex flex-1 flex-col gap-2 p-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-brand-red">{destination}</p>
-        <h3 className="text-lg font-semibold leading-tight text-slate-950">
-          <Link href={href}>{tour.title}</Link>
-        </h3>
-        <p className="text-sm text-slate-500">
+      <div className="flex flex-1 flex-col gap-2 p-5">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-navy-500">
           {tour.tourType.replace(/-/g, " ")}
           {tour.season && tour.season !== "year-round" ? ` · ${tour.season}` : ""}
         </p>
+        <h3 className="text-lg font-semibold leading-snug tracking-tight text-navy-950">
+          <Link href={href} className="transition-colors hover:text-navy-700">
+            {tour.title}
+          </Link>
+        </h3>
         <div className="mt-auto flex items-center justify-between gap-3 pt-3">
-          <span className="font-semibold text-slate-900">
-            {isFree ? "Free to join" : `From $${tour.priceFrom} ${tour.currency ?? "USD"}`}
+          <span className="text-sm font-medium text-slate-600">
+            {isFree ? "Tips appreciated" : `${tour.currency ?? "USD"} · per person`}
           </span>
           <Link
-            className="rounded-md bg-brand-blue px-3 py-2 text-sm font-semibold text-white hover:bg-blue-800"
             href={href}
+            className="inline-flex items-center gap-1 rounded-full bg-navy-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-navy-800"
           >
             {label}
+            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" aria-hidden="true">
+              <path
+                d="M5 12h14M13 6l6 6-6 6"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </Link>
         </div>
       </div>
