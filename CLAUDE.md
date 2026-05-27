@@ -70,23 +70,32 @@ Admin reversal requires an explicit audit reason. Every status change appends a 
 
 **File size limits** — UI components: 150 lines max. Server Actions and Services: 250 lines max. Payload collection configs: 200 lines max. Extract complex Payload lifecycle hooks into a `/hooks` subdirectory.
 
-### Current build state (Layer 7 started)
+### Current build state (Layer 8 monetization — UI shipped, partner IDs pending)
 
 - Foundation scaffolded: Next.js 15, Payload CMS, Neon Postgres, Clerk auth, Tailwind CSS, shadcn/ui, Vitest CI
 - Core domain types and Zod schemas exist and are tested
 - Booking transition state machine is implemented and tested
 - Frontend public pages read tours, destinations, and posts from Payload with static fallback timing via Next revalidation
-- Payload collection configs are wired for users, media, destinations, partners, tours, customers, bookings, posts, comments, reviews, promotions, and payments
+- Payload collection configs are wired for users, media, destinations, partners, tours, customers, bookings, posts, comments, reviews, promotions, payments, and `affiliate-clicks`
 - Media upload and QStash Sharp variant processing are implemented against Cloudflare R2
 - `booking-repository.ts` persists booking leads through Payload/Postgres with DB-backed idempotency
 - Public booking creates are hardened: server sanitizes plain-text special requests and forces public creates into `Pending`
 - Booking submissions use Upstash Redis REST rate limiting and send Resend customer/internal booking emails after idempotent create
 - Public cropped images use Payload media focal points (`focalX` / `focalY`) and prefer generated R2 variants
-- Clerk customer sync route exists at `src/app/api/webhooks/clerk/route.ts`, backed by `src/services/clerk-customer-sync.ts`
+- Clerk customer sync route is live at `src/app/api/webhooks/clerk/route.ts`, backed by `src/services/clerk-customer-sync.ts`. End-to-end verified via `pnpm qa:clerk-sync` (2026-05-27)
+- Layer 7 trust signals shipped: cookie consent banner (`src/components/consent-banner.tsx`), share buttons with UTM (`src/components/share-buttons.tsx`)
+- Layer 8 click-tracking infra: `affiliate-clicks` Payload collection, `POST /api/events/click` with Zod + rate-limit + SHA-256 IP hashing, `<TrackedLink>` (sendBeacon + fetch keepalive fallback, `rel="noopener noreferrer sponsored"`)
+- Layer 8 OTA widgets live on **3 surfaces**: homepage Featured Experiences (3 cards), destination detail (`Top things to do in {city}`), tour detail (`Similar experiences in {destination}`). `src/lib/ota-providers.ts` defines GetYourGuide / Viator / Klook / Civitatis / GuruWalk with generic search URLs — **affiliate IDs not yet injected**, so revenue is intentionally 0
 
-Current stage: Layer 7 Trust + Engagement has started after the Layer 5 booking lead engine landed. Before relying on Clerk sync in production, verify Vercel Production has the Clerk webhook, Upstash Redis REST, and Resend booking email env vars; configure the Clerk webhook endpoint for `user.created` and `user.updated`; redeploy; then run live Clerk and booking/email QA.
+Current stage: Layer 8 Monetization scaffold is in production. UI/UX and click attribution are stable; OTA partner accounts have not been registered yet, so click URLs are generic search rather than affiliate-tagged. Adding partner IDs is a single-file change in `src/lib/ota-providers.ts` (see `docs/OTA_INTEGRATIONS.md` § "Adding affiliate IDs") — no schema or UI work needed.
 
-Next work: finish production readiness gaps before online payment: live Clerk webhook verification, live booking/email/Redis QA, booking capacity/slot transaction locking if capacity affects inventory, remaining media/performance backlog in `docs/toiuu.md`, then Layer 8/9 monetization and payment provider work.
+Next work, in order:
+1. Owner registers OTA partner programs (GetYourGuide / Viator / Klook / Civitatis / GuruWalk) and feeds partner IDs.
+2. Layer 8 K — move partner IDs into Payload `partners` collection (CMS-driven, no redeploy) — see `docs/OTA_INTEGRATIONS.md`.
+3. Layer 8 L — internal `/admin` affiliate-clicks dashboard (aggregate by `targetType`, `targetId`, `source`, day).
+4. Booking capacity/slot transaction locking if capacity affects inventory.
+5. Remaining media/performance backlog in `docs/toiuu.md`.
+6. Layer 9 online payment work (Stripe + VNPay/MoMo) only after the above is stable.
 
 ### Indexing policy (production)
 

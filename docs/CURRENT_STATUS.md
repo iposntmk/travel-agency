@@ -1,48 +1,51 @@
 # Current Status
 
-**Updated:** 2026-05-27
+**Updated:** 2026-05-27 (Layer 8 monetization UI shipped)
 
 ## Current Layer / Stage
 
-The project is currently at **Layer 7 - Trust + Engagement started**.
+The project is currently at **Layer 8 - Monetization Without Payment** with **UI/UX shipped** but **affiliate partner accounts not yet registered**. Click attribution infra is live, so revenue starts flowing the moment partner IDs are added to `src/lib/ota-providers.ts` — no UI or schema work needed.
 
-Layers 1-5 have enough implementation to support the current MVP flow:
+Layers 1-7 are complete enough to support the current production flow:
 
 - Layer 1 Foundation: scaffold, CI scripts, env validation, Vercel setup.
-- Layer 2 Core Data Models + Access Control: Payload collections, explicit access rules, migrations, Zod schemas.
+- Layer 2 Core Data Models + Access Control: Payload collections (including `affiliate-clicks`), explicit access rules, migrations, Zod schemas.
 - Layer 3 Media Pipeline: signed upload, R2 storage, QStash Sharp variant processing, public focal-point rendering.
 - Layer 4 Public Pages: Payload-backed tours, destinations, blog, sitemap, robots, metadata, JSON-LD, cached public reads.
 - Layer 5 Booking Lead Engine: booking Server Action, validation, sanitization, Upstash Redis-backed rate-limit guard, DB-backed idempotency, Payload/Postgres persistence, Resend customer/internal booking emails.
+- Layer 6 Free Tours: `/free-tours` page, free-tour upsell on confirmation page, `source` tracking through the booking funnel.
+- Layer 7 Trust + Engagement: Clerk customer sync (live + verified), cookie consent banner (`tc.consent.v1` localStorage gate), social share buttons (FB / X / WhatsApp / Email / copy) with UTM tagging.
 
-Layer 7 has started with Clerk customer sync:
+Layer 8 implementation status:
 
-- `src/app/api/webhooks/clerk/route.ts`
-- `src/services/clerk-customer-sync.ts`
-- `tests/api/clerk-webhook.test.ts`
-- `tests/services/clerk-customer-sync.test.ts`
+- **Click tracking infra (done)** — `affiliate-clicks` collection (`src/collections/payload/AffiliateClicks.ts`), `POST /api/events/click` with Zod + rate-limit (30/min/IP under `affiliate-click` prefix) + SHA-256 IP hashing, `<TrackedLink>` component (sendBeacon with fetch keepalive fallback, `rel="noopener noreferrer sponsored"`). Add-on partner clicks on tour detail also flow through this.
+- **OTA provider catalog (done)** — `src/lib/ota-providers.ts` defines 5 providers: GetYourGuide, Viator, Klook, Civitatis, GuruWalk. `buildUrl(city)` returns generic search URLs (no `partner_id` yet).
+- **OTA widget (done)** — `src/components/ota-widget.tsx` server component, renders provider label + "More things to do in {city}" + external-partner disclosure + `<TrackedLink>` to the provider search.
+- **OTA surfaces live (done)** — homepage Featured Experiences strip (3 destination cards × GetYourGuide), destination detail `Top things to do in {city}` (GetYourGuide + Viator pair), tour detail `Similar experiences in {destination}` (GetYourGuide + Viator pair). Each surface passes a distinct `source` for attribution.
+- **Affiliate IDs (pending)** — partner accounts not yet registered. Revenue = 0 until partner IDs are appended to `buildUrl()` per provider. See `docs/OTA_INTEGRATIONS.md` § "Adding affiliate IDs".
 
-Production-readiness work that has landed after the original Clerk handoff:
+Latest production-readiness verification:
 
+- `pnpm qa:clerk-sync` on 2026-05-27 — Clerk → Payload customer sync confirmed end-to-end (creates throwaway Clerk user, waits for webhook, asserts Payload `customers` row, cleans up both sides).
+- Resend booking email + internal sales notification confirmed delivered ("resend mail: passed, done").
+- Vercel Deployment Protection patched off (`ssoProtection: null`) so webhooks reach the deployed routes.
+- All Vercel Production envs synced 2026-05-27 (Clerk webhook secret, Upstash Redis REST, Resend, R2, QStash, Neon, Payload).
+
+Last shipped commits (top to bottom = newest to oldest):
+
+- `d1cda72 Show OTA Featured Experiences on home + destination pages`
+- `c75fd9d Add OTA widget scaffold on tour detail (no affiliate IDs yet)`
+- `198c1aa Track add-on partner clicks as affiliate events`
+- `51aca80 Add cookie consent banner and social share buttons`
+- `243f9a0 Wire booking source tracking and free-tour upsell`
+- `9aa6c92 Add public booking inquiry form`
+- `c48da27 Add Clerk webhook sync verification script`
+- `2265c61 Drop unused getTours and getToursForDestination`
+- `6d74327 Add R2 Cache-Control backfill script`
+- `f7210e5 Document noindex policy and ALLOW_INDEXING gate`
+- `fcb05fb Trim CMS list getter payload with select`
+- `878ad41 Enable Vercel image optimization for public pages`
 - `e8553df Harden booking submissions for production readiness`
-  - Adds Upstash Redis REST rate limiting for public booking submissions.
-  - Adds Resend booking confirmation email to the customer and internal notification to sales/admin.
-  - Keeps booking creation idempotent if email delivery fails.
-  - Adds env schema entries for Redis and booking email routing.
-- `e7ef37f Respect media focal points in public images`
-  - Uses Payload `focalX` / `focalY` for public cropped hero, card, and gallery images.
-  - Adds tests for focal point rounding and bounds clamping.
-
-Local `.env` was redacted-reviewed on 2026-05-27 and passes `parseEnv()`, including Clerk webhook, Upstash Redis REST, Resend, R2, QStash, Neon, and Payload vars.
-
-Last shipped commits:
-
-- `e7ef37f Respect media focal points in public images`
-- `e8553df Harden booking submissions for production readiness`
-- `8dae33e Sync Clerk users into Payload customers`
-- `d25cedd Persist booking leads through Payload`
-- `12d2086 Harden public booking submissions`
-- `eda4691 Improve SEO and public page payloads`
-- `64d8feb Improve Payload-backed page performance`
 
 ## Immediate Production Follow-Up
 
@@ -111,17 +114,18 @@ For the current Clerk handoff, also inspect:
 
 ## Remaining High-Priority Work
 
-- Finish Clerk production webhook configuration and verify live sync.
-- Verify Vercel Production envs/redeploy for Redis rate limiting and Resend booking emails.
-- Add booking slot/capacity transaction locking if bookings mutate availability or `currentPax`.
-- Continue media/performance backlog in `docs/toiuu.md`, especially the P0/P1 items not yet landed:
-  - Vercel function region pinning to Singapore.
-  - Neon pooler URL/pool tuning.
-  - R2 cache-control/preconnect audit.
-  - Image strategy reconciliation after R2 variants: decide whether to keep pre-rendered variants only or re-enable Next image optimization for selected cases.
-- Add manual QA for a production booking submit and email delivery.
-- Start Layer 8 monetization work only after production booking readiness is stable.
-- Start Layer 9 online payment only after Pay Later booking flow is stable and audited.
+**Owner (non-dev) tasks — unblocks Layer 8 revenue:**
+
+- Register OTA partner programs: GetYourGuide → Viator → Klook → Civitatis → GuruWalk (priority order from `docs/OTA_INTEGRATIONS.md` §3). Hand the partner IDs back to dev to wire in.
+
+**Dev tasks — in order:**
+
+1. **Layer 8 K** — Move OTA partner IDs into Payload `partners` (or new `ota-partners`) collection so revenue switches on without a redeploy. Loading order: extend collection → migration → switch `src/lib/ota-providers.ts` to read partner ID from CMS at request time (cache-friendly). Documented in `docs/OTA_INTEGRATIONS.md`.
+2. **Layer 8 L** — Internal `/admin` affiliate-clicks dashboard: aggregate by `targetType`, `targetId`, `source`, day. Pure read view; underlying data is already being collected.
+3. Booking slot/capacity transaction locking if bookings mutate availability or `currentPax`.
+4. Production booking submit QA on the real domain — covered functionally by the Resend pass, but worth running once on the canonical hostname before indexing flips.
+5. Media/performance backlog in `docs/toiuu.md` (remaining P0/P1 items: Vercel function region pinning, Neon pooler tuning, R2 cache-control/preconnect audit, image strategy reconciliation).
+6. **Layer 9 Online Payment** — only after the above is stable and the Pay Later flow has been audited.
 
 ## Verification Baseline
 

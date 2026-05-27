@@ -42,12 +42,22 @@ Nếu chỉ có 1-2 dev, đi tuần tự theo đúng thứ tự trên. Không đ
 
 ### Trạng thái hiện tại
 
-**Cập nhật 2026-05-26:** dự án đang ở **Layer 7 - Trust + Engagement started**.
+**Cập nhật 2026-05-27:** dự án đang ở **Layer 8 - Monetization Without Payment, UI shipped, chờ partner IDs**.
 
-- Layer 1-4 đã có implementation chạy được: app scaffold, Payload collections, media pipeline, public pages, SEO/canonical/JSON-LD, robots/sitemap, cache và public payload optimization.
-- Layer 5 Booking Lead Engine đã landed cho luồng MVP: Server Action validation, plain-text sanitization, public create forced `Pending`, DB-backed idempotency, Payload/Postgres persistence.
-- Layer 7 đã bắt đầu bằng Clerk webhook sync `customers.clerkUserId`: `src/app/api/webhooks/clerk/route.ts` và `src/services/clerk-customer-sync.ts`.
-- Production còn thiếu cấu hình/QA ngoài code: verify Vercel Production envs cho Clerk webhook, Upstash Redis REST, Resend booking email routing; tạo Clerk webhook endpoint cho `user.created` / `user.updated`; redeploy; verify live Clerk sync và một booking/email flow thật.
+- Layer 1-6 đã landed đầy đủ cho luồng MVP. Layer 7 (Trust + Engagement) hoàn tất phần lõi: Clerk customer sync verified end-to-end (`pnpm qa:clerk-sync`), cookie consent banner + UTM share buttons live.
+- Layer 8 đã ship scaffold + UI/UX trên 3 surfaces:
+  - Homepage: section "Featured Experiences" (3 cards × GetYourGuide).
+  - Destination detail: section "Top things to do in {city}" (GetYourGuide + Viator).
+  - Tour detail: section "Similar experiences in {destination}" (GetYourGuide + Viator).
+- Click attribution infra ổn định: collection `affiliate-clicks`, route `POST /api/events/click` (Zod + rate-limit + SHA-256 IP hash), component `<TrackedLink>` (sendBeacon + fetch keepalive fallback, `rel="noopener noreferrer sponsored"`).
+- `src/lib/ota-providers.ts` định nghĩa 5 provider (GetYourGuide / Viator / Klook / Civitatis / GuruWalk). URL hiện tại trỏ trang search chung — **chưa có partner ID, doanh thu = 0**. Hướng dẫn nhét partner ID khi có account: `docs/OTA_INTEGRATIONS.md` § "Adding affiliate IDs".
+
+**Việc đang chờ trước khi đi tiếp:**
+
+1. Chủ sở hữu đăng ký tài khoản OTA (theo thứ tự priority trong `OTA_INTEGRATIONS.md` §3) → bàn giao partner ID.
+2. Dev wire partner ID qua Payload `partners` collection (Layer 8 K) thay vì hardcode — giúp flip revenue mà không redeploy.
+3. Dev xây dashboard nội bộ `/admin` aggregate click theo `targetType`, `targetId`, `source`, ngày (Layer 8 L).
+4. Sau đó: booking capacity locking, media/performance backlog, rồi Layer 9 Online Payment.
 
 Dev tiếp theo nên đọc `docs/CURRENT_STATUS.md` sau `CLAUDE.md` để biết điểm dừng chính xác, rồi mới chọn task tiếp theo trong roadmap này.
 
@@ -280,12 +290,20 @@ Inquiry mới **luôn** bắt đầu là `Pending`. Sales/ops chỉ chuyển san
 - `OTAWidget` reusable: `provider`, `city`, `experienceIds`, `variant`.
 - Graceful fallback nếu OTA script fail.
 
+### Trạng thái triển khai
+
+- ✅ **J/M – OTA UI scaffold** (`d1cda72`, `c75fd9d`): widget + click tracking + 3 surfaces (home, destination, tour). Revenue = 0 cho tới khi có partner IDs.
+- ✅ **Add-on click tracking** (`198c1aa`): add-on partner cards trên tour detail wrap qua `<TrackedLink>`.
+- ⏳ Owner: đăng ký partner programs theo thứ tự ở `OTA_INTEGRATIONS.md` §3.
+- ⏭ **Sprint K – CMS-driven partner IDs**: extend Payload `partners` (hoặc tạo `ota-partners`) collection, migration, đọc partner ID ở request time trong `src/lib/ota-providers.ts`. Mục tiêu: bật doanh thu mà không redeploy.
+- ⏭ **Sprint L – Affiliate clicks dashboard**: trang `/admin` aggregate clicks theo `targetType`, `targetId`, `source`, ngày. Read-only, dữ liệu đã có.
+
 ### Exit criteria
 
-- Affiliate/add-on click tracking ghi nhận được.
-- Widget fail không làm vỡ layout.
-- Tour của agency vẫn là CTA chính.
-- Có disclosure rõ ràng cho external partner/affiliate.
+- Affiliate/add-on click tracking ghi nhận được. ✅
+- Widget fail không làm vỡ layout. ✅ (Server-side render, không phụ thuộc script bên ngoài.)
+- Tour của agency vẫn là CTA chính. ✅ (OTA widget nằm dưới CTA chính, hero/booking aside không thay đổi.)
+- Có disclosure rõ ràng cho external partner/affiliate. ✅
 
 ---
 
