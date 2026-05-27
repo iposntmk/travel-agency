@@ -1,9 +1,11 @@
 "use server";
 
+import { headers } from "next/headers";
 import { bookingSubmitSchema, type BookingSubmitInput } from "@/schemas/booking";
 import { sanitizeOptionalPlainText } from "@/lib/sanitize";
 import { createInitialStatusHistory } from "@/services/booking-transitions";
 import { createBookingOnce } from "@/services/booking-repository";
+import { sendBookingInquiryEmails } from "@/services/booking-emails";
 import { checkRateLimit } from "@/services/rate-limit";
 import type { BookingRecord } from "@/types/domain";
 
@@ -22,7 +24,7 @@ export type ActionResult<T> =
 
 export async function submitBooking(
   input: BookingSubmitInput,
-  rateLimitKey = input.email
+  rateLimitKey?: string
 ): Promise<ActionResult<{ booking: BookingRecord; duplicate: boolean }>> {
   const parsed = bookingSubmitSchema.safeParse(input);
 
@@ -37,7 +39,7 @@ export async function submitBooking(
     };
   }
 
-  if (!checkRateLimit(rateLimitKey)) {
+  if (!(await checkRateLimit(await bookingRateLimitKey(parsed.data, rateLimitKey)))) {
     return {
       ok: false,
       error: {
@@ -68,6 +70,10 @@ export async function submitBooking(
     };
 
     const result = await createBookingOnce(booking);
+    if (!result.duplicate) {
+      await sendBookingInquiryEmails(result.booking).catch(() => undefined);
+    }
+
     return { ok: true, data: result };
   } catch {
     return {
@@ -77,5 +83,19 @@ export async function submitBooking(
         message: "Booking could not be submitted. Please contact our team directly."
       }
     };
+  }
+}
+
+async function bookingRateLimitKey(input: BookingSubmitInput, explicitKey?: string): Promise<string> {
+  const requester = explicitKey ?? (await requestIp()) ?? "anonymous";
+  return `${requester}:${input.email}`;
+}
+
+async function requestIp(): Promise<string | undefined> {
+  try {
+    const requestHeaders = await headers();
+    return requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() || requestHeaders.get("x-real-ip") || undefined;
+  } catch {
+    return undefined;
   }
 }

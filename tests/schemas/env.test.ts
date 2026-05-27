@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   parseEnv,
+  parseBookingEmailEnv,
+  parseBookingRateLimitEnv,
   parseClerkWebhookEnv,
   parseNextConfigEnv,
   parsePayloadConfigEnv,
@@ -22,7 +24,11 @@ const validEnv = {
   QSTASH_TOKEN: "token",
   QSTASH_CURRENT_SIGNING_KEY: "current",
   QSTASH_NEXT_SIGNING_KEY: "next",
-  RESEND_API_KEY: "resend"
+  UPSTASH_REDIS_REST_URL: "https://redis.example.com",
+  UPSTASH_REDIS_REST_TOKEN: "redis-token",
+  RESEND_API_KEY: "resend",
+  RESEND_FROM_EMAIL: "An's Travel Agency <bookings@example.test>",
+  BOOKING_SALES_EMAIL: "sales@example.test"
 };
 
 describe("env schema", () => {
@@ -73,6 +79,26 @@ describe("env schema", () => {
       CLERK_WEBHOOK_SIGNING_SECRET: "whsec_test"
     });
     expect(() => parseClerkWebhookEnv({})).toThrow();
+  });
+
+  it("requires Redis rate limit env in production but permits local fallback", () => {
+    expect(parseBookingRateLimitEnv(validEnv)).toMatchObject({
+      UPSTASH_REDIS_REST_URL: validEnv.UPSTASH_REDIS_REST_URL,
+      UPSTASH_REDIS_REST_TOKEN: validEnv.UPSTASH_REDIS_REST_TOKEN
+    });
+
+    expect(parseBookingRateLimitEnv({ NODE_ENV: "test" })).toBeUndefined();
+    expect(() => parseBookingRateLimitEnv({ NODE_ENV: "production" })).toThrow();
+  });
+
+  it("validates booking email routing env separately", () => {
+    expect(parseBookingEmailEnv(validEnv)).toEqual({
+      RESEND_API_KEY: validEnv.RESEND_API_KEY,
+      RESEND_FROM_EMAIL: validEnv.RESEND_FROM_EMAIL,
+      BOOKING_SALES_EMAIL: validEnv.BOOKING_SALES_EMAIL
+    });
+
+    expect(() => parseBookingEmailEnv({ ...validEnv, BOOKING_SALES_EMAIL: "bad" })).toThrow();
   });
 
   it("normalizes optional local dev origins", () => {

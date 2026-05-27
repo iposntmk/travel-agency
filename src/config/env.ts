@@ -6,6 +6,7 @@ const booleanFlag = z.preprocess(
   (value) => (value === "" ? undefined : value),
   z.enum(["true", "false"]).default("false").transform((value) => value === "true")
 );
+const requiredEmail = z.string().trim().email();
 
 export const envSchema = z.object({
   DATABASE_URL: z.string().url(),
@@ -23,7 +24,11 @@ export const envSchema = z.object({
   QSTASH_TOKEN: z.string().min(1),
   QSTASH_CURRENT_SIGNING_KEY: z.string().min(1),
   QSTASH_NEXT_SIGNING_KEY: z.string().min(1),
+  UPSTASH_REDIS_REST_URL: z.string().url(),
+  UPSTASH_REDIS_REST_TOKEN: z.string().min(1),
   RESEND_API_KEY: z.string().min(1),
+  RESEND_FROM_EMAIL: z.string().min(3),
+  BOOKING_SALES_EMAIL: requiredEmail,
   SENTRY_DSN: z.string().url().optional().or(z.literal("")),
   ALLOW_INDEXING: booleanFlag,
   DEV_ORIGIN: optionalUrl,
@@ -80,6 +85,22 @@ export const clerkWebhookEnvSchema = z.object({
 
 export type ClerkWebhookEnv = z.infer<typeof clerkWebhookEnvSchema>;
 
+export const bookingRateLimitEnvSchema = z.object({
+  UPSTASH_REDIS_REST_URL: z.string().url(),
+  UPSTASH_REDIS_REST_TOKEN: z.string().min(1),
+  NODE_ENV: nodeEnv
+});
+
+export type BookingRateLimitEnv = z.infer<typeof bookingRateLimitEnvSchema>;
+
+export const bookingEmailEnvSchema = envSchema.pick({
+  RESEND_API_KEY: true,
+  RESEND_FROM_EMAIL: true,
+  BOOKING_SALES_EMAIL: true
+});
+
+export type BookingEmailEnv = z.infer<typeof bookingEmailEnvSchema>;
+
 export const payloadStorageEnvSchema = envSchema.pick({
   R2_ACCOUNT_ID: true,
   R2_BUCKET: true,
@@ -112,6 +133,28 @@ export function parseHealthEnv(source: Record<string, string | undefined>): Heal
 
 export function parseClerkWebhookEnv(source: Record<string, string | undefined>): ClerkWebhookEnv {
   return clerkWebhookEnvSchema.parse(source);
+}
+
+export function parseBookingRateLimitEnv(
+  source: Record<string, string | undefined>
+): BookingRateLimitEnv | undefined {
+  const hasUrl = Boolean(source.UPSTASH_REDIS_REST_URL);
+  const hasToken = Boolean(source.UPSTASH_REDIS_REST_TOKEN);
+  const environment = nodeEnv.parse(source.NODE_ENV);
+
+  if (!hasUrl && !hasToken) {
+    if (environment === "production") {
+      return bookingRateLimitEnvSchema.parse(source);
+    }
+
+    return undefined;
+  }
+
+  return bookingRateLimitEnvSchema.parse(source);
+}
+
+export function parseBookingEmailEnv(source: Record<string, string | undefined>): BookingEmailEnv {
+  return bookingEmailEnvSchema.parse(source);
 }
 
 export function parsePayloadStorageEnv(
@@ -194,6 +237,28 @@ export function getClerkWebhookEnv(): ClerkWebhookEnv {
   }
 
   return cachedClerkWebhookEnv;
+}
+
+let cachedBookingRateLimitEnv: BookingRateLimitEnv | undefined;
+let didReadBookingRateLimitEnv = false;
+
+export function getBookingRateLimitEnv(): BookingRateLimitEnv | undefined {
+  if (!didReadBookingRateLimitEnv) {
+    cachedBookingRateLimitEnv = parseBookingRateLimitEnv(process.env);
+    didReadBookingRateLimitEnv = true;
+  }
+
+  return cachedBookingRateLimitEnv;
+}
+
+let cachedBookingEmailEnv: BookingEmailEnv | undefined;
+
+export function getBookingEmailEnv(): BookingEmailEnv {
+  if (!cachedBookingEmailEnv) {
+    cachedBookingEmailEnv = parseBookingEmailEnv(process.env);
+  }
+
+  return cachedBookingEmailEnv;
 }
 
 let cachedPayloadStorageEnv: PayloadStorageEnv | undefined;
