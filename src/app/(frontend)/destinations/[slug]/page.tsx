@@ -118,7 +118,6 @@ export default async function DestinationDetailPage({ params }: PageProps) {
               sizes="(min-width: 768px) 60vw, 100vw"
               className="object-cover"
               style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined}
-              unoptimized
             />
           </div>
           {html ? (

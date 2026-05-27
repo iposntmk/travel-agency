@@ -158,7 +158,6 @@ export default async function TourDetailPage({ params }: PageProps) {
               sizes="(min-width: 768px) 60vw, 100vw"
               className="object-cover"
               style={heroImage.objectPosition ? { objectPosition: heroImage.objectPosition } : undefined}
-              unoptimized
             />
           </div>
 
@@ -175,7 +174,6 @@ export default async function TourDetailPage({ params }: PageProps) {
                       sizes="20vw"
                       className="object-cover"
                       style={img.objectPosition ? { objectPosition: img.objectPosition } : undefined}
-                      unoptimized
                     />
                   </div>
                 );

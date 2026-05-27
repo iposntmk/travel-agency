@@ -49,7 +49,6 @@ export default async function BlogPage() {
                       sizes="(min-width: 768px) 33vw, 100vw"
                       className="object-cover"
                       style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined}
-                      unoptimized
                     />
                   </Link>
                   <div className="flex flex-1 flex-col gap-2 p-4">
