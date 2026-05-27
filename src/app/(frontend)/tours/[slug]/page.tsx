@@ -251,7 +251,7 @@ export default async function TourDetailPage({ params }: PageProps) {
           ) : null}
 
           <Link
-            href="/booking/confirmation"
+            href={`/booking/${tour.slug}`}
             className="block w-full rounded-md bg-brand-blue px-4 py-3 text-center text-sm font-semibold text-white hover:bg-blue-800"
           >
             {isFree ? "Register" : "Request this tour"}
