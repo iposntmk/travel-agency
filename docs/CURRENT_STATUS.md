@@ -1,6 +1,6 @@
 # Current Status
 
-**Updated:** 2026-05-27 (Layer 8 L internal affiliate-clicks dashboard shipped)
+**Updated:** 2026-05-27 (Layer 8 L dashboard + frontend polish Stages 1-5 shipped)
 
 ## Current Layer / Stage
 
@@ -14,7 +14,15 @@ Layers 1-7 are complete enough to support the current production flow:
 - Layer 4 Public Pages: Payload-backed tours, destinations, blog, sitemap, robots, metadata, JSON-LD, cached public reads.
 - Layer 5 Booking Lead Engine: booking Server Action, validation, sanitization, Upstash Redis-backed rate-limit guard, DB-backed idempotency, Payload/Postgres persistence, Resend customer/internal booking emails.
 - Layer 6 Free Tours: `/free-tours` page, free-tour upsell on confirmation page, `source` tracking through the booking funnel.
-- Layer 7 Trust + Engagement: Clerk customer sync (live + verified), cookie consent banner (`tc.consent.v1` localStorage gate), social share buttons (FB / X / WhatsApp / Email / copy) with UTM tagging.
+- Layer 7 Trust + Engagement: Clerk customer sync (live + verified), cookie consent banner (`tc.consent.v1` localStorage gate, navy rounded card + cookie mark), social share buttons (FB / X / WhatsApp / Email round-icon buttons + Copy-link with check feedback) with UTM tagging.
+
+Frontend polish (2026-05-27, 5 stages):
+
+- Stage 1 — design tokens (`navy.50–navy.950` scale + `mist`, `shadow-card`/`shadow-elevated`, `max-w-page`, `ease-out-soft`), Inter via `next/font`, `.sr-only` + `.skip-link` + `prefers-reduced-motion` guard, **SiteHeader** with sticky-on-scroll + backdrop blur + hamburger drawer (ESC closes, focus management, body scroll lock, `aria-current`/`aria-expanded`/`aria-controls`), 4-column **SiteFooter**.
+- Stage 2 — **HomeHero** (navy gradient + radial highlights + dot pattern, gold-dot eyebrow pill, glass `DestinationsPanel`, glass `TrustStrip`), **WhyTcTravel** 3-column with inline shield/compass/heart icons, shared **SectionBand**/`SectionHead`/`EmptyState`/`PageHero` primitives, **TourCard v2** (rounded-2xl, hover lift, image scale, destination badge + price/free chip, arrow CTA).
+- Stage 3 — listing pages (`/tours`, `/destinations`, `/blog`, `/free-tours`) use `PageHero` + `Breadcrumb` (default + on-dark variants); new shared `DestinationCard` + `BlogCard`; navy filter chips with `aria-pressed`; navy-50 skeleton; refined empty states.
+- Stage 4 — detail pages (`tours/[slug]`, `destinations/[slug]`, `blog/[slug]`) use shared `Breadcrumb`; rounded-2xl hero on navy-50 + `shadow-card`; prose uses `font-display` headings, navy links, relaxed leading; tour detail extracted into `TourBookingAside` (sticky `top-24`, prominent navy CTA, share buttons), `TourItinerary` (numbered chip + gold time eyebrow), `TourAddOns` (hover-lift cards) to stay under the 250-line page cap.
+- Stage 5 — ConsentBanner refresh (floating rounded-2xl + backdrop blur + cookie-mark icon, pill CTAs, `pointer-events: none` outside panel so page stays interactive), ShareButtons refresh (round SVG-icon buttons + accessible labels + focus ring).
 
 Layer 8 implementation status:
 
