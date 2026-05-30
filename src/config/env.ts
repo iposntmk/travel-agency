@@ -28,6 +28,7 @@ export const envSchema = z.object({
   UPSTASH_REDIS_REST_TOKEN: z.string().min(1),
   RESEND_API_KEY: z.string().min(1),
   RESEND_FROM_EMAIL: z.string().min(3),
+  RESEND_AUDIENCE_ID: z.string().min(1).optional(),
   BOOKING_SALES_EMAIL: requiredEmail,
   SENTRY_DSN: z.string().url().optional().or(z.literal("")),
   ALLOW_INDEXING: booleanFlag,
@@ -101,6 +102,13 @@ export const bookingEmailEnvSchema = envSchema.pick({
 
 export type BookingEmailEnv = z.infer<typeof bookingEmailEnvSchema>;
 
+export const newsletterEnvSchema = envSchema.pick({
+  RESEND_API_KEY: true,
+  RESEND_AUDIENCE_ID: true
+});
+
+export type NewsletterEnv = z.infer<typeof newsletterEnvSchema>;
+
 export const payloadStorageEnvSchema = envSchema.pick({
   R2_ACCOUNT_ID: true,
   R2_BUCKET: true,
@@ -155,6 +163,10 @@ export function parseBookingRateLimitEnv(
 
 export function parseBookingEmailEnv(source: Record<string, string | undefined>): BookingEmailEnv {
   return bookingEmailEnvSchema.parse(source);
+}
+
+export function parseNewsletterEnv(source: Record<string, string | undefined>): NewsletterEnv {
+  return newsletterEnvSchema.parse(source);
 }
 
 export function parsePayloadStorageEnv(
@@ -259,6 +271,16 @@ export function getBookingEmailEnv(): BookingEmailEnv {
   }
 
   return cachedBookingEmailEnv;
+}
+
+let cachedNewsletterEnv: NewsletterEnv | undefined;
+
+export function getNewsletterEnv(): NewsletterEnv {
+  if (!cachedNewsletterEnv) {
+    cachedNewsletterEnv = parseNewsletterEnv(process.env);
+  }
+
+  return cachedNewsletterEnv;
 }
 
 let cachedPayloadStorageEnv: PayloadStorageEnv | undefined;
