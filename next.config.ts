@@ -18,10 +18,13 @@ const cspReportOnly = [
   "base-uri 'self'",
   "form-action 'self'",
   "frame-ancestors 'self'",
-  "upgrade-insecure-requests"
+  "upgrade-insecure-requests",
+  "report-uri /api/csp-report",
+  "report-to csp-endpoint"
 ].join("; ");
 const securityHeaders = [
   { key: "Content-Security-Policy-Report-Only", value: cspReportOnly },
+  { key: "Reporting-Endpoints", value: 'csp-endpoint="/api/csp-report"' },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" }
