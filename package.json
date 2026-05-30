@@ -29,6 +29,8 @@
     "@payloadcms/storage-s3": "3.84.1",
     "@radix-ui/react-slot": "^1.2.4",
     "@upstash/qstash": "^2.11.0",
+    "@vercel/analytics": "2.0.1",
+    "@vercel/speed-insights": "2.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.16.0",
@@ -59,13 +61,5 @@
     "typescript-eslint": "^8.32.1",
     "vitest": "^3.1.4"
   },
-  "packageManager": "pnpm@10.11.0",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@clerk/shared",
-      "esbuild",
-      "sharp",
-      "unrs-resolver"
-    ]
-  }
+  "packageManager": "pnpm@10.11.0"
 }
