@@ -1,7 +1,7 @@
 import "server-only";
 
 import sharp from "sharp";
-import { IMMUTABLE_CACHE_CONTROL, r2GetObject, r2PutObject, r2PublicUrl } from "@/lib/r2";
+import { IMMUTABLE_CACHE_CONTROL, r2GetObject, r2PutObject, r2PublicUrl, r2SetCacheControl } from "@/lib/r2";
 
 export interface MediaVariants {
   thumb: { avif: string; webp: string };
@@ -17,6 +17,13 @@ const PRESETS = {
 } as const;
 
 type PresetName = keyof typeof PRESETS;
+
+// sharp format -> MIME for backfilling Cache-Control on the original object.
+const ORIGINAL_MIME: Record<string, string> = {
+  jpeg: "image/jpeg",
+  png: "image/png",
+  webp: "image/webp"
+};
 
 export function validateDimensions(width: number | undefined, height: number | undefined): void {
   if ((width ?? 0) > 8000 || (height ?? 0) > 8000) {
@@ -50,6 +57,15 @@ export async function generateVariants(mediaId: string, originalKey: string): Pr
   };
 
   const tasks: Array<() => Promise<void>> = [];
+
+  // The admin upload presigned URL does not set Cache-Control, so backfill the
+  // immutable header on the original in place once we know its real format.
+  const originalContentType = ORIGINAL_MIME[meta.format ?? ""];
+  if (originalContentType) {
+    tasks.push(async () => {
+      await r2SetCacheControl(originalKey, originalContentType, IMMUTABLE_CACHE_CONTROL);
+    });
+  }
 
   for (const [name, preset] of Object.entries(PRESETS) as Array<[PresetName, (typeof PRESETS)[PresetName]]>) {
     tasks.push(async () => {

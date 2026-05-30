@@ -1,18 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { validateDimensions, variantKey, generateVariants } from "@/services/media-processor";
-import { r2PutObject } from "@/lib/r2";
+import { r2PutObject, r2SetCacheControl } from "@/lib/r2";
 
 vi.mock("@/lib/r2", () => ({
   IMMUTABLE_CACHE_CONTROL: "public, max-age=31536000, immutable",
   r2GetObject: vi.fn().mockResolvedValue(Buffer.from("fake-image-data")),
   r2PutObject: vi.fn().mockResolvedValue(undefined),
+  r2SetCacheControl: vi.fn().mockResolvedValue(undefined),
   r2PublicUrl: (key: string) => `https://cdn.example.com/${key}`,
 }));
 
 vi.mock("sharp", () => {
   const mkBuf = () => Promise.resolve(Buffer.from("processed"));
   const instance = {
-    metadata: vi.fn().mockResolvedValue({ width: 1200, height: 800 }),
+    metadata: vi.fn().mockResolvedValue({ width: 1200, height: 800, format: "jpeg" }),
     resize: function () {
       return this;
     },
@@ -102,6 +103,16 @@ describe("generateVariants", () => {
       expect.stringContaining("variants/42/"),
       expect.any(Buffer),
       expect.stringMatching(/^image\//),
+      "public, max-age=31536000, immutable"
+    );
+  });
+
+  it("backfills immutable Cache-Control on the original object", async () => {
+    await generateVariants("42", "originals/2026/05/42/original.jpg");
+
+    expect(r2SetCacheControl).toHaveBeenCalledWith(
+      "originals/2026/05/42/original.jpg",
+      "image/jpeg",
       "public, max-age=31536000, immutable"
     );
   });
