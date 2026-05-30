@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import { HomeHero } from "@/components/home/home-hero";
+import { NewsletterSignup } from "@/components/home/newsletter-signup";
+import { SeasonalBanner } from "@/components/home/seasonal-banner";
+import { Testimonials } from "@/components/home/testimonials";
 import { WhyTcTravel } from "@/components/home/why-tc-travel";
+import { DestinationCard } from "@/components/destination-card";
 import { JsonLd } from "@/components/json-ld";
 import { OtaWidget } from "@/components/ota-widget";
 import { EmptyState, SectionBand, SectionHead } from "@/components/section";
 import { TourCard } from "@/components/tour-card";
 import { getSiteUrl } from "@/config/env";
-import { getDestinations } from "@/lib/cms";
+import { getDestinations, getFeaturedReviews, getSiteSettings } from "@/lib/cms";
 import { getToursForList } from "@/lib/cms-list";
 import { organizationJsonLd, webSiteJsonLd } from "@/lib/structured-data";
 
@@ -18,12 +22,14 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   const siteUrl = getSiteUrl().replace(/\/$/, "");
-  const [featuredTours, freeTours, destinations] = await Promise.all([
+  const [featuredTours, freeTours, destinations, reviews, siteSettings] = await Promise.all([
     getToursForList({ featuredOnly: true, limit: 3 }).then((tours) =>
       tours.length > 0 ? tours : getToursForList({ limit: 3 })
     ),
     getToursForList({ freeOnly: true, limit: 3 }),
-    getDestinations(6)
+    getDestinations(6),
+    getFeaturedReviews(3),
+    getSiteSettings()
   ]);
 
   return (
@@ -31,6 +37,8 @@ export default async function HomePage() {
       <JsonLd data={[organizationJsonLd(siteUrl), webSiteJsonLd(siteUrl)]} />
 
       <HomeHero destinations={destinations.slice(0, 3)} />
+
+      <SeasonalBanner />
 
       <SectionBand>
         <SectionHead
@@ -53,8 +61,25 @@ export default async function HomePage() {
         )}
       </SectionBand>
 
-      {freeTours.length > 0 ? (
+      {destinations.length > 0 ? (
         <SectionBand tone="soft">
+          <SectionHead
+            eyebrow="Where to go"
+            title="Popular Destinations"
+            subtitle="Central Vietnam and beyond — explore tours, car transfers, guides, and things to do in each city hub."
+            actionHref="/destinations"
+            actionLabel="All destinations"
+          />
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {destinations.map((destination) => (
+              <DestinationCard key={destination.id} destination={destination} />
+            ))}
+          </div>
+        </SectionBand>
+      ) : null}
+
+      {freeTours.length > 0 ? (
+        <SectionBand>
           <SectionHead
             eyebrow="Lead with experience"
             title="Join Our Free Tours"
@@ -77,7 +102,7 @@ export default async function HomePage() {
       ) : null}
 
       {destinations.length > 0 ? (
-        <SectionBand>
+        <SectionBand tone="soft">
           <SectionHead
             eyebrow="External partners"
             title="Featured Experiences"
@@ -97,7 +122,11 @@ export default async function HomePage() {
         </SectionBand>
       ) : null}
 
+      <Testimonials reviews={reviews} trust={siteSettings?.trust} />
+
       <WhyTcTravel />
+
+      <NewsletterSignup />
     </main>
   );
 }
