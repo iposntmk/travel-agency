@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface SectionBandProps {
@@ -56,15 +57,7 @@ export function SectionHead({
           className="inline-flex items-center gap-1 text-sm font-semibold text-navy-700 transition hover:text-navy-900"
         >
           {actionLabel}
-          <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" aria-hidden="true">
-            <path
-              d="M5 12h14M13 6l6 6-6 6"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden="true" />
         </Link>
       ) : null}
     </div>

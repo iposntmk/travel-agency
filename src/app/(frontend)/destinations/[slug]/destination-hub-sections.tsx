@@ -1,5 +1,6 @@
 import { BlogCard } from "@/components/blog-card";
 import { CarRentalCard } from "@/components/car-rental-card";
+import { MobileScrollRow } from "@/components/mobile-scroll-row";
 import { SectionHead } from "@/components/section";
 import type { DestinationHub } from "@/lib/cms";
 
@@ -20,26 +21,26 @@ export function DestinationHubSections({ hub }: Props) {
             actionHref={`/car-rentals?destination=${destination.slug}`}
             actionLabel="View routes"
           />
-          <div className="flex gap-5 overflow-x-auto pb-3 md:grid md:grid-cols-3 md:overflow-visible">
+          <MobileScrollRow className="gap-5 pb-3 md:grid md:grid-cols-3 md:overflow-visible">
             {carRentals.slice(0, 3).map((rental) => (
               <div key={rental.id} className="w-[82vw] shrink-0 md:w-auto">
                 <CarRentalCard rental={rental} />
               </div>
             ))}
-          </div>
+          </MobileScrollRow>
         </section>
       ) : null}
 
       {guides.length > 0 ? (
         <section className="mt-16">
           <SectionHead eyebrow="Travel guide" title={`${destination.title} guide`} actionHref="/blog" actionLabel="All guides" />
-          <div className="flex gap-5 overflow-x-auto pb-3 md:grid md:grid-cols-3 md:overflow-visible">
+          <MobileScrollRow className="gap-5 pb-3 md:grid md:grid-cols-3 md:overflow-visible">
             {guides.slice(0, 3).map((post) => (
               <div key={post.id} className="w-[82vw] shrink-0 md:w-auto">
                 <BlogCard post={post} />
               </div>
             ))}
-          </div>
+          </MobileScrollRow>
         </section>
       ) : null}
 

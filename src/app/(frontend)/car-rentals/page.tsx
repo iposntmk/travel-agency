@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { CarRentalCard } from "@/components/car-rental-card";
+import { MobileScrollRow } from "@/components/mobile-scroll-row";
 import { PageHero } from "@/components/section";
 import { getCarRentalsForList, getDestinations } from "@/lib/cms";
 
@@ -48,7 +49,7 @@ export default async function CarRentalsPage({ searchParams }: PageProps) {
       </PageHero>
       <section className="bg-white py-12 md:py-16">
         <div className="mx-auto max-w-page px-4">
-          <div className="mb-6 flex gap-2 overflow-x-auto pb-2">
+          <MobileScrollRow className="mb-6 gap-2 pb-2">
             <Link className="shrink-0 rounded-full bg-[#047857] px-4 py-2 text-sm font-semibold text-white" href="/car-rentals">
               All routes
             </Link>
@@ -61,7 +62,7 @@ export default async function CarRentalsPage({ searchParams }: PageProps) {
                 {destination.title}
               </Link>
             ))}
-          </div>
+          </MobileScrollRow>
           {rentals.length === 0 ? (
             <p className="rounded-lg border border-dashed border-slate-200 p-8 text-center text-sm text-slate-500">
               No car rentals match these filters.

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MobileScrollRow } from "@/components/mobile-scroll-row";
 
 interface Props {
   slug: string;
@@ -9,12 +10,15 @@ interface Props {
 
 export function TourMobileTabs() {
   return (
-    <nav className="sticky top-[65px] z-20 -mx-4 flex gap-4 overflow-x-auto border-y border-slate-200 bg-white/95 px-4 py-3 text-sm font-semibold text-slate-700 backdrop-blur md:hidden">
+    <MobileScrollRow
+      as="nav"
+      className="sticky top-[65px] z-20 -mx-4 gap-4 border-y border-slate-200 bg-white/95 px-4 py-3 text-sm font-semibold text-slate-700 backdrop-blur md:hidden"
+    >
       <a href="#overview">Overview</a>
       <a href="#itinerary">Itinerary</a>
       <a href="#price">Price</a>
       <a href="#reviews">Reviews</a>
-    </nav>
+    </MobileScrollRow>
   );
 }
 

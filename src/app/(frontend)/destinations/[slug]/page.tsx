@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { JsonLd } from "@/components/json-ld";
@@ -9,6 +10,7 @@ import { SectionHead } from "@/components/section";
 import { TourCard } from "@/components/tour-card";
 import { getSiteUrl } from "@/config/env";
 import { getDestinationBySlug, getDestinationHub, getDestinations } from "@/lib/cms";
+import { destinationRegionBestSeason, destinationRegionLabel } from "@/lib/destination-regions";
 import { lexicalToHtml, lexicalToPlainText } from "@/lib/lexical";
 import { resolveImage, resolveOgImage } from "@/lib/media";
 import { absoluteUrl, breadcrumbJsonLd, touristDestinationJsonLd } from "@/lib/structured-data";
@@ -51,19 +53,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-const REGION_BEST_SEASON: Record<string, string> = {
-  central:
-    "February to August — dry season is best for beaches and old town walks. Heaviest rain falls from October to early December.",
-  north: "October to April — cooler, drier months ideal for trekking and city exploration.",
-  south: "December to April — dry season; rest of the year sees afternoon showers."
-};
-
-const REGION_LABEL: Record<string, string> = {
-  central: "Central Vietnam",
-  north: "Northern Vietnam",
-  south: "Southern Vietnam"
-};
-
 export default async function DestinationDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const hub = await getDestinationHub(slug);
@@ -88,8 +77,8 @@ export default async function DestinationDetailPage({ params }: PageProps) {
     `Tours in ${destination.title}.`;
   const siteUrl = getSiteUrl().replace(/\/$/, "");
   const destinationUrl = absoluteUrl(siteUrl, `/destinations/${destination.slug}`);
-  const bestSeason = details.bestTimeToVisit || (destination.region ? REGION_BEST_SEASON[destination.region] : undefined);
-  const regionLabel = destination.region ? REGION_LABEL[destination.region] : null;
+  const bestSeason = details.bestTimeToVisit || destinationRegionBestSeason(destination.region);
+  const regionLabel = destinationRegionLabel(destination.region);
 
   return (
     <main className="bg-mist pb-20">
@@ -160,15 +149,7 @@ export default async function DestinationDetailPage({ params }: PageProps) {
                 className="mt-5 inline-flex items-center gap-1 rounded-full bg-navy-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-navy-800"
               >
                 See tours
-                <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" aria-hidden="true">
-                  <path
-                    d="M5 12h14M13 6l6 6-6 6"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden="true" />
               </Link>
             </aside>
           ) : null}

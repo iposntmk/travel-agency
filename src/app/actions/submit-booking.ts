@@ -1,6 +1,5 @@
 "use server";
 
-import { headers } from "next/headers";
 import { bookingSubmitSchema, type BookingSubmitInput } from "@/schemas/booking";
 import { sanitizeOptionalPlainText } from "@/lib/sanitize";
 import { createInitialStatusHistory } from "@/services/booking-transitions";
@@ -8,6 +7,7 @@ import { createBookingOnce } from "@/services/booking-repository";
 import { sendBookingInquiryEmails } from "@/services/booking-emails";
 import { checkRateLimit } from "@/services/rate-limit";
 import type { BookingRecord } from "@/types/domain";
+import { requestIp } from "./request-ip";
 
 type ActionErrorType = "validation" | "business" | "rate-limit" | "system";
 
@@ -89,13 +89,4 @@ export async function submitBooking(
 async function bookingRateLimitKey(input: BookingSubmitInput, explicitKey?: string): Promise<string> {
   const requester = explicitKey ?? (await requestIp()) ?? "anonymous";
   return `${requester}:${input.email}`;
-}
-
-async function requestIp(): Promise<string | undefined> {
-  try {
-    const requestHeaders = await headers();
-    return requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() || requestHeaders.get("x-real-ip") || undefined;
-  } catch {
-    return undefined;
-  }
 }

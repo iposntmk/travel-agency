@@ -187,110 +187,32 @@ export function parsePayloadStorageEnv(
   return payloadStorageEnvSchema.parse(values);
 }
 
-let cachedEnv: Env | undefined;
+function createEnvGetter<T>(parseSource: (source: Record<string, string | undefined>) => T): () => T {
+  let didRead = false;
+  let cached: T;
 
-export function getEnv(): Env {
-  if (!cachedEnv) {
-    cachedEnv = parseEnv(process.env);
-  }
+  return () => {
+    if (!didRead) {
+      cached = parseSource(process.env);
+      didRead = true;
+    }
 
-  return cachedEnv;
+    return cached;
+  };
 }
 
-let cachedPayloadConfigEnv: PayloadConfigEnv | undefined;
-
-export function getPayloadConfigEnv(): PayloadConfigEnv {
-  if (!cachedPayloadConfigEnv) {
-    cachedPayloadConfigEnv = parsePayloadConfigEnv(process.env);
-  }
-
-  return cachedPayloadConfigEnv;
-}
-
-let cachedNextConfigEnv: NextConfigEnv | undefined;
-
-export function getNextConfigEnv(): NextConfigEnv {
-  if (!cachedNextConfigEnv) {
-    cachedNextConfigEnv = parseNextConfigEnv(process.env);
-  }
-
-  return cachedNextConfigEnv;
-}
-
-let cachedSeoEnv: SeoEnv | undefined;
-
-export function getSeoEnv(): SeoEnv {
-  if (!cachedSeoEnv) {
-    cachedSeoEnv = parseSeoEnv(process.env);
-  }
-
-  return cachedSeoEnv;
-}
+export const getEnv = createEnvGetter(parseEnv);
+export const getPayloadConfigEnv = createEnvGetter(parsePayloadConfigEnv);
+export const getNextConfigEnv = createEnvGetter(parseNextConfigEnv);
+export const getSeoEnv = createEnvGetter(parseSeoEnv);
 
 export function getSiteUrl(): string {
   return getSeoEnv().NEXT_PUBLIC_SITE_URL!;
 }
 
-let cachedHealthEnv: HealthEnv | undefined;
-
-export function getHealthEnv(): HealthEnv {
-  if (!cachedHealthEnv) {
-    cachedHealthEnv = parseHealthEnv(process.env);
-  }
-
-  return cachedHealthEnv;
-}
-
-let cachedClerkWebhookEnv: ClerkWebhookEnv | undefined;
-
-export function getClerkWebhookEnv(): ClerkWebhookEnv {
-  if (!cachedClerkWebhookEnv) {
-    cachedClerkWebhookEnv = parseClerkWebhookEnv(process.env);
-  }
-
-  return cachedClerkWebhookEnv;
-}
-
-let cachedBookingRateLimitEnv: BookingRateLimitEnv | undefined;
-let didReadBookingRateLimitEnv = false;
-
-export function getBookingRateLimitEnv(): BookingRateLimitEnv | undefined {
-  if (!didReadBookingRateLimitEnv) {
-    cachedBookingRateLimitEnv = parseBookingRateLimitEnv(process.env);
-    didReadBookingRateLimitEnv = true;
-  }
-
-  return cachedBookingRateLimitEnv;
-}
-
-let cachedBookingEmailEnv: BookingEmailEnv | undefined;
-
-export function getBookingEmailEnv(): BookingEmailEnv {
-  if (!cachedBookingEmailEnv) {
-    cachedBookingEmailEnv = parseBookingEmailEnv(process.env);
-  }
-
-  return cachedBookingEmailEnv;
-}
-
-let cachedNewsletterEnv: NewsletterEnv | undefined;
-
-export function getNewsletterEnv(): NewsletterEnv {
-  if (!cachedNewsletterEnv) {
-    cachedNewsletterEnv = parseNewsletterEnv(process.env);
-  }
-
-  return cachedNewsletterEnv;
-}
-
-let cachedPayloadStorageEnv: PayloadStorageEnv | undefined;
-let didReadPayloadStorageEnv = false;
-
-export function getPayloadStorageEnv(): PayloadStorageEnv | undefined {
-  if (!didReadPayloadStorageEnv) {
-    cachedPayloadStorageEnv = parsePayloadStorageEnv(process.env);
-    didReadPayloadStorageEnv = true;
-  }
-
-  return cachedPayloadStorageEnv;
-}
+export const getHealthEnv = createEnvGetter(parseHealthEnv);
+export const getClerkWebhookEnv = createEnvGetter(parseClerkWebhookEnv);
+export const getBookingRateLimitEnv = createEnvGetter(parseBookingRateLimitEnv);
+export const getBookingEmailEnv = createEnvGetter(parseBookingEmailEnv);
+export const getNewsletterEnv = createEnvGetter(parseNewsletterEnv);
+export const getPayloadStorageEnv = createEnvGetter(parsePayloadStorageEnv);

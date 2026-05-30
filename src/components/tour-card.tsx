@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import type { Tour, Destination } from "@/payload-types";
 import { resolveImage } from "@/lib/media";
 
@@ -81,15 +82,7 @@ export function TourCard({ tour, ctaHref, ctaLabel }: TourCardProps) {
             className="inline-flex items-center gap-1 rounded-full bg-[#047857] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#065F46]"
           >
             {label}
-            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" aria-hidden="true">
-              <path
-                d="M5 12h14M13 6l6 6-6 6"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden="true" />
           </Link>
         </div>
       </div>

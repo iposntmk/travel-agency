@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import type { Destination } from "@/payload-types";
 import { resolveImage } from "@/lib/media";
 import { QuickProposal } from "./quick-proposal";
@@ -14,7 +15,6 @@ const TRUST_ITEMS = [
 interface HomeHeroProps {
   destinations: Destination[];
 }
-
 export function HomeHero({ destinations }: HomeHeroProps) {
   const heroDestination = destinations[0];
   const image = resolveImage(heroDestination?.featuredImage, "Tailor-made Vietnam travel", { variant: "hero" });
@@ -49,7 +49,7 @@ export function HomeHero({ destinations }: HomeHeroProps) {
               className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#047857] px-6 text-sm font-semibold text-white shadow-elevated transition hover:bg-[#065F46]"
             >
               Start your travel project
-              <ArrowIcon />
+              <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden="true" />
             </Link>
             <Link
               href="/tours"
@@ -78,19 +78,5 @@ function TrustStrip() {
         </div>
       ))}
     </dl>
-  );
-}
-
-function ArrowIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" aria-hidden="true">
-      <path
-        d="M5 12h14M13 6l6 6-6 6"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
   );
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { ShareButtons } from "@/components/share-buttons";
 import type { Tour } from "@/payload-types";
 
@@ -45,15 +46,7 @@ export function TourBookingAside({ tour, tourUrl, isFree }: Props) {
         className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-navy-900 px-4 py-3 text-sm font-semibold text-white shadow-card transition hover:bg-navy-800"
       >
         {isFree ? "Register" : "Request this tour"}
-        <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" aria-hidden="true">
-          <path
-            d="M5 12h14M13 6l6 6-6 6"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden="true" />
       </Link>
 
       {tour.availableDates && tour.availableDates.length > 0 ? (

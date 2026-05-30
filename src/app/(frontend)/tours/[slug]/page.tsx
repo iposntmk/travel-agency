@@ -13,9 +13,10 @@ import { getToursForDestinationList } from "@/lib/cms-list";
 import { lexicalToHtml, lexicalToPlainText } from "@/lib/lexical";
 import { resolveImage, resolveOgImage } from "@/lib/media";
 import { absoluteUrl, breadcrumbJsonLd, tourProductJsonLd } from "@/lib/structured-data";
-import type { Destination, Media, Partner, Tour } from "@/payload-types";
+import type { Media, Partner } from "@/payload-types";
 import { TourAddOns } from "./tour-addons";
 import { TourBookingAside } from "./tour-booking-aside";
+import { badgesFor, destinationOf } from "./tour-detail-helpers";
 import { TourItinerary } from "./tour-itinerary";
 import { TourMobileBottomCta, TourMobileTabs } from "./tour-mobile-cta";
 
@@ -62,21 +63,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       url: `${siteUrl.replace(/\/$/, "")}/tours/${tour.slug}`
     }
   };
-}
-
-function destinationOf(tour: Tour): Destination | null {
-  return tour.destination && typeof tour.destination === "object"
-    ? (tour.destination as Destination)
-    : null;
-}
-
-function badgesFor(tour: Tour): string[] {
-  const badges: string[] = [];
-  if (tour.minPax && tour.currentPax && tour.currentPax >= tour.minPax) badges.push("Guaranteed Departure");
-  if (tour.operationType === "partner") badges.push("Partner operated");
-  if (tour.operationType === "hybrid") badges.push("Hybrid operation");
-  if (tour.isFeaturedInSeason) badges.push("Seasonal pick");
-  return badges;
 }
 
 export default async function TourDetailPage({ params }: PageProps) {

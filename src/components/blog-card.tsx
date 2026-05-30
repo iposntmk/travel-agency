@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { resolveImage } from "@/lib/media";
 import type { Destination, Post } from "@/payload-types";
 
@@ -45,15 +46,7 @@ export function BlogCard({ post }: Props) {
         </h2>
         <span className="mt-auto inline-flex items-center gap-1 pt-3 text-sm font-semibold text-navy-700">
           Read article
-          <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" aria-hidden="true">
-            <path
-              d="M5 12h14M13 6l6 6-6 6"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden="true" />
         </span>
       </div>
     </article>

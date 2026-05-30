@@ -6,6 +6,7 @@ import { Testimonials } from "@/components/home/testimonials";
 import { WhyTcTravel } from "@/components/home/why-tc-travel";
 import { DestinationCard } from "@/components/destination-card";
 import { JsonLd } from "@/components/json-ld";
+import { MobileScrollRow } from "@/components/mobile-scroll-row";
 import { OtaWidget } from "@/components/ota-widget";
 import { EmptyState, SectionBand, SectionHead } from "@/components/section";
 import { TourCard } from "@/components/tour-card";
@@ -51,13 +52,13 @@ export default async function HomePage() {
         {featuredTours.length === 0 ? (
           <EmptyState>No tours published yet. Check back soon.</EmptyState>
         ) : (
-          <div className="flex gap-5 overflow-x-auto pb-3 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
+          <MobileScrollRow className="gap-5 pb-3 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
             {featuredTours.map((tour) => (
               <div key={tour.id} className="w-[82vw] shrink-0 sm:w-auto">
                 <TourCard tour={tour} />
               </div>
             ))}
-          </div>
+          </MobileScrollRow>
         )}
       </SectionBand>
 
@@ -87,7 +88,7 @@ export default async function HomePage() {
             actionHref="/free-tours"
             actionLabel="See free tours"
           />
-          <div className="flex gap-5 overflow-x-auto pb-3 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
+          <MobileScrollRow className="gap-5 pb-3 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
             {freeTours.map((tour) => (
               <div key={tour.id} className="w-[82vw] shrink-0 sm:w-auto">
                 <TourCard
@@ -97,7 +98,7 @@ export default async function HomePage() {
                 />
               </div>
             ))}
-          </div>
+          </MobileScrollRow>
         </SectionBand>
       ) : null}
 
@@ -108,7 +109,7 @@ export default async function HomePage() {
             title="Featured Experiences"
             subtitle="Day tours, tickets, and activities curated by trusted travel partners — booked externally, not through TC Travel."
           />
-          <div className="flex gap-5 overflow-x-auto pb-3 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
+          <MobileScrollRow className="gap-5 pb-3 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
             {destinations.slice(0, 3).map((destination) => (
               <div key={destination.id} className="w-[82vw] shrink-0 sm:w-auto">
                 <OtaWidget
@@ -118,7 +119,7 @@ export default async function HomePage() {
                 />
               </div>
             ))}
-          </div>
+          </MobileScrollRow>
         </SectionBand>
       ) : null}
 

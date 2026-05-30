@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { destinationRegionLabel } from "@/lib/destination-regions";
 import { lexicalToPlainText } from "@/lib/lexical";
 import { resolveImage } from "@/lib/media";
 import type { Destination } from "@/payload-types";
@@ -8,16 +10,10 @@ interface Props {
   destination: Destination;
 }
 
-const REGION_LABEL: Record<string, string> = {
-  central: "Central Vietnam",
-  north: "Northern Vietnam",
-  south: "Southern Vietnam"
-};
-
 export function DestinationCard({ destination }: Props) {
   const image = resolveImage(destination.featuredImage, destination.title, { variant: "card" });
   const summary = lexicalToPlainText(destination.description, 140);
-  const region = destination.region ? REGION_LABEL[destination.region] : null;
+  const region = destinationRegionLabel(destination.region);
 
   return (
     <Link
@@ -47,15 +43,7 @@ export function DestinationCard({ destination }: Props) {
         {summary ? <p className="text-sm leading-7 text-slate-600">{summary}</p> : null}
         <span className="mt-auto inline-flex items-center gap-1 pt-3 text-sm font-semibold text-navy-700">
           Explore
-          <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" aria-hidden="true">
-            <path
-              d="M5 12h14M13 6l6 6-6 6"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden="true" />
         </span>
       </div>
     </Link>

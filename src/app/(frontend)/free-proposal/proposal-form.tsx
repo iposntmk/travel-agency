@@ -1,59 +1,84 @@
 "use client";
 
-import { Minus, Plus } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
+import { FormProvider, useForm, type FieldErrors, type Path } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { submitCustomInquiry } from "@/app/actions/submit-custom-inquiry";
+import { clientUuid } from "@/lib/client-uuid";
 import type { Destination } from "@/payload-types";
+import { customInquirySchema, type CustomInquiryInput } from "@/schemas/custom-inquiry";
+import { PROPOSAL_STAGES, PROPOSAL_STEP_FIELDS, type CustomInquiryFormValues } from "./proposal-form-options";
+import { ProposalFormStep } from "./proposal-form-steps";
 
 interface Props {
   destinations: Destination[];
 }
 
-const THEMES = ["Culture", "Food", "Nature", "Family", "Beach", "Photography"];
-const STAGES = ["I have an idea", "I need advice", "Ready to book"];
-
 export function FreeProposalForm({ destinations }: Props) {
+  const idempotencyKey = useMemo(() => clientUuid(), []);
   const [step, setStep] = useState(0);
   const [pending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
+  const [serverError, setServerError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
-  const [state, setState] = useState({
-    planningStage: STAGES[0],
-    adults: 2,
-    children: 0,
-    exactDatesKnown: false,
-    departureMonth: "",
-    estimatedDays: 7,
-    selectedDestinations: [] as string[],
-    themes: [] as string[],
-    accommodationLevels: ["Comfort"],
-    budgetPerPerson: 800,
-    message: "",
-    name: "",
-    email: "",
-    phone: "",
-    nationality: "",
-    whatsappOptIn: true
+  const methods = useForm<CustomInquiryFormValues, unknown, CustomInquiryInput>({
+    resolver: zodResolver(customInquirySchema),
+    mode: "onTouched",
+    defaultValues: {
+      planningStage: PROPOSAL_STAGES[0],
+      adults: 2,
+      children: 0,
+      exactDatesKnown: false,
+      departureMonth: "",
+      estimatedDays: 7,
+      selectedDestinations: [],
+      themes: [],
+      accommodationLevels: ["Comfort"],
+      budgetPerPerson: 800,
+      message: "",
+      name: "",
+      email: "",
+      phone: "",
+      nationality: "",
+      whatsappOptIn: true,
+      source: "free-proposal",
+      idempotencyKey
+    }
   });
-  const idempotencyKey = useMemo(() => crypto.randomUUID(), []);
-  const progress = ((step + 1) / 4) * 100;
+  const busy = pending || methods.formState.isSubmitting;
+  const progress = ((step + 1) / PROPOSAL_STEP_FIELDS.length) * 100;
+  const destinationLabels = Object.fromEntries(destinations.map((d) => [d.slug, d.title]));
 
-  function toggle(list: "selectedDestinations" | "themes", value: string) {
-    setState((current) => ({
-      ...current,
-      [list]: current[list].includes(value)
-        ? current[list].filter((item) => item !== value)
-        : [...current[list], value]
-    }));
+  async function nextStep() {
+    const valid = await methods.trigger(PROPOSAL_STEP_FIELDS[step]);
+    if (valid) setStep((current) => Math.min(current + 1, PROPOSAL_STEP_FIELDS.length - 1));
   }
 
-  function submit() {
-    setError(null);
+  function submit(values: CustomInquiryInput) {
+    setServerError(null);
     startTransition(async () => {
-      const result = await submitCustomInquiry({ ...state, idempotencyKey, source: "free-proposal" });
-      if (result.ok) setDone(true);
-      else setError(result.error.message);
+      const result = await submitCustomInquiry(values);
+      if (result.ok) {
+        setDone(true);
+        return;
+      }
+
+      applyServerErrors(result.error.fieldErrors);
+      setServerError(result.error.message);
     });
+  }
+
+  function applyServerErrors(fieldErrors?: Record<string, string[]>) {
+    if (!fieldErrors) return;
+    const targetStep = firstStepWithError(Object.keys(fieldErrors));
+    if (targetStep !== undefined) setStep(targetStep);
+    Object.entries(fieldErrors).forEach(([field, messages]) => {
+      if (messages[0]) methods.setError(field as Path<CustomInquiryFormValues>, { type: "server", message: messages[0] });
+    });
+  }
+
+  function handleInvalid(errors: FieldErrors<CustomInquiryFormValues>) {
+    const targetStep = firstStepWithError(Object.keys(errors));
+    if (targetStep !== undefined) setStep(targetStep);
   }
 
   if (done) {
@@ -68,64 +93,42 @@ export function FreeProposalForm({ destinations }: Props) {
   }
 
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-elevated md:p-6">
-      <div className="h-1 overflow-hidden rounded-full bg-slate-100">
-        <div className="h-full bg-[#047857]" style={{ width: `${progress}%` }} />
-      </div>
-      <div className="mt-6">
-        {step === 0 ? (
-          <Step title="Planning">
-            <ChipGroup values={STAGES} selected={[state.planningStage]} onToggle={(value) => setState({ ...state, planningStage: value })} />
-          </Step>
-        ) : null}
-        {step === 1 ? (
-          <Step title="Participants & dates">
-            <Counter label="Adults" value={state.adults} min={1} onChange={(adults) => setState({ ...state, adults })} />
-            <Counter label="Children" value={state.children} min={0} onChange={(children) => setState({ ...state, children })} />
-            <input className={fieldClass} placeholder="Departure month, e.g. March 2027" value={state.departureMonth} onChange={(e) => setState({ ...state, departureMonth: e.target.value })} />
-            <input className={fieldClass} type="number" min={1} placeholder="Estimated days" value={state.estimatedDays} onChange={(e) => setState({ ...state, estimatedDays: Number(e.target.value) })} />
-          </Step>
-        ) : null}
-        {step === 2 ? (
-          <Step title="Travel project">
-            <ChipGroup values={destinations.map((d) => d.slug)} labels={Object.fromEntries(destinations.map((d) => [d.slug, d.title]))} selected={state.selectedDestinations} onToggle={(value) => toggle("selectedDestinations", value)} />
-            <ChipGroup values={THEMES} selected={state.themes} onToggle={(value) => toggle("themes", value)} />
-            <textarea className={`${fieldClass} min-h-28`} placeholder="Notes, pace, must-sees, hotel style..." value={state.message} onChange={(e) => setState({ ...state, message: e.target.value })} />
-          </Step>
-        ) : null}
-        {step === 3 ? (
-          <Step title="Contact">
-            <input className={fieldClass} placeholder="Full name" value={state.name} onChange={(e) => setState({ ...state, name: e.target.value })} />
-            <input className={fieldClass} type="email" placeholder="Email" value={state.email} onChange={(e) => setState({ ...state, email: e.target.value })} />
-            <input className={fieldClass} placeholder="Phone or WhatsApp" value={state.phone} onChange={(e) => setState({ ...state, phone: e.target.value })} />
-            <input className={fieldClass} placeholder="Nationality" value={state.nationality} onChange={(e) => setState({ ...state, nationality: e.target.value })} />
-          </Step>
-        ) : null}
-      </div>
-      {error ? <p className="mt-4 text-sm font-medium text-red-600">{error}</p> : null}
-      <div className="mt-6 flex justify-between gap-3">
-        <button type="button" disabled={step === 0} onClick={() => setStep(step - 1)} className="rounded-full border border-slate-200 px-5 py-2 text-sm font-semibold disabled:opacity-40">Back</button>
-        {step < 3 ? (
-          <button type="button" onClick={() => setStep(step + 1)} className="rounded-full bg-[#047857] px-5 py-2 text-sm font-semibold text-white">Next</button>
-        ) : (
-          <button type="button" disabled={pending} onClick={submit} className="rounded-full bg-[#047857] px-5 py-2 text-sm font-semibold text-white disabled:opacity-60">Submit</button>
-        )}
-      </div>
-    </section>
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(submit, handleInvalid)} className="rounded-lg border border-slate-200 bg-white p-4 shadow-elevated md:p-6" noValidate>
+        <div className="h-1 overflow-hidden rounded-full bg-slate-100">
+          <div className="h-full bg-[#047857]" style={{ width: `${progress}%` }} />
+        </div>
+        <div className="mt-6">
+          <ProposalFormStep
+            step={step}
+            destinations={destinations}
+            destinationLabels={destinationLabels}
+            busy={busy}
+          />
+        </div>
+        {serverError ? <p className="mt-4 text-sm font-medium text-red-600">{serverError}</p> : null}
+        <div className="mt-6 flex justify-between gap-3">
+          <button type="button" disabled={step === 0 || busy} onClick={() => setStep(step - 1)} className={secondaryButtonClass}>
+            Back
+          </button>
+          {step < PROPOSAL_STEP_FIELDS.length - 1 ? (
+            <button type="button" disabled={busy} onClick={nextStep} className={primaryButtonClass}>Next</button>
+          ) : (
+            <button type="submit" disabled={busy} className={primaryButtonClass}>
+              {busy ? "Submitting..." : "Submit"}
+            </button>
+          )}
+        </div>
+      </form>
+    </FormProvider>
   );
 }
 
-function Step({ title, children }: { title: string; children: React.ReactNode }) {
-  return <div className="space-y-4"><h2 className="text-2xl font-semibold tracking-tight text-slate-950">{title}</h2>{children}</div>;
+function firstStepWithError(fields: string[]): number | undefined {
+  const names = new Set(fields);
+  const index = PROPOSAL_STEP_FIELDS.findIndex((stepFields) => stepFields.some((field) => names.has(field)));
+  return index === -1 ? undefined : index;
 }
 
-function Counter({ label, value, min, onChange }: { label: string; value: number; min: number; onChange: (value: number) => void }) {
-  return <div className="flex items-center justify-between rounded-lg border border-slate-200 p-3"><span className="font-medium text-slate-800">{label}</span><div className="flex items-center gap-3"><button type="button" className={iconButtonClass} onClick={() => onChange(Math.max(min, value - 1))}><Minus className="h-4 w-4" /></button><span className="w-8 text-center font-semibold">{value}</span><button type="button" className={iconButtonClass} onClick={() => onChange(value + 1)}><Plus className="h-4 w-4" /></button></div></div>;
-}
-
-function ChipGroup({ values, labels, selected, onToggle }: { values: string[]; labels?: Record<string, string>; selected: string[]; onToggle: (value: string) => void }) {
-  return <div className="flex flex-wrap gap-2">{values.map((value) => <button key={value} type="button" onClick={() => onToggle(value)} className={selected.includes(value) ? "rounded-full bg-[#047857] px-4 py-2 text-sm font-semibold text-white" : "rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700"}>{labels?.[value] ?? value}</button>)}</div>;
-}
-
-const fieldClass = "w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/15";
-const iconButtonClass = "inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-700";
+const primaryButtonClass = "rounded-full bg-[#047857] px-5 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60";
+const secondaryButtonClass = "rounded-full border border-slate-200 px-5 py-2 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-40";

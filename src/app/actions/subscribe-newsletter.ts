@@ -1,9 +1,9 @@
 "use server";
 
-import { headers } from "next/headers";
 import { newsletterSubscribeSchema, type NewsletterSubscribeInput } from "@/schemas/newsletter";
 import { NewsletterNotConfiguredError, subscribeToNewsletter } from "@/services/newsletter";
 import { checkRateLimit } from "@/services/rate-limit";
+import { requestIp } from "./request-ip";
 import type { ActionResult } from "./submit-booking";
 
 export async function subscribeNewsletter(
@@ -45,18 +45,5 @@ export async function subscribeNewsletter(
       ok: false,
       error: { type: "system", message: "We couldn’t complete your sign-up. Please try again later." }
     };
-  }
-}
-
-async function requestIp(): Promise<string | undefined> {
-  try {
-    const requestHeaders = await headers();
-    return (
-      requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-      requestHeaders.get("x-real-ip") ||
-      undefined
-    );
-  } catch {
-    return undefined;
   }
 }

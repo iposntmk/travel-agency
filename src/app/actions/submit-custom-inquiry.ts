@@ -1,11 +1,11 @@
 "use server";
 
-import { headers } from "next/headers";
 import { customInquirySchema, type CustomInquiryInput } from "@/schemas/custom-inquiry";
 import { createCustomInquiryOnce, type CustomInquiryRecord } from "@/services/custom-inquiry-repository";
 import { sendCustomInquiryEmails } from "@/services/custom-inquiry-emails";
 import { checkRateLimit } from "@/services/rate-limit";
 import type { ActionResult } from "./submit-booking";
+import { requestIp } from "./request-ip";
 
 export async function submitCustomInquiry(
   input: CustomInquiryInput,
@@ -55,13 +55,4 @@ export async function submitCustomInquiry(
 async function customInquiryRateLimitKey(input: CustomInquiryInput, explicitKey?: string): Promise<string> {
   const requester = explicitKey ?? (await requestIp()) ?? "anonymous";
   return `${requester}:${input.email}`;
-}
-
-async function requestIp(): Promise<string | undefined> {
-  try {
-    const requestHeaders = await headers();
-    return requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() || requestHeaders.get("x-real-ip") || undefined;
-  } catch {
-    return undefined;
-  }
 }
