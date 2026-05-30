@@ -1,12 +1,12 @@
 # Current Status
 
-**Updated:** 2026-05-30 (Travel platform expansion local gate passed; commit/push pending)
+**Updated:** 2026-05-30 (Travel platform expansion committed and pushed; production deploy verification pending)
 
 ## Current Layer / Stage
 
-The project is currently at **Layer 8 - Monetization Without Payment** with the earlier OTA/dashboard work shipped, and a new **Travel Platform Expansion** implemented locally with the full local gate passing on 2026-05-30.
+The project is currently at **Layer 8 - Monetization Without Payment** with the earlier OTA/dashboard work shipped, and the new **Travel Platform Expansion** committed and pushed to `origin/master` in `79ad0cf`.
 
-Do not treat the expansion as production-shipped until the changes are committed, pushed to `origin/master`, and the Vercel production deployment completes.
+Do not treat the expansion as production-verified until the Vercel production deployment and live smoke checks complete.
 
 Layers 1-7 are complete enough to support the current production flow:
 
@@ -35,7 +35,7 @@ Layer 8 implementation status:
 - **Affiliate IDs (pending)** — partner accounts not yet registered. Revenue = 0 until partner IDs are appended to `buildUrl()` per provider. See `docs/OTA_INTEGRATIONS.md` § "Adding affiliate IDs".
 - **Internal clicks dashboard (done)** — `/internal/affiliate-clicks` (admin-only, Payload session gate) renders totals, top targets, top sources, OTA provider breakdown, day-by-day bar chart, and recent rows. Range selector `?range=7|30|90`. Aggregation lives in `src/services/affiliate-stats.ts` (pure aggregator + Payload loader). Disallowed in `robots.txt` and noindex'd via the internal layout. Verified with `pnpm test` (13 new tests) + `pnpm build`.
 
-Travel Platform Expansion status (local, verified):
+Travel Platform Expansion status (committed, pending production verification):
 
 - **Schema expansion implemented** — new Payload collections: `car-rentals`, `attractions`, `product-categories`, `custom-inquiries`, `team-members`, `site-settings`; expanded `destinations`, `tours`, and `posts` for city hubs, richer tour cards, ratings, guide categories, featured relationships, and sorting.
 - **Migration/types generated** — `src/migrations/20260529_124032_travel_platform_expansion.ts` and `.json` created; `src/payload-types.ts` regenerated.
@@ -43,11 +43,14 @@ Travel Platform Expansion status (local, verified):
 - **Frontend routes implemented** — `/free-proposal` multi-step proposal form, `/car-rentals`, `/car-rentals/[slug]`, destination hub sections for tours/car rentals/guides/attractions.
 - **Frontend UX refresh implemented** — lighter Authentik-inspired hero, emerald proposal CTA, mobile horizontal cards, expanded tour filters, itinerary accordion, mobile sticky tabs, and sticky tour bottom CTA.
 - **Tests added** — custom inquiry schema/action coverage for validation, destination requirement, duplicate idempotency, email suppression on duplicates, and rate limiting.
+- **Migration reviewed before push** — `up` is additive for new collections/fields/indexes/relationships; destructive SQL is limited to `down`.
+- **Committed and pushed** — `79ad0cf Broaden lead capture before payment work` was pushed to `origin/master` on 2026-05-30.
 
 Expansion verification:
 
 - 2026-05-29: `tsc --noEmit`, `vitest run`, and `eslint .` passed via local binaries, but `next build` timed out twice.
 - 2026-05-30: `pnpm typecheck`, `pnpm test`, `pnpm lint`, and `pnpm build` passed. Build completed in roughly 140 seconds and generated 28 static pages. Lint still reports the 4 pre-existing warnings in `src/migrations/20260527_041941.ts`.
+- 2026-05-30 commit gate: `git diff --cached --check` passed before commit; staged scope contained only intended docs/source/migration/test files.
 
 Latest production-readiness verification:
 
@@ -58,7 +61,7 @@ Latest production-readiness verification:
 
 Last shipped commits (top to bottom = newest to oldest):
 
-- (pending commit/push) Travel platform expansion: schema, custom inquiries, car rentals, city hubs, proposal UX
+- `79ad0cf Broaden lead capture before payment work` — Travel platform expansion: schema, custom inquiries, car rentals, city hubs, proposal UX, and updated priority docs deferring online payment.
 - `7047eee Document Stage 1-5 frontend polish and add tech stack reference`
 - `44758b3 Refresh consent banner and share buttons (Stage 5)`
 - `547d9d2 Polish detail pages with breadcrumb, navy aside, prose tweaks (Stage 4)`
@@ -145,15 +148,14 @@ For the current Clerk handoff, also inspect:
 
 **Dev tasks — in order:**
 
-1. Review generated migration `20260529_124032_travel_platform_expansion` before applying to Preview/Production.
-2. Commit and push the travel platform expansion after staging only the intended source/docs/migration/test files.
-3. Verify the Vercel production deployment completes after push.
-4. Complete frontend QA/polish for the public conversion surfaces: homepage, `/tours`, `/tours/[slug]`, `/destinations/[slug]`, `/free-proposal`, `/car-rentals`, and booking confirmation on mobile first.
-5. Security hardening before indexing/go-live: production booking + custom inquiry QA, comments/reviews sanitization if public UGC is enabled, CSP report review, access-control spot checks, and no secret/log/data files in commits.
-6. Performance + SEO backlog in `docs/toiuu.md`: Vercel region/pooler verification, media Cache-Control/R2 audit, image strategy reconciliation, metadataBase/canonical, JSON-LD, sitemap, and mobile Lighthouse target.
-7. **Layer 8 K** — Move OTA partner IDs into Payload `partners` (or new `ota-partners`) collection when owner provides IDs. This is revenue-enabling but should not block security/performance/SEO/frontend completion.
-8. Booking slot/capacity transaction locking only if bookings mutate availability or `currentPax`.
-9. **Layer 9 Online Payment** — explicitly deferred until the end, after Pay Later, security, performance, SEO, frontend, and production operations are stable.
+1. Verify the Vercel production deployment for `79ad0cf` completes, then smoke-check `/`, `/tours`, `/tours/[slug]`, `/destinations/[slug]`, `/free-proposal`, `/car-rentals`, and `/car-rentals/[slug]`.
+2. Confirm production migration/application health: new Payload collections load, existing content still renders, and no runtime migration errors appear.
+3. Complete frontend QA/polish for the public conversion surfaces on mobile first: homepage, `/tours`, `/tours/[slug]`, `/destinations/[slug]`, `/free-proposal`, `/car-rentals`, and booking confirmation.
+4. Security hardening before indexing/go-live: production booking + custom inquiry QA, comments/reviews sanitization if public UGC is enabled, CSP report review, access-control spot checks, and no secret/log/data files in commits.
+5. Performance + SEO backlog in `docs/toiuu.md`: Vercel region/pooler verification, media Cache-Control/R2 audit, image strategy reconciliation, metadataBase/canonical, JSON-LD, sitemap, and mobile Lighthouse target.
+6. **Layer 8 K** — Move OTA partner IDs into Payload `partners` (or new `ota-partners`) collection when owner provides IDs. This is revenue-enabling but should not block security/performance/SEO/frontend completion.
+7. Booking slot/capacity transaction locking only if bookings mutate availability or `currentPax`.
+8. **Layer 9 Online Payment** — explicitly deferred until the end, after Pay Later, security, performance, SEO, frontend, and production operations are stable.
 
 ## Verification Baseline
 

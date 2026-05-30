@@ -87,19 +87,20 @@ Admin reversal requires an explicit audit reason. Every status change appends a 
 - Layer 8 click-tracking infra: `affiliate-clicks` Payload collection, `POST /api/events/click` with Zod + rate-limit + SHA-256 IP hashing, `<TrackedLink>` (sendBeacon + fetch keepalive fallback, `rel="noopener noreferrer sponsored"`)
 - Layer 8 OTA widgets live on **3 surfaces**: homepage Featured Experiences (3 cards), destination detail (`Top things to do in {city}`), tour detail (`Similar experiences in {destination}`). `src/lib/ota-providers.ts` defines GetYourGuide / Viator / Klook / Civitatis / GuruWalk with generic search URLs — **affiliate IDs not yet injected**, so revenue is intentionally 0
 - Layer 8 L internal affiliate-clicks dashboard shipped at `/internal/affiliate-clicks` (`7e43aa0`)
-- Travel Platform Expansion is implemented locally: `/free-proposal`, `/car-rentals`, destination hub sections, custom inquiry Server Action/repository/emails, expanded tour filters/cards, generated migration `20260529_124032_travel_platform_expansion`
+- Travel Platform Expansion is committed and pushed in `79ad0cf`: `/free-proposal`, `/car-rentals`, destination hub sections, custom inquiry Server Action/repository/emails, expanded tour filters/cards, generated migration `20260529_124032_travel_platform_expansion`
 - Local gate on 2026-05-30 passed: `pnpm typecheck`, `pnpm test` (24 files, 131 tests), `pnpm lint` (4 pre-existing migration warnings), and `pnpm build` (roughly 140s)
 
-Current stage: Layer 8 Monetization scaffold is in production, and the Travel Platform Expansion has passed local verification but still needs migration review, commit/push, and Vercel deploy verification. OTA partner accounts have not been registered yet, so click URLs remain generic search rather than affiliate-tagged. Online payment is explicitly deferred until after frontend completion, security, performance, SEO, and Pay Later production operations are stable.
+Current stage: Layer 8 Monetization scaffold is in production, and the Travel Platform Expansion has passed local verification, migration review, commit, and push. It still needs Vercel production deployment verification and live smoke checks before being treated as production-verified. OTA partner accounts have not been registered yet, so click URLs remain generic search rather than affiliate-tagged. Online payment is explicitly deferred until after frontend completion, security, performance, SEO, and Pay Later production operations are stable.
 
 Next work, in order:
-1. Review migration `20260529_124032_travel_platform_expansion`, then commit/push the intended expansion files only and verify Vercel deploy.
-2. Complete public frontend QA/polish on mobile first: homepage, tours/list/detail, destination hub, `/free-proposal`, `/car-rentals`, and booking confirmation.
-3. Security hardening before indexing/go-live: production booking/custom inquiry QA, access-control spot checks, UGC sanitization if public comments/reviews are enabled, CSP report review, no secret/log/data files in commits.
-4. Performance + SEO backlog in `docs/toiuu.md`: region/pooler verification, media Cache-Control/R2 audit, image strategy reconciliation, metadataBase/canonical, JSON-LD, sitemap, mobile Lighthouse.
-5. Owner registers OTA partner programs and feeds partner IDs; then Layer 8 K moves IDs into Payload so revenue can switch on without redeploy. Do not let this block security/performance/SEO/frontend work.
-6. Booking capacity/slot transaction locking only if bookings mutate availability or `currentPax`.
-7. Layer 9 online payment (Stripe + VNPay/MoMo) is last-priority runtime work; keep the model extensible but do not implement it before the priorities above.
+1. Verify Vercel production deploy for `79ad0cf`, then smoke-check homepage, tours, destination hub, `/free-proposal`, and `/car-rentals`.
+2. Confirm production migration/application health: new Payload collections load, existing content renders, and no runtime migration errors appear.
+3. Complete public frontend QA/polish on mobile first: homepage, tours/list/detail, destination hub, `/free-proposal`, `/car-rentals`, and booking confirmation.
+4. Security hardening before indexing/go-live: production booking/custom inquiry QA, access-control spot checks, UGC sanitization if public comments/reviews are enabled, CSP report review, no secret/log/data files in commits.
+5. Performance + SEO backlog in `docs/toiuu.md`: region/pooler verification, media Cache-Control/R2 audit, image strategy reconciliation, metadataBase/canonical, JSON-LD, sitemap, mobile Lighthouse.
+6. Owner registers OTA partner programs and feeds partner IDs; then Layer 8 K moves IDs into Payload so revenue can switch on without redeploy. Do not let this block security/performance/SEO/frontend work.
+7. Booking capacity/slot transaction locking only if bookings mutate availability or `currentPax`.
+8. Layer 9 online payment (Stripe + VNPay/MoMo) is last-priority runtime work; keep the model extensible but do not implement it before the priorities above.
 
 ### Indexing policy (production)
 

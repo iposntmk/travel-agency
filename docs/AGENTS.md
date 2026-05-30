@@ -6,7 +6,7 @@ This file is a short handoff for coding agents. The active source of truth is `C
 
 The repository is no longer docs-only. It contains a working Next.js 15 + Payload CMS application.
 
-Current implementation stage: **Layer 8 - Monetization Without Payment**, with Travel Platform Expansion locally verified and pending commit/push/deploy verification.
+Current implementation stage: **Layer 8 - Monetization Without Payment**, with Travel Platform Expansion committed and pushed in `79ad0cf`; Vercel deploy verification and live smoke checks are still pending.
 
 Already implemented:
 
@@ -17,13 +17,13 @@ Already implemented:
 - Layer 5 Booking Lead Engine: Server Action validation, sanitization, public `Pending` enforcement, DB-backed idempotency, Payload/Postgres persistence.
 - Layer 7 complete enough for current production flow: Clerk webhook sync into Payload `customers`, cookie consent, and share buttons.
 - Layer 8 shipped: OTA click tracking, widgets, and `/internal/affiliate-clicks` dashboard.
-- Travel Platform Expansion local: car rentals, attractions, product categories, custom inquiries, team/settings, `/free-proposal`, `/car-rentals`, destination hub UX.
+- Travel Platform Expansion shipped to `origin/master`: car rentals, attractions, product categories, custom inquiries, team/settings, `/free-proposal`, `/car-rentals`, destination hub UX.
 - Production booking readiness: Upstash Redis REST rate limiting and Resend booking emails.
 - Media polish: public cropped images respect Payload `focalX` / `focalY`.
 
-Immediate priority after expansion commit/push:
+Immediate priority after expansion push:
 
-- Verify Vercel deployment and migration path.
+- Verify Vercel deployment for `79ad0cf` and migration/application health.
 - Finish frontend mobile QA/polish on public conversion surfaces.
 - Prioritize security, performance, and SEO backlog from `docs/toiuu.md`.
 - Defer runtime online payment until the end; keep schemas extensible but do not implement payment before the items above.
