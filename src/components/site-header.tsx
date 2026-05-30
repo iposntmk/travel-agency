@@ -11,6 +11,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/destinations", label: "Destinations" },
   { href: "/car-rentals", label: "Car Rental" },
   { href: "/blog", label: "Travel Guides" },
+  { href: "/about-us", label: "About" },
   { href: "/free-proposal", label: "Free Proposal" }
 ];
 
@@ -92,7 +93,7 @@ export function SiteHeader() {
 
         <div className="flex items-center gap-2">
           <Link
-            href="/tours"
+            href="/free-proposal"
             className="hidden rounded-full bg-[#047857] px-4 py-2 text-sm font-semibold text-white shadow-card transition hover:bg-[#065F46] md:inline-flex"
           >
             Free proposal

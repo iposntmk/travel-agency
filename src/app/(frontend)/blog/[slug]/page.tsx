@@ -6,11 +6,12 @@ import { Breadcrumb } from "@/components/breadcrumb";
 import { JsonLd } from "@/components/json-ld";
 import { ShareButtons } from "@/components/share-buttons";
 import { getSiteUrl } from "@/config/env";
-import { getPostBySlug, getPublishedPosts } from "@/lib/cms";
+import { getApprovedCommentsForTarget, getPostBySlug, getPublishedPosts } from "@/lib/cms";
 import { lexicalToHtml, lexicalToPlainText } from "@/lib/lexical";
 import { resolveImage, resolveOgImage } from "@/lib/media";
 import { absoluteUrl, blogPostingJsonLd, breadcrumbJsonLd } from "@/lib/structured-data";
 import type { Destination, Post, Tour } from "@/payload-types";
+import { BlogComments } from "./blog-comments";
 
 export const revalidate = 300;
 export const dynamicParams = true;
@@ -52,6 +53,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) notFound();
+  const comments = await getApprovedCommentsForTarget("posts", post.id, 12);
 
   const image = resolveImage(post.featuredImage, post.title, { variant: "hero" });
   const html = lexicalToHtml(post.content);
@@ -131,6 +133,8 @@ export default async function BlogPostPage({ params }: PageProps) {
         <div className="mt-10">
           <ShareButtons url={postUrl} title={post.title} medium="blog" campaignId={post.slug} />
         </div>
+
+        <BlogComments comments={comments} />
 
         <section className="mt-12 rounded-2xl border border-navy-100 bg-white p-6 shadow-card md:p-8">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-gold">Plan your trip</p>

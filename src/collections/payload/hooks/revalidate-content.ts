@@ -16,7 +16,13 @@ function uniqueTags(tags: string[]): string[] {
 
 function revalidateContentTags(tags: string[]): void {
   for (const tag of uniqueTags(tags)) {
-    revalidateTag(tag);
+    try {
+      revalidateTag(tag);
+    } catch (err) {
+      if (!(err instanceof Error) || !err.message.includes("static generation store missing")) {
+        throw err;
+      }
+    }
   }
 }
 

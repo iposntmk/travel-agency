@@ -3,7 +3,7 @@ import "server-only";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import { getPayloadClient } from "@/lib/payload";
-import type { Destination, Post, Review, SiteSetting, Tour } from "@/payload-types";
+import type { Comment, Destination, Post, Review, SiteSetting, TeamMember, Tour } from "@/payload-types";
 
 const DEFAULT_LIMIT = 24;
 
@@ -170,6 +170,88 @@ const getFeaturedReviewsCached = cache((limit: number) =>
 
 export function getFeaturedReviews(limit = 3): Promise<Review[]> {
   return getFeaturedReviewsCached(limit);
+}
+
+async function fetchReviewsForTour(tourId: number | string, limit: number): Promise<Review[]> {
+  const payload = await getPayloadClient();
+  const result = await payload.find({
+    collection: "reviews",
+    where: { and: [{ tour: { equals: tourId } }, { status: { equals: "approved" } }] },
+    limit,
+    depth: 1,
+    sort: "rating"
+  });
+  return result.docs as Review[];
+}
+
+const getReviewsForTourCached = cache((tourId: number | string, limit: number) =>
+  unstable_cache(() => fetchReviewsForTour(tourId, limit), ["cms", "tour-reviews", String(tourId), String(limit)], {
+    tags: ["reviews"]
+  })()
+);
+
+export function getReviewsForTour(tourId: number | string, limit = 5): Promise<Review[]> {
+  return getReviewsForTourCached(tourId, limit);
+}
+
+async function fetchApprovedCommentsForTarget(
+  relationTo: "posts" | "tours",
+  targetId: number | string,
+  limit: number
+): Promise<Comment[]> {
+  const payload = await getPayloadClient();
+  const result = await payload.find({
+    collection: "comments",
+    where: {
+      and: [
+        { "target.relationTo": { equals: relationTo } },
+        { "target.value": { equals: targetId } },
+        { status: { equals: "approved" } }
+      ]
+    },
+    limit,
+    depth: 1,
+    sort: "createdAt"
+  });
+  return result.docs as Comment[];
+}
+
+const getApprovedCommentsForTargetCached = cache((relationTo: "posts" | "tours", targetId: number | string, limit: number) =>
+  unstable_cache(
+    () => fetchApprovedCommentsForTarget(relationTo, targetId, limit),
+    ["cms", "comments", relationTo, String(targetId), String(limit)],
+    { tags: ["comments"] }
+  )()
+);
+
+export function getApprovedCommentsForTarget(
+  relationTo: "posts" | "tours",
+  targetId: number | string,
+  limit = 10
+): Promise<Comment[]> {
+  return getApprovedCommentsForTargetCached(relationTo, targetId, limit);
+}
+
+async function fetchTeamMembers(limit: number): Promise<TeamMember[]> {
+  const payload = await getPayloadClient();
+  const result = await payload.find({
+    collection: "team-members",
+    where: { status: { equals: "published" } },
+    limit,
+    depth: 1,
+    sort: "sortWeight"
+  });
+  return result.docs as TeamMember[];
+}
+
+const getTeamMembersCached = cache((limit: number) =>
+  unstable_cache(() => fetchTeamMembers(limit), ["cms", "team-members", String(limit)], {
+    tags: ["team-members"]
+  })()
+);
+
+export function getTeamMembers(limit = 8): Promise<TeamMember[]> {
+  return getTeamMembersCached(limit);
 }
 
 export type PublicCarRental = {

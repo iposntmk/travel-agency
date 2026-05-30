@@ -7,9 +7,9 @@ import { OtaWidget } from "@/components/ota-widget";
 import { SectionHead } from "@/components/section";
 import { TourCard } from "@/components/tour-card";
 import { getSiteUrl } from "@/config/env";
+import { getReviewsForTour, getTourBySlug } from "@/lib/cms";
+import { getToursForDestinationList, getToursForList } from "@/lib/cms-list";
 import { getPayloadClient } from "@/lib/payload";
-import { getTourBySlug } from "@/lib/cms";
-import { getToursForDestinationList } from "@/lib/cms-list";
 import { lexicalToHtml, lexicalToPlainText } from "@/lib/lexical";
 import { resolveImage, resolveOgImage } from "@/lib/media";
 import { absoluteUrl, breadcrumbJsonLd, tourProductJsonLd } from "@/lib/structured-data";
@@ -19,6 +19,7 @@ import { TourBookingAside } from "./tour-booking-aside";
 import { badgesFor, destinationOf } from "./tour-detail-helpers";
 import { TourItinerary } from "./tour-itinerary";
 import { TourMobileBottomCta, TourMobileTabs } from "./tour-mobile-cta";
+import { TourReviews } from "./tour-reviews";
 
 export const revalidate = 300;
 export const dynamicParams = true;
@@ -71,8 +72,14 @@ export default async function TourDetailPage({ params }: PageProps) {
   if (!tour) notFound();
 
   const destination = destinationOf(tour);
-  const related = destination ? await getToursForDestinationList(destination.id, 4) : [];
-  const relatedTours = related.filter((t) => t.id !== tour.id).slice(0, 3);
+  const [sameDestinationTours, fallbackTours, reviews] = await Promise.all([
+    destination ? getToursForDestinationList(destination.id, 4) : Promise.resolve([]),
+    getToursForList({ limit: 8 }),
+    getReviewsForTour(tour.id, 5)
+  ]);
+  const relatedTours = [...sameDestinationTours, ...fallbackTours]
+    .filter((candidate, index, list) => candidate.id !== tour.id && list.findIndex((t) => t.id === candidate.id) === index)
+    .slice(0, 3);
 
   const heroImage = resolveImage(tour.featuredImage, tour.title, { variant: "hero" });
   const gallery: Media[] = Array.isArray(tour.gallery)
@@ -191,17 +198,14 @@ export default async function TourDetailPage({ params }: PageProps) {
             <div id="itinerary">{tour.itinerary ? <TourItinerary items={tour.itinerary} /> : null}</div>
 
             <TourAddOns addOns={addOns} tourSlug={tour.slug} />
+
+            <TourReviews reviews={reviews} />
           </div>
 
           <div id="price">
             <TourBookingAside tour={tour} tourUrl={tourUrl} isFree={isFree} />
           </div>
         </div>
-        <div id="reviews" className="mt-10 rounded-lg border border-slate-200 bg-white p-5 md:hidden">
-          <p className="text-sm font-semibold text-slate-950">Reviews</p>
-          <p className="mt-2 text-sm text-slate-600">Guest reviews are shared after each confirmed trip.</p>
-        </div>
-
         {relatedTours.length > 0 ? (
           <section className="mt-16">
             <SectionHead

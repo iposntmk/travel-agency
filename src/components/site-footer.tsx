@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getSiteSettings } from "@/lib/cms";
 
 const COLUMNS = [
   {
@@ -7,6 +8,7 @@ const COLUMNS = [
       { href: "/tours", label: "All tours" },
       { href: "/free-tours", label: "Free tours" },
       { href: "/destinations", label: "Destinations" },
+      { href: "/car-rentals", label: "Car rentals" },
       { href: "/blog", label: "Travel blog" }
     ]
   },
@@ -19,14 +21,28 @@ const COLUMNS = [
       { href: "/destinations/hue", label: "Huế" },
       { href: "/destinations/da-nang", label: "Đà Nẵng" }
     ]
+  },
+  {
+    heading: "Company",
+    links: [
+      { href: "/about-us", label: "About us" },
+      { href: "/contact", label: "Contact" },
+      { href: "/free-proposal", label: "Free proposal" }
+    ]
   }
 ];
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  const settings = await getSiteSettings();
+  const email = settings?.salesEmail ?? "hello@tctravel.example";
+  const whatsapp = settings?.whatsapp ?? "+84-903-111-222";
+  const address = settings?.footer?.address ?? "Hội An · Huế · Đà Nẵng · Quảng Trị";
+  const company = settings?.footer?.companyName ?? "TC Travel Vietnam";
+
   return (
     <footer className="mt-20 border-t border-navy-100 bg-white">
       <div className="mx-auto max-w-page px-4 py-12">
-        <div className="grid gap-10 md:grid-cols-4">
+        <div className="grid gap-10 md:grid-cols-5">
           <div>
             <Link href="/" className="inline-flex items-center gap-2" aria-label="TC Travel Vietnam home">
               <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-navy-900 text-white">
@@ -40,7 +56,7 @@ export function SiteFooter() {
               </span>
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-6 text-slate-600">
-              Private, small group, and free walking tours across Hội An, Huế, and Đà Nẵng. Book now,
+              Private, small group, and free walking tours across Hội An, Huế, Đà Nẵng, and Quảng Trị. Book now,
               pay when you meet your guide.
             </p>
           </div>
@@ -68,19 +84,19 @@ export function SiteFooter() {
           <div>
             <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-navy-500">Contact</h2>
             <ul className="mt-4 space-y-2 text-sm text-slate-600">
-              <li>WhatsApp · +84 000 000 000</li>
+              <li>WhatsApp · {whatsapp}</li>
               <li>
-                <a className="hover:text-navy-900" href="mailto:sales@example.com">
-                  sales@example.com
+                <a className="hover:text-navy-900" href={`mailto:${email}`}>
+                  {email}
                 </a>
               </li>
-              <li>Hội An · Huế · Đà Nẵng</li>
+              <li>{address}</li>
             </ul>
           </div>
         </div>
 
         <div className="mt-10 flex flex-col-reverse gap-3 border-t border-navy-100 pt-6 text-xs text-slate-500 md:flex-row md:items-center md:justify-between">
-          <p>© {new Date().getFullYear()} TC Travel Vietnam. Book Now — Pay Later.</p>
+          <p>© {new Date().getFullYear()} {company}. Book Now — Pay Later.</p>
           <p>Local guides · Curated itineraries · Trusted by inbound travellers</p>
         </div>
       </div>

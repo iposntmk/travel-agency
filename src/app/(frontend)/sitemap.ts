@@ -6,7 +6,17 @@ import {
   getTourSitemapEntries
 } from "@/lib/cms-sitemap";
 
-const STATIC_ROUTES = ["/", "/tours", "/free-tours", "/destinations", "/blog"] as const;
+const STATIC_ROUTES = [
+  "/",
+  "/tours",
+  "/free-tours",
+  "/destinations",
+  "/car-rentals",
+  "/blog",
+  "/about-us",
+  "/contact",
+  "/free-proposal"
+] as const;
 export const revalidate = 86400;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
