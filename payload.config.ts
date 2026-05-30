@@ -52,7 +52,14 @@ export default buildConfig({
   // on uploads and other mutations.
   serverURL: env.NODE_ENV === "production" ? (env.NEXT_PUBLIC_SITE_URL ?? "") : "",
   cors: originAllowlist,
-  csrf: originAllowlist,
+  // In production every admin origin is HTTPS (a secure context), so the browser
+  // sends Sec-Fetch-* metadata and Payload's CSRF cookie check works. In dev we
+  // also serve the admin over plain HTTP on a LAN IP (e.g. http://192.168.2.7:3000),
+  // which is NOT a secure context — browsers omit Sec-Fetch-Site there, so Payload's
+  // extractJWT drops the auth cookie and the admin redirects back to /login. Leaving
+  // csrf empty in dev makes cookie auth work over HTTP-IP. SameSite=Lax cookies still
+  // provide baseline CSRF protection. Production keeps the strict allowlist.
+  csrf: env.NODE_ENV === "production" ? originAllowlist : [],
   admin: {
     user: Users.slug,
     importMap: {
