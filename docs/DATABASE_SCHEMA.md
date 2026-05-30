@@ -24,6 +24,7 @@
 | 16 | **custom-inquiries** | Lead form cho tailor-made/free proposal, tách khỏi `bookings`. |
 | 17 | **team-members** | Team/trust content public. |
 | 18 | **site-settings** | Hotline, WhatsApp, sales email, footer legal/trust summary. |
+| 19 | **navigation** | Header/footer menu do admin quản lý trong Payload. |
 
 ## 2. Quan hệ chính
 
@@ -123,6 +124,12 @@
 - Ops: `source`, `status`, `internalNotes`, `idempotencyKey`
 - Public creates are accepted through the Server Action; public reads are blocked.
 
+### `navigation`
+- `name`, `location`: `header` | `footer`
+- `status`: `draft` | `published`
+- `items[]`: `label`, `href`, `target`: `_self` | `_blank`, `children[]`
+- Header dùng `items[]` làm primary nav; footer dùng top-level item làm column và `children[]` làm link list.
+
 ### `posts`
 - `title`, `slug`, `featuredImage`, `content` (rich)
 - `categories[]` (relationship)
@@ -179,7 +186,7 @@
 
 Mỗi collection **phải** declare access rõ ràng:
 
-- **Public read:** `tours`, `destinations`, `posts`, `media`, `reviews` (approved), `comments` (approved), `partners` (featured).
+- **Public read:** `tours`, `destinations`, `posts`, `media`, `navigation`, `reviews` (approved), `comments` (approved), `partners` (featured).
 - **Authenticated user read/write:** `comments` (create own), `bookings` (create + xem lịch sử của mình).
 - **Admin/staff only:** inquiry/admin records such as `custom-inquiries`, `bookings`, `promotions`, `payments`. Delete remains admin-only.
 - **Public create:** `bookings` and `custom-inquiries` through validated, rate-limited, idempotent Server Actions.

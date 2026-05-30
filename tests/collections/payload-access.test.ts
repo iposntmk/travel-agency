@@ -4,6 +4,7 @@ import { Bookings } from "@/collections/payload/Bookings";
 import { hardenBookingBeforeValidate } from "@/collections/payload/hooks/booking-hardening";
 import { Destinations } from "@/collections/payload/Destinations";
 import { Media } from "@/collections/payload/Media";
+import { Navigation } from "@/collections/payload/Navigation";
 import { Partners } from "@/collections/payload/Partners";
 import { Posts } from "@/collections/payload/Posts";
 import { Tours } from "@/collections/payload/Tours";
@@ -47,6 +48,7 @@ describe("Payload collection access", () => {
   it("filters public content reads to publishable records", () => {
     expect(callAccess(Tours.access?.read)).toEqual({ status: { equals: "active" } });
     expect(callAccess(Posts.access?.read)).toEqual({ status: { equals: "published" } });
+    expect(callAccess(Navigation.access?.read)).toEqual({ status: { equals: "published" } });
     expect(callAccess(Partners.access?.read)).toEqual({ isFeatured: { equals: true } });
     expect(callAccess(Media.access?.read)).toEqual({ status: { equals: "ready" } });
   });
@@ -102,6 +104,8 @@ describe("Payload collection access", () => {
     expect(Destinations.hooks?.afterDelete).toHaveLength(1);
     expect(Posts.hooks?.afterChange).toHaveLength(1);
     expect(Posts.hooks?.afterDelete).toHaveLength(1);
+    expect(Navigation.hooks?.afterChange).toHaveLength(1);
+    expect(Navigation.hooks?.afterDelete).toHaveLength(1);
   });
 
   it("registers booking hardening before validation", () => {

@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getTourBySlug } from "@/lib/cms";
+import { getFooterNavigation, getHeaderNavigation } from "@/lib/cms-navigation";
 import { getToursForList } from "@/lib/cms-list";
 import { buildToursWhere } from "@/lib/cms-filters";
 import { getPayloadClient } from "@/lib/payload";
@@ -122,5 +123,59 @@ describe("CMS getters", () => {
         select: { slug: true, updatedAt: true }
       })
     );
+  });
+
+  it("falls back to the default header menu when navigation is empty", async () => {
+    const find = vi.fn().mockResolvedValue({ docs: [] });
+    mockedGetPayloadClient.mockResolvedValue({ find } as unknown as Awaited<ReturnType<typeof getPayloadClient>>);
+
+    await expect(getHeaderNavigation()).resolves.toEqual(
+      expect.arrayContaining([expect.objectContaining({ href: "/tours", label: "Tours" })])
+    );
+    expect(find).toHaveBeenCalledWith(
+      expect.objectContaining({
+        collection: "navigation",
+        where: { and: [{ location: { equals: "header" } }, { status: { equals: "published" } }] }
+      })
+    );
+  });
+
+  it("falls back to the default header menu before navigation migration is applied", async () => {
+    const missingTableError = Object.assign(new Error('relation "navigation" does not exist'), {
+      cause: { code: "42P01" }
+    });
+    const find = vi.fn().mockRejectedValue(missingTableError);
+    mockedGetPayloadClient.mockResolvedValue({ find } as unknown as Awaited<ReturnType<typeof getPayloadClient>>);
+
+    await expect(getHeaderNavigation()).resolves.toEqual(
+      expect.arrayContaining([expect.objectContaining({ href: "/tours", label: "Tours" })])
+    );
+  });
+
+  it("does not hide generic navigation database failures", async () => {
+    const find = vi.fn().mockRejectedValue(new Error("database unavailable"));
+    mockedGetPayloadClient.mockResolvedValue({ find } as unknown as Awaited<ReturnType<typeof getPayloadClient>>);
+
+    await expect(getHeaderNavigation()).rejects.toThrow("database unavailable");
+  });
+
+  it("normalizes footer navigation columns from Payload", async () => {
+    const find = vi.fn().mockResolvedValue({
+      docs: [
+        {
+          items: [
+            {
+              label: "Explore",
+              children: [{ label: "Tours", href: "/tours", target: "_blank" }]
+            }
+          ]
+        }
+      ]
+    });
+    mockedGetPayloadClient.mockResolvedValue({ find } as unknown as Awaited<ReturnType<typeof getPayloadClient>>);
+
+    await expect(getFooterNavigation()).resolves.toEqual([
+      { label: "Explore", target: "_self", children: [{ label: "Tours", href: "/tours", target: "_blank" }] }
+    ]);
   });
 });

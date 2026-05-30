@@ -1,39 +1,11 @@
 import Link from "next/link";
 import { getSiteSettings } from "@/lib/cms";
-
-const COLUMNS = [
-  {
-    heading: "Explore",
-    links: [
-      { href: "/tours", label: "All tours" },
-      { href: "/free-tours", label: "Free tours" },
-      { href: "/destinations", label: "Destinations" },
-      { href: "/car-rentals", label: "Car rentals" },
-      { href: "/blog", label: "Travel blog" }
-    ]
-  },
-  {
-    heading: "Plan your trip",
-    links: [
-      { href: "/tours?type=private", label: "Private tours" },
-      { href: "/tours?type=small-group", label: "Small group" },
-      { href: "/destinations/hoi-an", label: "Hội An" },
-      { href: "/destinations/hue", label: "Huế" },
-      { href: "/destinations/da-nang", label: "Đà Nẵng" }
-    ]
-  },
-  {
-    heading: "Company",
-    links: [
-      { href: "/about-us", label: "About us" },
-      { href: "/contact", label: "Contact" },
-      { href: "/free-proposal", label: "Free proposal" }
-    ]
-  }
-];
+import { getFooterNavigation } from "@/lib/cms-navigation";
+import type { NavItem } from "@/types/navigation";
 
 export async function SiteFooter() {
-  const settings = await getSiteSettings();
+  const [settings, navigation] = await Promise.all([getSiteSettings(), getFooterNavigation()]);
+  const columns = navigation.map(toFooterColumn).filter((column): column is FooterColumn => column.links.length > 0);
   const email = settings?.salesEmail ?? "hello@tctravel.example";
   const whatsapp = settings?.whatsapp ?? "+84-903-111-222";
   const address = settings?.footer?.address ?? "Hội An · Huế · Đà Nẵng · Quảng Trị";
@@ -61,7 +33,7 @@ export async function SiteFooter() {
             </p>
           </div>
 
-          {COLUMNS.map((col) => (
+          {columns.map((col) => (
             <nav key={col.heading} aria-label={col.heading}>
               <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-navy-500">
                 {col.heading}
@@ -71,6 +43,8 @@ export async function SiteFooter() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
+                      target={link.target}
+                      rel={link.target === "_blank" ? "noopener noreferrer" : undefined}
                       className="text-slate-600 transition-colors hover:text-navy-900"
                     >
                       {link.label}
@@ -102,4 +76,16 @@ export async function SiteFooter() {
       </div>
     </footer>
   );
+}
+
+type FooterColumn = {
+  heading: string;
+  links: Array<NavItem & { href: string }>;
+};
+
+function toFooterColumn(item: NavItem): FooterColumn {
+  const links = (item.children ?? (item.href ? [item] : [])).filter(
+    (link): link is NavItem & { href: string } => Boolean(link.href)
+  );
+  return { heading: item.label, links };
 }

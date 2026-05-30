@@ -81,6 +81,7 @@ export interface Config {
     posts: Post;
     'team-members': TeamMember;
     'site-settings': SiteSetting;
+    navigation: Navigation;
     comments: Comment;
     reviews: Review;
     promotions: Promotion;
@@ -107,6 +108,7 @@ export interface Config {
     posts: PostsSelect<false> | PostsSelect<true>;
     'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    navigation: NavigationSelect<false> | NavigationSelect<true>;
     comments: CommentsSelect<false> | CommentsSelect<true>;
     reviews: ReviewsSelect<false> | ReviewsSelect<true>;
     promotions: PromotionsSelect<false> | PromotionsSelect<true>;
@@ -655,6 +657,32 @@ export interface SiteSetting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation".
+ */
+export interface Navigation {
+  id: number;
+  name: string;
+  location: 'header' | 'footer';
+  status: 'draft' | 'published';
+  items: {
+    label: string;
+    href?: string | null;
+    target?: ('_self' | '_blank') | null;
+    children?:
+      | {
+          label: string;
+          href: string;
+          target?: ('_self' | '_blank') | null;
+          id?: string | null;
+        }[]
+      | null;
+    id?: string | null;
+  }[];
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "comments".
  */
 export interface Comment {
@@ -837,6 +865,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'site-settings';
         value: number | SiteSetting;
+      } | null)
+    | ({
+        relationTo: 'navigation';
+        value: number | Navigation;
       } | null)
     | ({
         relationTo: 'comments';
@@ -1288,6 +1320,33 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         reviewAverage?: T;
         reviewCount?: T;
         summary?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation_select".
+ */
+export interface NavigationSelect<T extends boolean = true> {
+  name?: T;
+  location?: T;
+  status?: T;
+  items?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        target?: T;
+        children?:
+          | T
+          | {
+              label?: T;
+              href?: T;
+              target?: T;
+              id?: T;
+            };
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;

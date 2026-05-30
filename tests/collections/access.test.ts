@@ -22,6 +22,7 @@ describe("collection access contracts", () => {
       "posts",
       "team-members",
       "site-settings",
+      "navigation",
       "comments",
       "reviews",
       "partners",

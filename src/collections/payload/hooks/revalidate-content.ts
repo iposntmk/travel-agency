@@ -40,9 +40,25 @@ function afterDelete(listTag: string, itemPrefix: string): CollectionAfterDelete
   };
 }
 
+function afterCollectionChange(listTag: string): CollectionAfterChangeHook {
+  return ({ doc }) => {
+    revalidateContentTags([listTag]);
+    return doc;
+  };
+}
+
+function afterCollectionDelete(listTag: string): CollectionAfterDeleteHook {
+  return ({ doc }) => {
+    revalidateContentTags([listTag]);
+    return doc;
+  };
+}
+
 export const revalidateTourAfterChange = afterChange("tours", "tour");
 export const revalidateTourAfterDelete = afterDelete("tours", "tour");
 export const revalidateDestinationAfterChange = afterChange("destinations", "destination");
 export const revalidateDestinationAfterDelete = afterDelete("destinations", "destination");
 export const revalidatePostAfterChange = afterChange("posts", "post");
 export const revalidatePostAfterDelete = afterDelete("posts", "post");
+export const revalidateNavigationAfterChange = afterCollectionChange("navigation");
+export const revalidateNavigationAfterDelete = afterCollectionDelete("navigation");

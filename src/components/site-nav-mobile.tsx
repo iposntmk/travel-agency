@@ -3,21 +3,18 @@
 import Link from "next/link";
 import type { RefObject } from "react";
 import { cn } from "@/lib/utils";
-
-export interface NavItem {
-  href: string;
-  label: string;
-}
+import type { HeaderNavItem } from "@/types/navigation";
 
 interface Props {
   open: boolean;
-  items: NavItem[];
+  items: HeaderNavItem[];
+  primaryItem?: HeaderNavItem;
   isActive: (href: string) => boolean;
   firstLinkRef: RefObject<HTMLAnchorElement | null>;
   onClose: () => void;
 }
 
-export function SiteNavMobile({ open, items, isActive, firstLinkRef, onClose }: Props) {
+export function SiteNavMobile({ open, items, primaryItem, isActive, firstLinkRef, onClose }: Props) {
   return (
     <div
       id="site-mobile-nav"
@@ -41,31 +38,65 @@ export function SiteNavMobile({ open, items, isActive, firstLinkRef, onClose }: 
         <ul className="flex flex-col">
           {items.map((item, idx) => (
             <li key={item.href}>
-              <Link
-                ref={idx === 0 ? firstLinkRef : undefined}
-                href={item.href}
-                aria-current={isActive(item.href) ? "page" : undefined}
-                className={cn(
-                  "block rounded-xl px-4 py-3 text-base font-medium transition-colors",
-                  isActive(item.href)
-                    ? "bg-navy-50 text-navy-900"
-                    : "text-slate-700 hover:bg-navy-50 hover:text-navy-900"
-                )}
-              >
-                {item.label}
-              </Link>
+              <MobileLink item={item} active={isActive(item.href)} refValue={idx === 0 ? firstLinkRef : undefined} />
+              {item.children?.length ? (
+                <ul className="ml-3 border-l border-navy-100 pl-2">
+                  {item.children.map((child) => (
+                    <li key={child.href}>
+                      <MobileLink item={child} active={isActive(child.href)} child />
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
             </li>
           ))}
-          <li className="mt-2 border-t border-navy-100 pt-2">
-            <Link
-              href="/free-proposal"
-              className="block rounded-xl bg-[#047857] px-4 py-3 text-center text-base font-semibold text-white transition hover:bg-[#065F46]"
-            >
-              Free proposal
-            </Link>
-          </li>
+          {primaryItem ? <PrimaryMobileLink item={primaryItem} /> : null}
         </ul>
       </nav>
     </div>
+  );
+}
+
+function MobileLink({
+  item,
+  active,
+  refValue,
+  child = false
+}: {
+  item: HeaderNavItem;
+  active: boolean;
+  refValue?: RefObject<HTMLAnchorElement | null>;
+  child?: boolean;
+}) {
+  return (
+    <Link
+      ref={refValue}
+      href={item.href}
+      target={item.target}
+      rel={item.target === "_blank" ? "noopener noreferrer" : undefined}
+      aria-current={active ? "page" : undefined}
+      className={cn(
+        "block rounded-xl px-4 py-3 font-medium transition-colors",
+        child ? "text-sm" : "text-base",
+        active ? "bg-navy-50 text-navy-900" : "text-slate-700 hover:bg-navy-50 hover:text-navy-900"
+      )}
+    >
+      {item.label}
+    </Link>
+  );
+}
+
+function PrimaryMobileLink({ item }: { item: HeaderNavItem }) {
+  return (
+    <li className="mt-2 border-t border-navy-100 pt-2">
+      <Link
+        href={item.href}
+        target={item.target}
+        rel={item.target === "_blank" ? "noopener noreferrer" : undefined}
+        className="block rounded-xl bg-[#047857] px-4 py-3 text-center text-base font-semibold text-white transition hover:bg-[#065F46]"
+      >
+        {item.label}
+      </Link>
+    </li>
   );
 }

@@ -60,6 +60,7 @@ export const collectionContracts: CollectionContract[] = [
     slug: "site-settings",
     access: { read: publicRead, create: staffOnly, update: staffOnly, delete: adminOnly }
   },
+  publicContent("navigation"),
   {
     slug: "comments",
     access: {

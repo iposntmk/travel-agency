@@ -14,6 +14,7 @@ import { CustomInquiries } from "@/collections/payload/CustomInquiries";
 import { Customers } from "@/collections/payload/Customers";
 import { Destinations } from "@/collections/payload/Destinations";
 import { Media } from "@/collections/payload/Media";
+import { Navigation } from "@/collections/payload/Navigation";
 import { Partners } from "@/collections/payload/Partners";
 import { Payments } from "@/collections/payload/Payments";
 import { Posts } from "@/collections/payload/Posts";
@@ -82,6 +83,7 @@ export default buildConfig({
     Posts,
     TeamMembers,
     SiteSettings,
+    Navigation,
     Comments,
     Reviews,
     Promotions,
