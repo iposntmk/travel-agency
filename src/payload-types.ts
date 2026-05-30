@@ -69,12 +69,18 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    'product-categories': ProductCategory;
+    attractions: Attraction;
     destinations: Destination;
     partners: Partner;
     tours: Tour;
+    'car-rentals': CarRental;
     customers: Customer;
     bookings: Booking;
+    'custom-inquiries': CustomInquiry;
     posts: Post;
+    'team-members': TeamMember;
+    'site-settings': SiteSetting;
     comments: Comment;
     reviews: Review;
     promotions: Promotion;
@@ -89,12 +95,18 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    'product-categories': ProductCategoriesSelect<false> | ProductCategoriesSelect<true>;
+    attractions: AttractionsSelect<false> | AttractionsSelect<true>;
     destinations: DestinationsSelect<false> | DestinationsSelect<true>;
     partners: PartnersSelect<false> | PartnersSelect<true>;
     tours: ToursSelect<false> | ToursSelect<true>;
+    'car-rentals': CarRentalsSelect<false> | CarRentalsSelect<true>;
     customers: CustomersSelect<false> | CustomersSelect<true>;
     bookings: BookingsSelect<false> | BookingsSelect<true>;
+    'custom-inquiries': CustomInquiriesSelect<false> | CustomInquiriesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
+    'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     comments: CommentsSelect<false> | CommentsSelect<true>;
     reviews: ReviewsSelect<false> | ReviewsSelect<true>;
     promotions: PromotionsSelect<false> | PromotionsSelect<true>;
@@ -200,6 +212,40 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-categories".
+ */
+export interface ProductCategory {
+  id: number;
+  title: string;
+  slug: string;
+  type: 'tour' | 'car-rental' | 'guide' | 'shared';
+  sortWeight?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "attractions".
+ */
+export interface Attraction {
+  id: number;
+  title: string;
+  slug: string;
+  destination: number | Destination;
+  summary?: string | null;
+  featuredImage?: (number | null) | Media;
+  categories?: (number | ProductCategory)[] | null;
+  sortWeight?: number | null;
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "destinations".
  */
 export interface Destination {
@@ -224,38 +270,35 @@ export interface Destination {
     };
     [k: string]: unknown;
   } | null;
+  summary?: string | null;
   featuredImage?: (number | null) | Media;
+  heroImage?: (number | null) | Media;
   region?: ('central' | 'north' | 'south') | null;
+  bestTimeToVisit?: string | null;
+  hubIntro?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  sortWeight?: number | null;
+  featuredTours?: (number | Tour)[] | null;
+  featuredCarRentals?: (number | CarRental)[] | null;
+  featuredGuides?: (number | Post)[] | null;
   seo?: {
     metaTitle?: string | null;
     metaDescription?: string | null;
     ogImage?: (number | null) | Media;
   };
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "partners".
- */
-export interface Partner {
-  id: number;
-  name: string;
-  logo?: (number | null) | Media;
-  description?: string | null;
-  partnerType: 'tour-outsource' | 'spa' | 'dental' | 'nail' | 'wellness' | 'other';
-  location?: (number | null) | Destination;
-  /**
-   * Affiliate commission as a decimal. 0.2 = 20%.
-   */
-  commissionRate?: number | null;
-  contactPerson?: string | null;
-  phone?: string | null;
-  email?: string | null;
-  whatsapp?: string | null;
-  rating?: number | null;
-  isFeatured?: boolean | null;
-  inquiryFormUrl?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -285,6 +328,17 @@ export interface Tour {
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
   destination: number | Destination;
+  durationDays?: number | null;
+  durationText?: string | null;
+  routeSummary?: string | null;
+  groupSizeMin?: number | null;
+  groupSizeMax?: number | null;
+  categories?: (number | ProductCategory)[] | null;
+  attractions?: (number | Attraction)[] | null;
+  ratingAverage?: number | null;
+  ratingCount?: number | null;
+  isFeatured?: boolean | null;
+  sortWeight?: number | null;
   operationType: 'self-operated' | 'partner' | 'hybrid';
   partner?: (number | null) | Partner;
   minPax?: number | null;
@@ -336,6 +390,109 @@ export interface Tour {
     metaTitle?: string | null;
     metaDescription?: string | null;
     ogImage?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partners".
+ */
+export interface Partner {
+  id: number;
+  name: string;
+  logo?: (number | null) | Media;
+  description?: string | null;
+  partnerType: 'tour-outsource' | 'spa' | 'dental' | 'nail' | 'wellness' | 'other';
+  location?: (number | null) | Destination;
+  /**
+   * Affiliate commission as a decimal. 0.2 = 20%.
+   */
+  commissionRate?: number | null;
+  contactPerson?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  whatsapp?: string | null;
+  rating?: number | null;
+  isFeatured?: boolean | null;
+  inquiryFormUrl?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "car-rentals".
+ */
+export interface CarRental {
+  id: number;
+  title: string;
+  slug: string;
+  destination: number | Destination;
+  routeFrom: string;
+  routeTo: string;
+  vehicleType: 'sedan' | 'suv' | 'van' | 'luxury' | 'minibus';
+  durationText?: string | null;
+  priceFrom?: number | null;
+  currency?: string | null;
+  featuredImage?: (number | null) | Media;
+  gallery?: (number | Media)[] | null;
+  partner?: (number | null) | Partner;
+  status: 'active' | 'paused';
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: number;
+  title: string;
+  slug: string;
+  featuredImage?: (number | null) | Media;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  status: 'draft' | 'published' | 'archived';
+  destination?: (number | null) | Destination;
+  guideCategory?: ('eat' | 'drink' | 'do' | 'shop' | 'before-trip' | 'service' | 'general') | null;
+  attractions?: (number | Attraction)[] | null;
+  sortWeight?: number | null;
+  relatedTour?: (number | null) | Tour;
+  relatedPosts?: (number | Post)[] | null;
+  tags?:
+    | {
+        tag: string;
+        id?: string | null;
+      }[]
+    | null;
+  featured?: boolean | null;
+  /**
+   * Estimated reading time in minutes
+   */
+  readingTime?: number | null;
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (number | null) | Media;
+    keywords?: string | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -412,48 +569,86 @@ export interface Booking {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "posts".
+ * via the `definition` "custom-inquiries".
  */
-export interface Post {
+export interface CustomInquiry {
   id: number;
-  title: string;
-  slug: string;
-  featuredImage?: (number | null) | Media;
-  content: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  status: 'draft' | 'published' | 'archived';
-  destination?: (number | null) | Destination;
-  relatedTour?: (number | null) | Tour;
-  relatedPosts?: (number | Post)[] | null;
-  tags?:
+  customer?: (number | null) | Customer;
+  customerName: string;
+  email: string;
+  phone?: string | null;
+  nationality?: string | null;
+  whatsappOptIn?: boolean | null;
+  planningStage?: string | null;
+  referralSource?: string | null;
+  travelCompanions?: string | null;
+  occasion?: string | null;
+  adults: number;
+  children?: number | null;
+  exactDatesKnown?: boolean | null;
+  departureDate?: string | null;
+  returnDate?: string | null;
+  departureMonth?: string | null;
+  estimatedDays?: number | null;
+  accommodationLevels?:
     | {
-        tag: string;
+        value: string;
         id?: string | null;
       }[]
     | null;
-  featured?: boolean | null;
-  /**
-   * Estimated reading time in minutes
-   */
-  readingTime?: number | null;
-  seo?: {
-    metaTitle?: string | null;
-    metaDescription?: string | null;
-    ogImage?: (number | null) | Media;
-    keywords?: string | null;
+  themes?:
+    | {
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  accompanimentType?: string | null;
+  budgetPerPerson?: number | null;
+  maxBudget?: number | null;
+  selectedDestinations: (number | Destination)[];
+  message?: string | null;
+  source?: string | null;
+  status: 'new' | 'contacted' | 'quoted' | 'closed' | 'spam';
+  internalNotes?: string | null;
+  idempotencyKey: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members".
+ */
+export interface TeamMember {
+  id: number;
+  name: string;
+  role: string;
+  photo?: (number | null) | Media;
+  quote?: string | null;
+  sortWeight?: number | null;
+  status?: ('draft' | 'published') | null;
+  isPublished?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  name: string;
+  hotline?: string | null;
+  whatsapp?: string | null;
+  salesEmail?: string | null;
+  footer?: {
+    companyName?: string | null;
+    legalText?: string | null;
+    address?: string | null;
+  };
+  trust?: {
+    reviewAverage?: number | null;
+    reviewCount?: number | null;
+    summary?: string | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -596,6 +791,14 @@ export interface PayloadLockedDocument {
         value: number | Media;
       } | null)
     | ({
+        relationTo: 'product-categories';
+        value: number | ProductCategory;
+      } | null)
+    | ({
+        relationTo: 'attractions';
+        value: number | Attraction;
+      } | null)
+    | ({
         relationTo: 'destinations';
         value: number | Destination;
       } | null)
@@ -608,6 +811,10 @@ export interface PayloadLockedDocument {
         value: number | Tour;
       } | null)
     | ({
+        relationTo: 'car-rentals';
+        value: number | CarRental;
+      } | null)
+    | ({
         relationTo: 'customers';
         value: number | Customer;
       } | null)
@@ -616,8 +823,20 @@ export interface PayloadLockedDocument {
         value: number | Booking;
       } | null)
     | ({
+        relationTo: 'custom-inquiries';
+        value: number | CustomInquiry;
+      } | null)
+    | ({
         relationTo: 'posts';
         value: number | Post;
+      } | null)
+    | ({
+        relationTo: 'team-members';
+        value: number | TeamMember;
+      } | null)
+    | ({
+        relationTo: 'site-settings';
+        value: number | SiteSetting;
       } | null)
     | ({
         relationTo: 'comments';
@@ -730,14 +949,56 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-categories_select".
+ */
+export interface ProductCategoriesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  type?: T;
+  sortWeight?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "attractions_select".
+ */
+export interface AttractionsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  destination?: T;
+  summary?: T;
+  featuredImage?: T;
+  categories?: T;
+  sortWeight?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "destinations_select".
  */
 export interface DestinationsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   description?: T;
+  summary?: T;
   featuredImage?: T;
+  heroImage?: T;
   region?: T;
+  bestTimeToVisit?: T;
+  hubIntro?: T;
+  sortWeight?: T;
+  featuredTours?: T;
+  featuredCarRentals?: T;
+  featuredGuides?: T;
   seo?:
     | T
     | {
@@ -780,6 +1041,17 @@ export interface ToursSelect<T extends boolean = true> {
   featuredImage?: T;
   gallery?: T;
   destination?: T;
+  durationDays?: T;
+  durationText?: T;
+  routeSummary?: T;
+  groupSizeMin?: T;
+  groupSizeMax?: T;
+  categories?: T;
+  attractions?: T;
+  ratingAverage?: T;
+  ratingCount?: T;
+  isFeatured?: T;
+  sortWeight?: T;
   operationType?: T;
   partner?: T;
   minPax?: T;
@@ -813,6 +1085,34 @@ export interface ToursSelect<T extends boolean = true> {
         id?: T;
       };
   addOns?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "car-rentals_select".
+ */
+export interface CarRentalsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  destination?: T;
+  routeFrom?: T;
+  routeTo?: T;
+  vehicleType?: T;
+  durationText?: T;
+  priceFrom?: T;
+  currency?: T;
+  featuredImage?: T;
+  gallery?: T;
+  partner?: T;
+  status?: T;
   seo?:
     | T
     | {
@@ -872,6 +1172,52 @@ export interface BookingsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "custom-inquiries_select".
+ */
+export interface CustomInquiriesSelect<T extends boolean = true> {
+  customer?: T;
+  customerName?: T;
+  email?: T;
+  phone?: T;
+  nationality?: T;
+  whatsappOptIn?: T;
+  planningStage?: T;
+  referralSource?: T;
+  travelCompanions?: T;
+  occasion?: T;
+  adults?: T;
+  children?: T;
+  exactDatesKnown?: T;
+  departureDate?: T;
+  returnDate?: T;
+  departureMonth?: T;
+  estimatedDays?: T;
+  accommodationLevels?:
+    | T
+    | {
+        value?: T;
+        id?: T;
+      };
+  themes?:
+    | T
+    | {
+        value?: T;
+        id?: T;
+      };
+  accompanimentType?: T;
+  budgetPerPerson?: T;
+  maxBudget?: T;
+  selectedDestinations?: T;
+  message?: T;
+  source?: T;
+  status?: T;
+  internalNotes?: T;
+  idempotencyKey?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts_select".
  */
 export interface PostsSelect<T extends boolean = true> {
@@ -881,6 +1227,9 @@ export interface PostsSelect<T extends boolean = true> {
   content?: T;
   status?: T;
   destination?: T;
+  guideCategory?: T;
+  attractions?: T;
+  sortWeight?: T;
   relatedTour?: T;
   relatedPosts?: T;
   tags?:
@@ -898,6 +1247,47 @@ export interface PostsSelect<T extends boolean = true> {
         metaDescription?: T;
         ogImage?: T;
         keywords?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members_select".
+ */
+export interface TeamMembersSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  photo?: T;
+  quote?: T;
+  sortWeight?: T;
+  status?: T;
+  isPublished?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  name?: T;
+  hotline?: T;
+  whatsapp?: T;
+  salesEmail?: T;
+  footer?:
+    | T
+    | {
+        companyName?: T;
+        legalText?: T;
+        address?: T;
+      };
+  trust?:
+    | T
+    | {
+        reviewAverage?: T;
+        reviewCount?: T;
+        summary?: T;
       };
   updatedAt?: T;
   createdAt?: T;

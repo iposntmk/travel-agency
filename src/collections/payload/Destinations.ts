@@ -25,7 +25,9 @@ export const Destinations: CollectionConfig = {
       admin: { description: "URL-friendly identifier, e.g. hoi-an" }
     },
     { name: "description", type: "richText" },
+    { name: "summary", type: "textarea" },
     { name: "featuredImage", type: "upload", relationTo: "media" },
+    { name: "heroImage", type: "upload", relationTo: "media" },
     {
       name: "region",
       type: "select",
@@ -35,6 +37,12 @@ export const Destinations: CollectionConfig = {
         { label: "Southern Vietnam", value: "south" }
       ]
     },
+    { name: "bestTimeToVisit", type: "textarea" },
+    { name: "hubIntro", type: "richText" },
+    { name: "sortWeight", type: "number", defaultValue: 0, index: true },
+    { name: "featuredTours", type: "relationship", relationTo: "tours", hasMany: true },
+    { name: "featuredCarRentals", type: "relationship", relationTo: "car-rentals" as never, hasMany: true },
+    { name: "featuredGuides", type: "relationship", relationTo: "posts", hasMany: true },
     {
       name: "seo",
       type: "group",

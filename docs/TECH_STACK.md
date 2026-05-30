@@ -67,14 +67,15 @@ Cập nhật ngay khi có thay đổi (thêm/đổi/loại bỏ). Mọi thành v
 
 ---
 
-### 7. Payment (Future - Phase 5)
+### 7. Payment (Future - Deferred Last)
 
 - Stripe (khách quốc tế) + VNPay/MoMo (khách Việt)
 - Hiện tại: **Chưa tích hợp thanh toán trực tuyến**
 - Toàn bộ flow sử dụng **Book Now - Pay Later** (trả cho guide hoặc tại văn phòng)
+- Runtime online payment chỉ triển khai sau khi frontend, security, performance, SEO và production operations ổn định.
 
 **Lý do:** Xây dựng lòng tin, giảm rào cản booking cho khách quốc tế.  
-**Ngày quyết định:** 11/05/2026
+**Ngày quyết định:** 11/05/2026; cập nhật ưu tiên 30/05/2026
 
 ---
 

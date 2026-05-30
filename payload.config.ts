@@ -6,16 +6,22 @@ import { s3Storage } from "@payloadcms/storage-s3";
 import { buildConfig } from "payload";
 import sharp from "sharp";
 import { AffiliateClicks } from "@/collections/payload/AffiliateClicks";
+import { Attractions } from "@/collections/payload/Attractions";
 import { Bookings } from "@/collections/payload/Bookings";
+import { CarRentals } from "@/collections/payload/CarRentals";
 import { Comments } from "@/collections/payload/Comments";
+import { CustomInquiries } from "@/collections/payload/CustomInquiries";
 import { Customers } from "@/collections/payload/Customers";
 import { Destinations } from "@/collections/payload/Destinations";
 import { Media } from "@/collections/payload/Media";
 import { Partners } from "@/collections/payload/Partners";
 import { Payments } from "@/collections/payload/Payments";
 import { Posts } from "@/collections/payload/Posts";
+import { ProductCategories } from "@/collections/payload/ProductCategories";
 import { Promotions } from "@/collections/payload/Promotions";
 import { Reviews } from "@/collections/payload/Reviews";
+import { SiteSettings } from "@/collections/payload/SiteSettings";
+import { TeamMembers } from "@/collections/payload/TeamMembers";
 import { Tours } from "@/collections/payload/Tours";
 import { Users } from "@/collections/payload/Users";
 import { getPayloadConfigEnv, getPayloadStorageEnv } from "@/config/env";
@@ -57,12 +63,18 @@ export default buildConfig({
   collections: [
     Users,
     Media,
+    ProductCategories,
+    Attractions,
     Destinations,
     Partners,
     Tours,
+    CarRentals,
     Customers,
     Bookings,
+    CustomInquiries,
     Posts,
+    TeamMembers,
+    SiteSettings,
     Comments,
     Reviews,
     Promotions,

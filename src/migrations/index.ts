@@ -5,6 +5,7 @@ import * as migration_20260525_033415_layer_1_3_access_hardening from './2026052
 import * as migration_20260525_041144_fix_media_admin_upload_storage from './20260525_041144_fix_media_admin_upload_storage';
 import * as migration_20260526_145531 from './20260526_145531';
 import * as migration_20260527_041941 from './20260527_041941';
+import * as migration_20260529_124032_travel_platform_expansion from './20260529_124032_travel_platform_expansion';
 
 export const migrations = [
   {
@@ -40,6 +41,11 @@ export const migrations = [
   {
     up: migration_20260527_041941.up,
     down: migration_20260527_041941.down,
-    name: '20260527_041941'
+    name: '20260527_041941',
+  },
+  {
+    up: migration_20260529_124032_travel_platform_expansion.up,
+    down: migration_20260529_124032_travel_platform_expansion.down,
+    name: '20260529_124032_travel_platform_expansion'
   },
 ];

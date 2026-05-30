@@ -33,6 +33,23 @@ export const Posts: CollectionConfig = {
       ]
     },
     { name: "destination", type: "relationship", relationTo: "destinations" },
+    {
+      name: "guideCategory",
+      type: "select",
+      index: true,
+      defaultValue: "general",
+      options: [
+        { label: "Eat", value: "eat" },
+        { label: "Drink", value: "drink" },
+        { label: "Do", value: "do" },
+        { label: "Shop", value: "shop" },
+        { label: "Before the Trip", value: "before-trip" },
+        { label: "Service", value: "service" },
+        { label: "General", value: "general" }
+      ]
+    },
+    { name: "attractions", type: "relationship", relationTo: "attractions" as never, hasMany: true },
+    { name: "sortWeight", type: "number", defaultValue: 0, index: true },
     { name: "relatedTour", type: "relationship", relationTo: "tours" },
     { name: "relatedPosts", type: "relationship", relationTo: "posts", hasMany: true },
     {

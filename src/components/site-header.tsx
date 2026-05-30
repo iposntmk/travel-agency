@@ -9,8 +9,9 @@ import { SiteNavMobile, type NavItem } from "@/components/site-nav-mobile";
 const NAV_ITEMS: NavItem[] = [
   { href: "/tours", label: "Tours" },
   { href: "/destinations", label: "Destinations" },
-  { href: "/free-tours", label: "Free Tours" },
-  { href: "/blog", label: "Blog" }
+  { href: "/car-rentals", label: "Car Rental" },
+  { href: "/blog", label: "Travel Guides" },
+  { href: "/free-proposal", label: "Free Proposal" }
 ];
 
 export function SiteHeader() {
@@ -92,9 +93,9 @@ export function SiteHeader() {
         <div className="flex items-center gap-2">
           <Link
             href="/tours"
-            className="hidden rounded-full bg-navy-900 px-4 py-2 text-sm font-semibold text-white shadow-card transition hover:bg-navy-800 md:inline-flex"
+            className="hidden rounded-full bg-[#047857] px-4 py-2 text-sm font-semibold text-white shadow-card transition hover:bg-[#065F46] md:inline-flex"
           >
-            Book a tour
+            Free proposal
           </Link>
           <button
             ref={toggleRef}

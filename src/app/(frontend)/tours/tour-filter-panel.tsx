@@ -32,10 +32,12 @@ function FilterGroup({ label, children }: { label: string; children: React.React
   );
 }
 
+const DURATIONS = [{ value: "1", label: "1 day" }, { value: "3", label: "Up to 3 days" }, { value: "7", label: "Up to 1 week" }];
+const GROUP_SIZES = [{ value: "2", label: "2 guests" }, { value: "4", label: "4 guests" }, { value: "8", label: "8+ guests" }];
+const SORTS = [{ value: "featured", label: "Featured" }, { value: "price", label: "Price" }, { value: "rating", label: "Rating" }, { value: "duration", label: "Duration" }];
+
 export function TourFilterPanel({ destinations, query }: TourFilterPanelProps) {
-  const hasFilters = Boolean(
-    query.destination || query.type || query.season || query.operation || query.priceMax
-  );
+  const hasFilters = Boolean(query.destination || query.type || query.season || query.operation || query.priceMax || query.duration || query.groupSize || query.rating || query.sort);
 
   return (
     <section
@@ -88,6 +90,42 @@ export function TourFilterPanel({ destinations, query }: TourFilterPanelProps) {
             active={query.season === s.value}
           />
         ))}
+      </FilterGroup>
+
+      <FilterGroup label="Duration">
+        <Chip href={`/tours${queryString(query, { duration: undefined })}`} label="Any" active={!query.duration} />
+        {DURATIONS.map((d) => (
+          <Chip
+            key={d.value}
+            href={`/tours${queryString(query, { duration: d.value })}`}
+            label={d.label}
+            active={query.duration === Number(d.value)}
+          />
+        ))}
+      </FilterGroup>
+
+      <FilterGroup label="Group size">
+        <Chip href={`/tours${queryString(query, { groupSize: undefined })}`} label="Any" active={!query.groupSize} />
+        {GROUP_SIZES.map((g) => (
+          <Chip
+            key={g.value}
+            href={`/tours${queryString(query, { groupSize: g.value })}`}
+            label={g.label}
+            active={query.groupSize === Number(g.value)}
+          />
+        ))}
+      </FilterGroup>
+
+      <FilterGroup label="Sort">
+        {SORTS.map((s) => (
+          <Chip
+            key={s.value}
+            href={`/tours${queryString(query, { sort: s.value === "featured" ? undefined : s.value })}`}
+            label={s.label}
+            active={s.value === "featured" ? !query.sort : query.sort === s.value}
+          />
+        ))}
+        <Chip href={`/tours${queryString(query, { rating: "4" })}`} label="4★+" active={query.rating === 4} />
       </FilterGroup>
 
       {hasFilters ? (

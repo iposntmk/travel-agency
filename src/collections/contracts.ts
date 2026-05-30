@@ -27,8 +27,11 @@ export const collectionContracts: CollectionContract[] = [
     access: { read: staffOnly, create: adminOnly, update: adminOnly, delete: adminOnly }
   },
   publicContent("media"),
+  publicContent("product-categories"),
+  publicContent("attractions"),
   publicContent("destinations"),
   publicContent("tours"),
+  publicContent("car-rentals"),
   {
     slug: "customers",
     access: { read: staffOnly, create: staffOnly, update: staffOnly, delete: adminOnly }
@@ -42,7 +45,21 @@ export const collectionContracts: CollectionContract[] = [
       delete: adminOnly
     }
   },
+  {
+    slug: "custom-inquiries",
+    access: {
+      read: staffOnly,
+      create: () => true,
+      update: staffOnly,
+      delete: adminOnly
+    }
+  },
   publicContent("posts"),
+  publicContent("team-members"),
+  {
+    slug: "site-settings",
+    access: { read: publicRead, create: staffOnly, update: staffOnly, delete: adminOnly }
+  },
   {
     slug: "comments",
     access: {

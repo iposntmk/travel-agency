@@ -10,10 +10,16 @@ export async function TourResults({ query }: { query: ToursPageQuery }) {
   const siteUrl = getSiteUrl().replace(/\/$/, "");
   const tours = await getToursForList({
     destinationSlug: query.destination,
+    categorySlug: query.category,
+    attractionSlug: query.attraction,
     tourType: query.type,
     season: query.season,
     operationType: query.operation,
     priceMax: query.priceMax,
+    durationDays: query.duration,
+    groupSize: query.groupSize,
+    ratingMin: query.rating,
+    sort: query.sort,
     limit: 48
   });
 

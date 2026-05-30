@@ -43,9 +43,11 @@ export default async function HomePage() {
         {featuredTours.length === 0 ? (
           <EmptyState>No tours published yet. Check back soon.</EmptyState>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="flex gap-5 overflow-x-auto pb-3 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
             {featuredTours.map((tour) => (
-              <TourCard key={tour.id} tour={tour} />
+              <div key={tour.id} className="w-[82vw] shrink-0 sm:w-auto">
+                <TourCard tour={tour} />
+              </div>
             ))}
           </div>
         )}
@@ -60,14 +62,15 @@ export default async function HomePage() {
             actionHref="/free-tours"
             actionLabel="See free tours"
           />
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="flex gap-5 overflow-x-auto pb-3 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
             {freeTours.map((tour) => (
-              <TourCard
-                key={tour.id}
-                tour={tour}
-                ctaLabel="Register"
-                ctaHref={`/booking/${tour.slug}?source=free-tour-upsell`}
-              />
+              <div key={tour.id} className="w-[82vw] shrink-0 sm:w-auto">
+                <TourCard
+                  tour={tour}
+                  ctaLabel="Register"
+                  ctaHref={`/booking/${tour.slug}?source=free-tour-upsell`}
+                />
+              </div>
             ))}
           </div>
         </SectionBand>
@@ -80,14 +83,15 @@ export default async function HomePage() {
             title="Featured Experiences"
             subtitle="Day tours, tickets, and activities curated by trusted travel partners — booked externally, not through TC Travel."
           />
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="flex gap-5 overflow-x-auto pb-3 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
             {destinations.slice(0, 3).map((destination) => (
-              <OtaWidget
-                key={destination.id}
-                provider="getyourguide"
-                city={destination.title}
-                source="/"
-              />
+              <div key={destination.id} className="w-[82vw] shrink-0 sm:w-auto">
+                <OtaWidget
+                  provider="getyourguide"
+                  city={destination.title}
+                  source="/"
+                />
+              </div>
             ))}
           </div>
         </SectionBand>

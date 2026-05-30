@@ -7,6 +7,7 @@ import {
   hasSearchParams,
   readParam,
   readPriceMax,
+  readPositiveNumber,
   resultsKey,
   type SearchParamValue,
   type ToursPageQuery
@@ -36,6 +37,10 @@ interface ToursPageProps {
     season?: SearchParamValue;
     operation?: SearchParamValue;
     priceMax?: SearchParamValue;
+    duration?: SearchParamValue;
+    groupSize?: SearchParamValue;
+    rating?: SearchParamValue;
+    sort?: SearchParamValue;
   }>;
 }
 
@@ -46,7 +51,11 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
     type: readParam(params.type),
     season: readParam(params.season),
     operation: readParam(params.operation),
-    priceMax: readPriceMax(params.priceMax)
+    priceMax: readPriceMax(params.priceMax),
+    duration: readPositiveNumber(params.duration),
+    groupSize: readPositiveNumber(params.groupSize),
+    rating: readPositiveNumber(params.rating),
+    sort: readParam(params.sort)
   };
   const destinations = await getDestinations();
 

@@ -13,6 +13,10 @@ const TOUR_LIST_SELECT = {
   slug: true,
   featuredImage: true,
   destination: true,
+  durationText: true,
+  routeSummary: true,
+  ratingAverage: true,
+  ratingCount: true,
   operationType: true,
   minPax: true,
   currentPax: true,
@@ -27,13 +31,19 @@ const TOUR_LIST_SELECT = {
 
 function stableToursQuery(input: ToursQuery = {}): ToursQuery {
   return {
+    attractionSlug: input.attractionSlug,
+    categorySlug: input.categorySlug,
     destinationSlug: input.destinationSlug,
+    durationDays: input.durationDays,
     featuredOnly: input.featuredOnly,
     freeOnly: input.freeOnly,
+    groupSize: input.groupSize,
     limit: input.limit,
     operationType: input.operationType,
     priceMax: input.priceMax,
+    ratingMin: input.ratingMin,
     season: input.season,
+    sort: input.sort,
     tourType: input.tourType
   };
 }
@@ -62,13 +72,23 @@ async function fetchToursForList(input: ToursQuery): Promise<Tour[]> {
       and: [...baseWhere.and, { destination: { equals: destinationId } }]
     } as Where;
   }
+  if (input.categorySlug) {
+    const categoryId = await entityIdForSlug(payload, "product-categories", input.categorySlug);
+    if (!categoryId) return [];
+    where = { and: [...(where.and as Record<string, unknown>[]), { categories: { contains: categoryId } }] } as Where;
+  }
+  if (input.attractionSlug) {
+    const attractionId = await entityIdForSlug(payload, "attractions", input.attractionSlug);
+    if (!attractionId) return [];
+    where = { and: [...(where.and as Record<string, unknown>[]), { attractions: { contains: attractionId } }] } as Where;
+  }
 
   const result = await payload.find({
     collection: "tours",
     where,
     limit: input.limit ?? DEFAULT_LIMIT,
     depth: 1,
-    sort: "-isFeaturedInSeason",
+    sort: sortForTours(input.sort),
     select: TOUR_LIST_SELECT
   });
 
@@ -110,4 +130,23 @@ const getToursForDestinationListCached = cache((destinationId: number, limit: nu
 
 export function getToursForDestinationList(destinationId: number, limit = 6): Promise<Tour[]> {
   return getToursForDestinationListCached(destinationId, limit);
+}
+
+async function entityIdForSlug(payload: Payload, collection: string, slug: string): Promise<number | undefined> {
+  const result = await (payload as unknown as { find(args: Record<string, unknown>): Promise<{ docs: { id?: number }[] }> }).find({
+    collection,
+    where: { slug: { equals: slug } },
+    limit: 1,
+    depth: 0,
+    select: { slug: true }
+  });
+
+  return result.docs[0]?.id;
+}
+
+function sortForTours(sort?: string): string {
+  if (sort === "price") return "priceFrom";
+  if (sort === "rating") return "-ratingAverage";
+  if (sort === "duration") return "durationDays";
+  return "-isFeatured";
 }

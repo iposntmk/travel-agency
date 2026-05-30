@@ -10,7 +10,7 @@
 - Thu thập lead chất lượng cao qua **Booking Inquiry Form**, không qua thanh toán online ở MVP.
 - Tạo lòng tin qua **social proof** (TripAdvisor, Google, GetYourGuide, GuruWalk, Viator…).
 - Tối ưu vận hành theo **seasonality** của từng thị trường để tăng tỷ lệ chuyển đổi.
-- Thiết kế sẵn để mở rộng sang **thanh toán trực tuyến** và **đa kênh OTA** ở giai đoạn sau.
+- Thiết kế sẵn để mở rộng sang **thanh toán trực tuyến** sau cùng và **đa kênh OTA** ở giai đoạn sau.
 
 ## 2. Đối tượng khách hàng
 
@@ -50,7 +50,7 @@ Chi tiết và chiến lược theo mùa: `MARKET_SEASONALITY.md`.
 - **Hosting:** Vercel
 - **Styling:** Tailwind CSS + shadcn/ui
 - **Authentication:** Clerk (MVP) — hỗ trợ Social Login (Google, Facebook, Apple)
-- **Payment (Phase 4):** Stripe (quốc tế) + VNPay/MoMo (nội địa)
+- **Payment (future, deferred last):** Stripe (quốc tế) + VNPay/MoMo (nội địa)
 - **Image Storage:** Cloudflare R2 + sharp self-transform variants — xem `MEDIA_STRATEGY.md`
 - **Form & Validation:** React Hook Form + Zod
 - **Package Manager:** pnpm
@@ -64,7 +64,7 @@ Chi tiết và chiến lược theo mùa: `MARKET_SEASONALITY.md`.
 - **Server Components + Server Actions** mặc định.
 - **Static-first + ISR** cho trang Tour, Destination, Blog.
 - **Edge-ready** khi có thể.
-- **Booking module modular** — sẵn sàng cho Phase 4 (payment integration) mà không phải migrate data.
+- **Booking module modular** — schema-ready cho payment tương lai mà không phải migrate data, nhưng runtime online payment không ưu tiên trước frontend/security/performance/SEO.
 
 ## 9. Cross-reference
 

@@ -18,13 +18,26 @@
 | 10 | **partners** | Đối tác outsource tour + Add-on services (spa, dental). |
 | 11 | **media** | Hình ảnh & video (R2-backed — xem `MEDIA_STRATEGY.md`). |
 | 12 | **payments** | Bản ghi thanh toán (Phase 5 — payment online). |
+| 13 | **car-rentals** | Private transfer/day-car products by route, destination, vehicle type. |
+| 14 | **attractions** | Điểm tham quan trong destination hub, dùng để gắn tour/guide. |
+| 15 | **product-categories** | Category chung cho tour/car rental/guide. |
+| 16 | **custom-inquiries** | Lead form cho tailor-made/free proposal, tách khỏi `bookings`. |
+| 17 | **team-members** | Team/trust content public. |
+| 18 | **site-settings** | Hotline, WhatsApp, sales email, footer legal/trust summary. |
 
 ## 2. Quan hệ chính
 
 - `Tour → Destination` (relationship)
+- `Tour → Product Categories[]`
+- `Tour → Attractions[]`
 - `Tour → Partner` (optional — nếu outsource)
 - `Booking → Tour`
 - `Booking → Customer`
+- `Custom Inquiry → Customer`
+- `Custom Inquiry → Destinations[]`
+- `Car Rental → Destination`
+- `Car Rental → Partner` (optional)
+- `Attraction → Destination`
 - `Comment → Tour` hoặc `Comment → Post`
 - `Comment → User` (người comment)
 - `Review → Tour`
@@ -46,6 +59,12 @@
 - `currentPax`: cập nhật thủ công khi gom group
 - `season`: `summer` | `winter` | `year-round`
 - `isFeaturedInSeason`: boolean
+- `durationDays`, `durationText`, `routeSummary`
+- `groupSizeMin`, `groupSizeMax`
+- `categories[]` (relationship → product-categories)
+- `attractions[]` (relationship → attractions)
+- `ratingAverage`, `ratingCount` (denormalized approved review aggregate)
+- `isFeatured`, `sortWeight`
 - `tourType`: `free-walking` | `free-cycling` | `paid-private` | `paid-group` | `adventure` | `family` | `cultural`
 - `status`: `active` | `seasonal` | `sold-out` | `paused`
 - `priceFrom`, `currency`, `pricingTiers[]`
@@ -68,12 +87,51 @@
 - `source`: `direct` | `free-tour-upsell` | `blog-cta` | `social` | `ota`
 - `statusHistory[]`: append-only audit trail with `from`, `to`, `actor`, `reason`, `source`, `createdAt`
 
+### `destinations`
+- `title`, `slug`, `description`, `featuredImage`
+- `heroImage`, `summary`, `bestTimeToVisit`, `hubIntro`
+- `region`: `central` | `north` | `south`
+- `sortWeight`
+- `featuredTours[]`, `featuredCarRentals[]`, `featuredGuides[]`
+- `seo` (meta title, description, OG image)
+
+### `car-rentals`
+- `title`, `slug`, `destination`
+- `routeFrom`, `routeTo`, `vehicleType`: `sedan` | `suv` | `van` | `luxury` | `minibus`
+- `durationText`, `priceFrom`, `currency`
+- `featuredImage`, `gallery[]`
+- `partner` (optional)
+- `status`: `active` | `paused`
+- `seo` (meta title, description, OG image)
+
+### `attractions`
+- `destination`, `title`, `slug`, `summary`, `featuredImage`
+- `categories[]` (relationship → product-categories)
+- `sortWeight`
+- `seo` (meta title, description, OG image)
+
+### `product-categories`
+- `title`, `slug`
+- `type`: `tour` | `car-rental` | `guide` | `shared`
+- `sortWeight`
+
+### `custom-inquiries`
+- Customer/contact: `customer`, `customerName`, `email`, `phone`, `nationality`, `whatsappOptIn`
+- Planning: `planningStage`, `referralSource`, `travelCompanions`, `occasion`
+- Participants/dates: `adults`, `children`, `exactDatesKnown`, `departureDate`, `returnDate`, `departureMonth`, `estimatedDays`
+- Project: `accommodationLevels[]`, `themes[]`, `accompanimentType`, `budgetPerPerson`, `maxBudget`, `selectedDestinations[]`, `message`
+- Ops: `source`, `status`, `internalNotes`, `idempotencyKey`
+- Public creates are accepted through the Server Action; public reads are blocked.
+
 ### `posts`
 - `title`, `slug`, `featuredImage`, `content` (rich)
 - `categories[]` (relationship)
 - `tags[]` (text array)
 - `relatedPosts[]` (manual hoặc auto — gợi ý theo category/tag/season/destination)
 - `destination` (optional relationship)
+- `guideCategory`: `eat` | `drink` | `do` | `shop` | `before-trip` | `service` | `general`
+- `attractions[]` (relationship → attractions)
+- `sortWeight`
 - `relatedTour` (optional relationship — cho CTA Booking cuối bài)
 - `featured`: boolean
 - `readingTime`: number (tự động tính)
@@ -123,8 +181,9 @@ Mỗi collection **phải** declare access rõ ràng:
 
 - **Public read:** `tours`, `destinations`, `posts`, `media`, `reviews` (approved), `comments` (approved), `partners` (featured).
 - **Authenticated user read/write:** `comments` (create own), `bookings` (create + xem lịch sử của mình).
-- **Admin only:** Tất cả còn lại, đặc biệt `bookings.internalNotes`, `partners.commissionRate`, `promotions`, `payments`.
-- **Public booking submit:** Cho phép tạo inquiry không cần login qua Server Action đã rate-limit, validate Zod và idempotent. Public user không được đọc booking của người khác.
+- **Admin/staff only:** inquiry/admin records such as `custom-inquiries`, `bookings`, `promotions`, `payments`. Delete remains admin-only.
+- **Public create:** `bookings` and `custom-inquiries` through validated, rate-limited, idempotent Server Actions.
+- **Public booking/custom inquiry submit:** Cho phép tạo inquiry không cần login qua Server Action đã rate-limit, validate Zod và idempotent. Public user không được đọc booking/custom inquiry của người khác.
 
 ## 5. Cross-reference
 
@@ -145,6 +204,7 @@ Sau khi scaffold app, dùng **Payload built-in migrations** làm nguồn chuẩn
 - Thay đổi breaking trên collection public (`tours`, `destinations`, `posts`) phải có fallback render hoặc data backfill trước khi deploy.
 - Không rename/delete field quan trọng của booking/payment nếu chưa có migration data rõ ràng.
 - Payment fields phải tồn tại nullable từ MVP để Phase 5 không cần migration lớn.
+- Travel platform expansion migration: `20260529_124032_travel_platform_expansion` adds city hub fields, car rentals, attractions, product categories, custom inquiries, team members, and site settings. Review before applying to Preview/Production.
 
 ### Seed data tối thiểu
 

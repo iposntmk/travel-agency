@@ -58,10 +58,10 @@ export function SiteNavMobile({ open, items, isActive, firstLinkRef, onClose }: 
           ))}
           <li className="mt-2 border-t border-navy-100 pt-2">
             <Link
-              href="/tours"
-              className="block rounded-xl bg-navy-900 px-4 py-3 text-center text-base font-semibold text-white transition hover:bg-navy-800"
+              href="/free-proposal"
+              className="block rounded-xl bg-[#047857] px-4 py-3 text-center text-base font-semibold text-white transition hover:bg-[#065F46]"
             >
-              Book a tour
+              Free proposal
             </Link>
           </li>
         </ul>

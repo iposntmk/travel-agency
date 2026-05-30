@@ -17,6 +17,7 @@ import type { Destination, Media, Partner, Tour } from "@/payload-types";
 import { TourAddOns } from "./tour-addons";
 import { TourBookingAside } from "./tour-booking-aside";
 import { TourItinerary } from "./tour-itinerary";
+import { TourMobileBottomCta, TourMobileTabs } from "./tour-mobile-cta";
 
 export const revalidate = 300;
 export const dynamicParams = true;
@@ -46,9 +47,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!tour) return { title: "Tour not found" };
 
   const siteUrl = getSiteUrl();
-  const description =
-    tour.seo?.metaDescription?.trim() || lexicalToPlainText(tour.description) ||
-    `Book ${tour.title} in Central Vietnam.`;
+  const description = tour.seo?.metaDescription?.trim() || lexicalToPlainText(tour.description) || `Book ${tour.title} in Central Vietnam.`;
   const ogImage = resolveOgImage(tour.seo?.ogImage ?? tour.featuredImage, siteUrl);
 
   return {
@@ -99,8 +98,7 @@ export default async function TourDetailPage({ params }: PageProps) {
   const isFree = !tour.priceFrom || tour.priceFrom === 0;
   const badges = badgesFor(tour);
   const descriptionHtml = lexicalToHtml(tour.description);
-  const description =
-    tour.seo?.metaDescription?.trim() || lexicalToPlainText(tour.description) || `Book ${tour.title} in Central Vietnam.`;
+  const description = tour.seo?.metaDescription?.trim() || lexicalToPlainText(tour.description) || `Book ${tour.title} in Central Vietnam.`;
   const siteUrl = getSiteUrl().replace(/\/$/, "");
   const tourUrl = absoluteUrl(siteUrl, `/tours/${tour.slug}`);
 
@@ -160,7 +158,8 @@ export default async function TourDetailPage({ params }: PageProps) {
 
         <div className="mt-8 grid gap-8 md:grid-cols-[1.4fr_0.6fr]">
           <div className="space-y-8">
-            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-navy-50 shadow-card">
+            <TourMobileTabs />
+            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg bg-navy-50 shadow-card">
               <Image
                 src={heroImage.url}
                 alt={heroImage.alt}
@@ -197,17 +196,24 @@ export default async function TourDetailPage({ params }: PageProps) {
 
             {descriptionHtml ? (
               <section
+                id="overview"
                 className="prose prose-slate max-w-none prose-headings:font-display prose-headings:tracking-tight prose-headings:text-navy-950 prose-a:text-navy-700 prose-strong:text-navy-900 prose-p:leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: descriptionHtml }}
               />
             ) : null}
 
-            {tour.itinerary ? <TourItinerary items={tour.itinerary} /> : null}
+            <div id="itinerary">{tour.itinerary ? <TourItinerary items={tour.itinerary} /> : null}</div>
 
             <TourAddOns addOns={addOns} tourSlug={tour.slug} />
           </div>
 
-          <TourBookingAside tour={tour} tourUrl={tourUrl} isFree={isFree} />
+          <div id="price">
+            <TourBookingAside tour={tour} tourUrl={tourUrl} isFree={isFree} />
+          </div>
+        </div>
+        <div id="reviews" className="mt-10 rounded-lg border border-slate-200 bg-white p-5 md:hidden">
+          <p className="text-sm font-semibold text-slate-950">Reviews</p>
+          <p className="mt-2 text-sm text-slate-600">Guest reviews are shared after each confirmed trip.</p>
         </div>
 
         {relatedTours.length > 0 ? (
@@ -238,6 +244,7 @@ export default async function TourDetailPage({ params }: PageProps) {
           </section>
         ) : null}
       </div>
+      <TourMobileBottomCta slug={tour.slug} isFree={isFree} currency={tour.currency} priceFrom={tour.priceFrom} />
     </main>
   );
 }

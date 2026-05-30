@@ -19,9 +19,15 @@ export function TourCard({ tour, ctaHref, ctaLabel }: TourCardProps) {
 
   const href = ctaHref ?? `/tours/${tour.slug}`;
   const label = ctaLabel ?? (isFree ? "Register" : "View details");
+  const details = tour as Tour & {
+    durationText?: string;
+    routeSummary?: string;
+    ratingAverage?: number;
+    ratingCount?: number;
+  };
 
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-navy-100 bg-white shadow-card transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-elevated">
+    <article className="group relative flex flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-card transition-all duration-300 ease-out-soft hover:-translate-y-0.5 hover:shadow-elevated">
       <Link href={href} className="relative block aspect-[4/3] overflow-hidden bg-navy-50">
         <Image
           src={image.url}
@@ -40,8 +46,8 @@ export function TourCard({ tour, ctaHref, ctaLabel }: TourCardProps) {
         <span
           className={
             isFree
-              ? "absolute right-3 top-3 inline-flex items-center rounded-full bg-brand-gold px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-navy-950 shadow-card"
-              : "absolute right-3 top-3 inline-flex items-center rounded-full bg-navy-900 px-3 py-1 text-[11px] font-semibold text-white shadow-card"
+              ? "absolute right-3 top-3 inline-flex items-center rounded-full bg-[#C65A3A] px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white shadow-card"
+              : "absolute right-3 top-3 inline-flex items-center rounded-full bg-[#047857] px-3 py-1 text-[11px] font-semibold text-white shadow-card"
           }
         >
           {isFree ? "Free" : `From $${tour.priceFrom}`}
@@ -57,13 +63,22 @@ export function TourCard({ tour, ctaHref, ctaLabel }: TourCardProps) {
             {tour.title}
           </Link>
         </h3>
+        <div className="space-y-1 text-sm leading-6 text-slate-600">
+          {details.routeSummary ? <p>{details.routeSummary}</p> : null}
+          <p>
+            {details.durationText ?? "Flexible timing"}
+            {details.ratingAverage && details.ratingCount
+              ? ` · ${details.ratingAverage.toFixed(1)} (${details.ratingCount})`
+              : ""}
+          </p>
+        </div>
         <div className="mt-auto flex items-center justify-between gap-3 pt-3">
           <span className="text-sm font-medium text-slate-600">
             {isFree ? "Tips appreciated" : `${tour.currency ?? "USD"} · per person`}
           </span>
           <Link
             href={href}
-            className="inline-flex items-center gap-1 rounded-full bg-navy-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-navy-800"
+            className="inline-flex items-center gap-1 rounded-full bg-[#047857] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#065F46]"
           >
             {label}
             <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" aria-hidden="true">

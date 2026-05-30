@@ -65,7 +65,9 @@ describe("buildToursWhere", () => {
 
   it("filters featured tours when featuredOnly is true", () => {
     const where = buildToursWhere({ featuredOnly: true }) as { and: Array<Record<string, unknown>> };
-    expect(where.and).toContainEqual({ isFeaturedInSeason: { equals: true } });
+    expect(where.and).toContainEqual({
+      or: [{ isFeatured: { equals: true } }, { isFeaturedInSeason: { equals: true } }]
+    });
   });
 });
 

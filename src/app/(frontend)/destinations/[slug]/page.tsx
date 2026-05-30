@@ -8,11 +8,11 @@ import { OtaWidget } from "@/components/ota-widget";
 import { SectionHead } from "@/components/section";
 import { TourCard } from "@/components/tour-card";
 import { getSiteUrl } from "@/config/env";
-import { getDestinationBySlug, getDestinations } from "@/lib/cms";
-import { getToursForDestinationList } from "@/lib/cms-list";
+import { getDestinationBySlug, getDestinationHub, getDestinations } from "@/lib/cms";
 import { lexicalToHtml, lexicalToPlainText } from "@/lib/lexical";
 import { resolveImage, resolveOgImage } from "@/lib/media";
 import { absoluteUrl, breadcrumbJsonLd, touristDestinationJsonLd } from "@/lib/structured-data";
+import { DestinationHubSections } from "./destination-hub-sections";
 
 export const revalidate = 300;
 export const dynamicParams = true;
@@ -66,19 +66,29 @@ const REGION_LABEL: Record<string, string> = {
 
 export default async function DestinationDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const destination = await getDestinationBySlug(slug);
-  if (!destination) notFound();
+  const hub = await getDestinationHub(slug);
+  if (!hub) notFound();
+  const { destination, tours } = hub;
+  const details = destination as typeof destination & {
+    summary?: string;
+    bestTimeToVisit?: string;
+    hubIntro?: unknown;
+    heroImage?: unknown;
+  };
 
-  const tours = await getToursForDestinationList(destination.id, 6);
-  const image = resolveImage(destination.featuredImage, destination.title, { variant: "hero" });
-  const html = lexicalToHtml(destination.description);
+  const image = resolveImage(
+    (details.heroImage ?? destination.featuredImage) as Parameters<typeof resolveImage>[0],
+    destination.title,
+    { variant: "hero" }
+  );
+  const html = lexicalToHtml((details.hubIntro ?? destination.description) as typeof destination.description);
   const description =
     destination.seo?.metaDescription?.trim() ||
     lexicalToPlainText(destination.description) ||
     `Tours in ${destination.title}.`;
   const siteUrl = getSiteUrl().replace(/\/$/, "");
   const destinationUrl = absoluteUrl(siteUrl, `/destinations/${destination.slug}`);
-  const bestSeason = destination.region ? REGION_BEST_SEASON[destination.region] : undefined;
+  const bestSeason = details.bestTimeToVisit || (destination.region ? REGION_BEST_SEASON[destination.region] : undefined);
   const regionLabel = destination.region ? REGION_LABEL[destination.region] : null;
 
   return (
@@ -136,6 +146,7 @@ export default async function DestinationDetailPage({ params }: PageProps) {
                 dangerouslySetInnerHTML={{ __html: html }}
               />
             ) : null}
+            {details.summary ? <p className="text-lg leading-8 text-slate-700">{details.summary}</p> : null}
           </div>
 
           {bestSeason ? (
@@ -182,6 +193,8 @@ export default async function DestinationDetailPage({ params }: PageProps) {
             </div>
           )}
         </section>
+
+        <DestinationHubSections hub={hub} />
 
         <section className="mt-16">
           <SectionHead

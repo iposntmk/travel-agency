@@ -1,8 +1,8 @@
 # Development Roadmap & Delivery Strategy
 
-**Tên dự án:** VM Travel Platform  
-**Phiên bản:** MVP v1.1  
-**Cập nhật:** 2026-05-24  
+**Tên dự án:** VM Travel Platform
+**Phiên bản:** MVP v1.1
+**Cập nhật:** 2026-05-30
 **Vai trò tài liệu:** Roadmap phát triển chính. Các phân tích trong `Phan_tich.md` và `proposal.md` đã được chắt lọc vào file này; hai file đó chỉ còn là tài liệu tham khảo.
 
 ---
@@ -34,15 +34,15 @@ Layer 5  Booking Lead Engine
 Layer 6  Free Tours
 Layer 7  Trust + Engagement
 Layer 8  Monetization Without Payment
-Layer 9  Online Payment
 Layer 10 Polish + Production
+Layer 9  Online Payment (deferred last)
 ```
 
-Nếu chỉ có 1-2 dev, đi tuần tự theo đúng thứ tự trên. Không đẩy social, OTA, payment hoặc analytics nâng cao lên trước khi booking engine ổn định.
+Nếu chỉ có 1-2 dev, đi tuần tự theo đúng thứ tự trên. Không đẩy social, OTA, payment hoặc analytics nâng cao lên trước khi booking engine ổn định. **Quyết định 2026-05-30:** online payment giữ schema-ready nhưng không còn là ưu tiên sau Layer 8; triển khai runtime payment sau cùng, sau khi frontend, security, performance, SEO và vận hành production ổn định.
 
 ### Trạng thái hiện tại
 
-**Cập nhật 2026-05-27:** dự án đang ở **Layer 8 - Monetization Without Payment, UI + internal dashboard shipped, chờ partner IDs**.
+**Cập nhật 2026-05-30:** dự án đang ở **Layer 8 - Monetization Without Payment**, với nhánh mở rộng travel platform đã implement local và đã pass full local gate. Chưa coi là production-shipped cho tới khi commit/push `origin master` và Vercel deploy xong.
 
 - Layer 1-6 đã landed đầy đủ cho luồng MVP. Layer 7 (Trust + Engagement) hoàn tất phần lõi: Clerk customer sync verified end-to-end (`pnpm qa:clerk-sync`), cookie consent banner + UTM share buttons live.
 - Layer 8 đã ship scaffold + UI/UX trên 3 surfaces:
@@ -51,13 +51,23 @@ Nếu chỉ có 1-2 dev, đi tuần tự theo đúng thứ tự trên. Không đ
   - Tour detail: section "Similar experiences in {destination}" (GetYourGuide + Viator).
 - Click attribution infra ổn định: collection `affiliate-clicks`, route `POST /api/events/click` (Zod + rate-limit + SHA-256 IP hash), component `<TrackedLink>` (sendBeacon + fetch keepalive fallback, `rel="noopener noreferrer sponsored"`).
 - `src/lib/ota-providers.ts` định nghĩa 5 provider (GetYourGuide / Viator / Klook / Civitatis / GuruWalk). URL hiện tại trỏ trang search chung — **chưa có partner ID, doanh thu = 0**. Hướng dẫn nhét partner ID khi có account: `docs/OTA_INTEGRATIONS.md` § "Adding affiliate IDs".
+- Travel platform expansion local 2026-05-29:
+  - Schema: thêm `car-rentals`, `attractions`, `product-categories`, `custom-inquiries`, `team-members`, `site-settings`; mở rộng `destinations`, `tours`, `posts`.
+  - Backend: thêm Server Action `submitCustomInquiry`, schema Zod, repository idempotent, email service, read helpers cho destination hub/car rentals/guides/home content.
+  - Frontend: thêm `/free-proposal`, `/car-rentals`, `/car-rentals/[slug]`, destination hub sections, proposal form 4 bước, tour accordion/sticky mobile CTA, expanded tour filters.
+  - Migration/types: generated `20260529_124032_travel_platform_expansion`.
+  - Verification: `pnpm typecheck`, `pnpm test`, `pnpm lint`, `pnpm build` pass on 2026-05-30. Build previously timed out twice on 2026-05-29 but is no longer the blocker.
 
 **Việc đang chờ trước khi đi tiếp:**
 
-1. Chủ sở hữu đăng ký tài khoản OTA (theo thứ tự priority trong `OTA_INTEGRATIONS.md` §3) → bàn giao partner ID.
-2. Dev wire partner ID qua Payload `partners` collection (Layer 8 K) thay vì hardcode — giúp flip revenue mà không redeploy.
-3. ~~Dev xây dashboard nội bộ aggregate click theo `targetType`, `targetId`, `source`, ngày (Layer 8 L).~~ **Done 2026-05-27** — `/internal/affiliate-clicks`.
-4. Sau đó: booking capacity locking, media/performance backlog, rồi Layer 9 Online Payment.
+1. Review migration `20260529_124032_travel_platform_expansion`.
+2. Commit, push `origin master`, then verify Vercel auto-deploy.
+3. Hoàn thiện frontend public conversion surfaces bằng mobile QA trước: homepage, tours/list/detail, destination hub, `/free-proposal`, `/car-rentals`, booking confirmation.
+4. Làm security hardening trước khi mở indexing: production QA form, access-control spot checks, UGC sanitization nếu bật comment/review, CSP report review, không commit log/secret/data.
+5. Làm performance + SEO backlog trong `docs/toiuu.md`: region/pooler, media cache/R2, image strategy, metadataBase/canonical, JSON-LD, sitemap, Lighthouse mobile.
+6. Chủ sở hữu đăng ký tài khoản OTA (theo thứ tự priority trong `OTA_INTEGRATIONS.md` §3) → bàn giao partner ID; dev wire vào Payload khi có ID, nhưng không để việc này chặn security/performance/SEO/frontend.
+7. Booking capacity locking chỉ làm nếu booking thật sự mutate availability/currentPax.
+8. Layer 9 Online Payment để sau cùng.
 
 Dev tiếp theo nên đọc `docs/CURRENT_STATUS.md` sau `CLAUDE.md` để biết điểm dừng chính xác, rồi mới chọn task tiếp theo trong roadmap này.
 
@@ -297,6 +307,16 @@ Inquiry mới **luôn** bắt đầu là `Pending`. Sales/ops chỉ chuyển san
 - ⏳ Owner: đăng ký partner programs theo thứ tự ở `OTA_INTEGRATIONS.md` §3.
 - ⏭ **Sprint K – CMS-driven partner IDs**: extend Payload `partners` (hoặc tạo `ota-partners`) collection, migration, đọc partner ID ở request time trong `src/lib/ota-providers.ts`. Mục tiêu: bật doanh thu mà không redeploy.
 - ✅ **Sprint L – Affiliate clicks dashboard** (2026-05-27): trang `/internal/affiliate-clicks` (admin-only, Payload session gate) aggregate clicks theo `targetType`, `targetId`, `source`, ngày. Pure aggregator + Payload loader trong `src/services/affiliate-stats.ts`, render trong `src/app/(internal)/internal/affiliate-clicks/`. Robots disallow + noindex layout. 13 unit tests cho aggregator.
+- 🟡 **Sprint M – Travel platform expansion** (local 2026-05-29, local gate passed 2026-05-30): CMS city hub + car rental + attractions + product categories + custom inquiries + team/settings; `/free-proposal`; `/car-rentals`; richer destination/tour UX. Awaiting migration review, commit/push, and Vercel deploy verification.
+
+### Sprint M exit criteria before shipping
+
+- `pnpm build` completes locally or in CI without hanging.
+- Generated migration is reviewed and applied successfully in Preview.
+- Custom inquiry submit creates one `custom-inquiries` row and reuses existing `customers` by email.
+- Public users can create but not read custom inquiries.
+- `/free-proposal`, `/car-rentals`, `/destinations/[slug]`, `/tours/[slug]` pass mobile smoke checks.
+- No payment UI or online payment flow is introduced.
 
 ### Exit criteria
 
@@ -307,9 +327,9 @@ Inquiry mới **luôn** bắt đầu là `Pending`. Sales/ops chỉ chuyển san
 
 ---
 
-## 11. Layer 9 - Online Payment
+## 11. Layer 9 - Online Payment (Deferred Last)
 
-**Mục tiêu:** thêm online payment song song với Pay Later mà không rewrite booking model.
+**Mục tiêu:** thêm online payment song song với Pay Later mà không rewrite booking model. Runtime payment hiện **không ưu tiên**; chỉ triển khai sau khi Pay Later, frontend, security, performance, SEO, content, và production operations đã ổn định.
 
 ### Scope
 
@@ -378,12 +398,12 @@ Layer 7 Trust + Engagement
     |
 Layer 8 Monetization Without Payment
     |
-Layer 9 Online Payment
-    |
 Layer 10 Polish + Production
+    |
+Layer 9 Online Payment (deferred last)
 ```
 
-Layer 7 và Layer 8 có thể chạy song song sau khi Layer 5 ổn định và cookie-consent/tracking contract đã rõ. Layer 9 không nên làm song song sớm vì dễ tạo abstraction thừa cho MVP.
+Layer 7 và Layer 8 có thể chạy song song sau khi Layer 5 ổn định và cookie-consent/tracking contract đã rõ. Layer 10 polish/security/performance/SEO hiện đi trước Layer 9. Layer 9 không nên làm song song sớm vì dễ tạo abstraction thừa cho MVP.
 
 ---
 

@@ -18,10 +18,16 @@ export type SearchParamValue = string | string[] | undefined;
 
 export interface ToursPageQuery {
   destination?: string;
+  category?: string;
+  attraction?: string;
   type?: string;
   season?: string;
   operation?: string;
   priceMax?: number;
+  duration?: number;
+  groupSize?: number;
+  rating?: number;
+  sort?: string;
 }
 
 export function readParam(value: SearchParamValue): string | undefined {
@@ -30,6 +36,10 @@ export function readParam(value: SearchParamValue): string | undefined {
 }
 
 export function readPriceMax(value: SearchParamValue): number | undefined {
+  return readPositiveNumber(value);
+}
+
+export function readPositiveNumber(value: SearchParamValue): number | undefined {
   const raw = readParam(value);
   if (!raw) return undefined;
   const num = Number(raw);
@@ -46,10 +56,16 @@ export function hasSearchParams(params: Record<string, SearchParamValue>): boole
 export function queryString(query: ToursPageQuery, overrides: Record<string, string | undefined>): string {
   const merged: Record<string, string | undefined> = {
     destination: query.destination,
+    category: query.category,
+    attraction: query.attraction,
     type: query.type,
     season: query.season,
     operation: query.operation,
     priceMax: query.priceMax ? String(query.priceMax) : undefined,
+    duration: query.duration ? String(query.duration) : undefined,
+    groupSize: query.groupSize ? String(query.groupSize) : undefined,
+    rating: query.rating ? String(query.rating) : undefined,
+    sort: query.sort,
     ...overrides
   };
   const search = new URLSearchParams();

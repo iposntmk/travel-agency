@@ -1,10 +1,12 @@
 # Current Status
 
-**Updated:** 2026-05-27 (Layer 8 L dashboard + frontend polish Stages 1-5 shipped)
+**Updated:** 2026-05-30 (Travel platform expansion local gate passed; commit/push pending)
 
 ## Current Layer / Stage
 
-The project is currently at **Layer 8 - Monetization Without Payment** with **UI/UX shipped** but **affiliate partner accounts not yet registered**. Click attribution infra is live, so revenue starts flowing the moment partner IDs are added to `src/lib/ota-providers.ts` — no UI or schema work needed.
+The project is currently at **Layer 8 - Monetization Without Payment** with the earlier OTA/dashboard work shipped, and a new **Travel Platform Expansion** implemented locally with the full local gate passing on 2026-05-30.
+
+Do not treat the expansion as production-shipped until the changes are committed, pushed to `origin/master`, and the Vercel production deployment completes.
 
 Layers 1-7 are complete enough to support the current production flow:
 
@@ -33,6 +35,20 @@ Layer 8 implementation status:
 - **Affiliate IDs (pending)** — partner accounts not yet registered. Revenue = 0 until partner IDs are appended to `buildUrl()` per provider. See `docs/OTA_INTEGRATIONS.md` § "Adding affiliate IDs".
 - **Internal clicks dashboard (done)** — `/internal/affiliate-clicks` (admin-only, Payload session gate) renders totals, top targets, top sources, OTA provider breakdown, day-by-day bar chart, and recent rows. Range selector `?range=7|30|90`. Aggregation lives in `src/services/affiliate-stats.ts` (pure aggregator + Payload loader). Disallowed in `robots.txt` and noindex'd via the internal layout. Verified with `pnpm test` (13 new tests) + `pnpm build`.
 
+Travel Platform Expansion status (local, verified):
+
+- **Schema expansion implemented** — new Payload collections: `car-rentals`, `attractions`, `product-categories`, `custom-inquiries`, `team-members`, `site-settings`; expanded `destinations`, `tours`, and `posts` for city hubs, richer tour cards, ratings, guide categories, featured relationships, and sorting.
+- **Migration/types generated** — `src/migrations/20260529_124032_travel_platform_expansion.ts` and `.json` created; `src/payload-types.ts` regenerated.
+- **Custom inquiry flow implemented** — `submitCustomInquiry` Server Action with Zod validation, IP/email rate limiting, plain-text sanitization, idempotency, customer reuse, Payload persistence, and non-blocking Resend customer/sales emails.
+- **Frontend routes implemented** — `/free-proposal` multi-step proposal form, `/car-rentals`, `/car-rentals/[slug]`, destination hub sections for tours/car rentals/guides/attractions.
+- **Frontend UX refresh implemented** — lighter Authentik-inspired hero, emerald proposal CTA, mobile horizontal cards, expanded tour filters, itinerary accordion, mobile sticky tabs, and sticky tour bottom CTA.
+- **Tests added** — custom inquiry schema/action coverage for validation, destination requirement, duplicate idempotency, email suppression on duplicates, and rate limiting.
+
+Expansion verification:
+
+- 2026-05-29: `tsc --noEmit`, `vitest run`, and `eslint .` passed via local binaries, but `next build` timed out twice.
+- 2026-05-30: `pnpm typecheck`, `pnpm test`, `pnpm lint`, and `pnpm build` passed. Build completed in roughly 140 seconds and generated 28 static pages. Lint still reports the 4 pre-existing warnings in `src/migrations/20260527_041941.ts`.
+
 Latest production-readiness verification:
 
 - `pnpm qa:clerk-sync` on 2026-05-27 — Clerk → Payload customer sync confirmed end-to-end (creates throwaway Clerk user, waits for webhook, asserts Payload `customers` row, cleans up both sides).
@@ -42,20 +58,19 @@ Latest production-readiness verification:
 
 Last shipped commits (top to bottom = newest to oldest):
 
-- (pending) Layer 8 L internal affiliate-clicks dashboard
+- (pending commit/push) Travel platform expansion: schema, custom inquiries, car rentals, city hubs, proposal UX
+- `7047eee Document Stage 1-5 frontend polish and add tech stack reference`
+- `44758b3 Refresh consent banner and share buttons (Stage 5)`
+- `547d9d2 Polish detail pages with breadcrumb, navy aside, prose tweaks (Stage 4)`
+- `5da67a8 Polish listing pages with PageHero and refined cards (Stage 3)`
+- `5d5079d2 Polish homepage hero, sections, and TourCard`
+- `269f861 Refresh frontend design tokens and ship SiteHeader/Footer`
+- `7e43aa0 Add internal affiliate-clicks dashboard (Layer 8 L)`
+- `ab44f6d Update status docs to reflect Layer 8 UI shipped`
 - `d1cda72 Show OTA Featured Experiences on home + destination pages`
 - `c75fd9d Add OTA widget scaffold on tour detail (no affiliate IDs yet)`
 - `198c1aa Track add-on partner clicks as affiliate events`
 - `51aca80 Add cookie consent banner and social share buttons`
-- `243f9a0 Wire booking source tracking and free-tour upsell`
-- `9aa6c92 Add public booking inquiry form`
-- `c48da27 Add Clerk webhook sync verification script`
-- `2265c61 Drop unused getTours and getToursForDestination`
-- `6d74327 Add R2 Cache-Control backfill script`
-- `f7210e5 Document noindex policy and ALLOW_INDEXING gate`
-- `fcb05fb Trim CMS list getter payload with select`
-- `878ad41 Enable Vercel image optimization for public pages`
-- `e8553df Harden booking submissions for production readiness`
 
 ## Immediate Production Follow-Up
 
@@ -130,20 +145,23 @@ For the current Clerk handoff, also inspect:
 
 **Dev tasks — in order:**
 
-1. **Layer 8 K** — Move OTA partner IDs into Payload `partners` (or new `ota-partners`) collection so revenue switches on without a redeploy. Loading order: extend collection → migration → switch `src/lib/ota-providers.ts` to read partner ID from CMS at request time (cache-friendly). Documented in `docs/OTA_INTEGRATIONS.md`.
-2. ~~**Layer 8 L** — Internal `/admin` affiliate-clicks dashboard.~~ **Done** — `/internal/affiliate-clicks` (admin-only Payload session gate), see `src/app/(internal)/internal/affiliate-clicks/page.tsx` + `affiliate-dashboard.tsx` + `src/services/affiliate-stats.ts`.
-3. Booking slot/capacity transaction locking if bookings mutate availability or `currentPax`.
-4. Production booking submit QA on the real domain — covered functionally by the Resend pass, but worth running once on the canonical hostname before indexing flips.
-5. Media/performance backlog in `docs/toiuu.md` (remaining P0/P1 items: Vercel function region pinning, Neon pooler tuning, R2 cache-control/preconnect audit, image strategy reconciliation).
-6. **Layer 9 Online Payment** — only after the above is stable and the Pay Later flow has been audited.
+1. Review generated migration `20260529_124032_travel_platform_expansion` before applying to Preview/Production.
+2. Commit and push the travel platform expansion after staging only the intended source/docs/migration/test files.
+3. Verify the Vercel production deployment completes after push.
+4. Complete frontend QA/polish for the public conversion surfaces: homepage, `/tours`, `/tours/[slug]`, `/destinations/[slug]`, `/free-proposal`, `/car-rentals`, and booking confirmation on mobile first.
+5. Security hardening before indexing/go-live: production booking + custom inquiry QA, comments/reviews sanitization if public UGC is enabled, CSP report review, access-control spot checks, and no secret/log/data files in commits.
+6. Performance + SEO backlog in `docs/toiuu.md`: Vercel region/pooler verification, media Cache-Control/R2 audit, image strategy reconciliation, metadataBase/canonical, JSON-LD, sitemap, and mobile Lighthouse target.
+7. **Layer 8 K** — Move OTA partner IDs into Payload `partners` (or new `ota-partners`) collection when owner provides IDs. This is revenue-enabling but should not block security/performance/SEO/frontend completion.
+8. Booking slot/capacity transaction locking only if bookings mutate availability or `currentPax`.
+9. **Layer 9 Online Payment** — explicitly deferred until the end, after Pay Later, security, performance, SEO, frontend, and production operations are stable.
 
 ## Verification Baseline
 
 Latest local verification before this status update:
 
 - `pnpm typecheck` passed.
-- `pnpm test` passed: 22 files, 123 tests (Layer 8 L added 13 aggregator tests).
-- `pnpm lint` passed (4 pre-existing migration warnings unchanged).
-- `pnpm build` passed; new `/internal/affiliate-clicks` route registered as Dynamic.
+- `pnpm test` passed: 24 files, 131 tests.
+- `pnpm lint` passed with 4 pre-existing migration warnings unchanged.
+- `pnpm build` passed; build completed in roughly 140 seconds and registered `/free-proposal`, `/car-rentals`, and `/car-rentals/[slug]`.
 
 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, and `pnpm build` before committing code changes.

@@ -1,8 +1,8 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Destination } from "@/payload-types";
-
-const DOT_PATTERN =
-  "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><circle cx='2' cy='2' r='1' fill='white'/></svg>\")";
+import { resolveImage } from "@/lib/media";
+import { QuickProposal } from "./quick-proposal";
 
 const TRUST_ITEMS = [
   { label: "4.9★ rating", hint: "From inbound travellers" },
@@ -16,79 +16,55 @@ interface HomeHeroProps {
 }
 
 export function HomeHero({ destinations }: HomeHeroProps) {
+  const heroDestination = destinations[0];
+  const image = resolveImage(heroDestination?.featuredImage, "Tailor-made Vietnam travel", { variant: "hero" });
+
   return (
-    <section className="relative overflow-hidden bg-navy-950 text-white">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(1100px 480px at 80% -10%, rgba(74,144,217,0.35), transparent 60%), radial-gradient(820px 540px at 10% 110%, rgba(15,103,177,0.45), transparent 55%)"
-        }}
-      />
-      <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.07]" style={{ backgroundImage: DOT_PATTERN }} />
-      <div className="relative mx-auto grid max-w-page gap-12 px-4 py-20 md:grid-cols-[1.15fr_0.85fr] md:items-center md:py-28">
-        <div>
-          <p className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-navy-100 backdrop-blur">
-            <span className="h-1.5 w-1.5 rounded-full bg-brand-gold" />
-            Central Vietnam · Private & Free Tours
+    <section className="relative bg-white">
+      <div className="relative min-h-[660px] overflow-hidden md:min-h-[720px]">
+        <Image
+          src={image.url}
+          alt={image.alt}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+          style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined}
+        />
+        <div className="absolute inset-0 bg-white/70" aria-hidden />
+        <div className="relative mx-auto flex min-h-[660px] max-w-page flex-col justify-center px-4 pb-28 pt-20 md:min-h-[720px]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700">
+            Private tailor-made trips in Vietnam
           </p>
-          <h1 className="mt-6 max-w-2xl font-display text-4xl font-bold leading-tight tracking-tight md:text-6xl">
-            Discover Hội An, Huế & Đà Nẵng on your terms.
+          <h1 className="mt-5 max-w-3xl font-display text-4xl font-bold leading-tight tracking-tight text-slate-950 md:text-6xl">
+            Local journeys shaped around your pace.
           </h1>
-          <p className="mt-6 max-w-xl text-base leading-7 text-navy-100 md:text-lg md:leading-8">
-            Private guides, small groups, and free walking tours from locals who live the region.
-            Submit an inquiry now and pay later when you meet your guide.
+          <p className="mt-6 max-w-2xl text-base leading-7 text-slate-700 md:text-lg md:leading-8">
+            Private guides, small groups, car transfers, and flexible proposals across Hội An, Huế, Đà Nẵng, and beyond.
+            No payment is required until your trip is confirmed.
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
             <Link
-              href="/tours"
-              className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-navy-900 shadow-elevated transition hover:bg-navy-50"
+              href="/free-proposal"
+              className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#047857] px-6 text-sm font-semibold text-white shadow-elevated transition hover:bg-[#065F46]"
             >
-              Explore tours
+              Start your travel project
               <ArrowIcon />
             </Link>
             <Link
-              href="/free-tours"
-              className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/5 px-6 py-3 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10"
+              href="/tours"
+              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-slate-300 bg-white px-6 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
             >
-              Join free tours
+              Explore tours
             </Link>
           </div>
           <TrustStrip />
         </div>
-        <DestinationsPanel destinations={destinations} />
-      </div>
-    </section>
-  );
-}
-
-function DestinationsPanel({ destinations }: HomeHeroProps) {
-  return (
-    <div className="relative">
-      <div className="absolute inset-0 -translate-y-3 translate-x-3 rounded-3xl bg-white/10 blur-md md:translate-x-6" aria-hidden />
-      <div className="relative rounded-3xl border border-white/15 bg-white/5 p-5 backdrop-blur">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-navy-100">Featured destinations</p>
-        <div className="mt-4 grid gap-3">
-          {destinations.length === 0 ? (
-            <p className="text-sm text-navy-100">Destinations coming soon.</p>
-          ) : (
-            destinations.map((destination) => (
-              <Link
-                key={destination.id}
-                href={`/destinations/${destination.slug}`}
-                className="flex items-center justify-between rounded-2xl bg-white/10 px-4 py-3 transition hover:bg-white/15"
-              >
-                <span className="font-semibold text-white">{destination.title}</span>
-                <span className="text-xs text-navy-100">
-                  {destination.region === "central" ? "Central Vietnam" : "Vietnam"} →
-                </span>
-              </Link>
-            ))
-          )}
+        <div className="absolute inset-x-4 bottom-0 translate-y-1/2 md:left-1/2 md:right-auto md:w-[min(760px,calc(100%-2rem))] md:-translate-x-1/2">
+          <QuickProposal destinations={destinations} />
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -96,9 +72,9 @@ function TrustStrip() {
   return (
     <dl className="mt-10 grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-4">
       {TRUST_ITEMS.map((item) => (
-        <div key={item.label} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur">
-          <dt className="text-sm font-semibold text-white">{item.label}</dt>
-          <dd className="mt-0.5 text-[11px] uppercase tracking-wide text-navy-100">{item.hint}</dd>
+        <div key={item.label} className="rounded-lg border border-white/70 bg-white/75 px-4 py-3 shadow-card backdrop-blur">
+          <dt className="text-sm font-semibold text-slate-950">{item.label}</dt>
+          <dd className="mt-0.5 text-[11px] uppercase tracking-wide text-slate-600">{item.hint}</dd>
         </div>
       ))}
     </dl>

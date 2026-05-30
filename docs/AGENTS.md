@@ -6,7 +6,7 @@ This file is a short handoff for coding agents. The active source of truth is `C
 
 The repository is no longer docs-only. It contains a working Next.js 15 + Payload CMS application.
 
-Current implementation stage: **Layer 7 - Trust + Engagement started**.
+Current implementation stage: **Layer 8 - Monetization Without Payment**, with Travel Platform Expansion locally verified and pending commit/push/deploy verification.
 
 Already implemented:
 
@@ -15,15 +15,18 @@ Already implemented:
 - Layer 3 Media: Cloudflare R2 signed uploads and QStash Sharp variant processing.
 - Layer 4 Public Pages: Payload-backed tours, destinations, blog, SEO metadata, JSON-LD, sitemap, robots, cached public reads.
 - Layer 5 Booking Lead Engine: Server Action validation, sanitization, public `Pending` enforcement, DB-backed idempotency, Payload/Postgres persistence.
-- Layer 7 started: Clerk webhook sync into Payload `customers`.
+- Layer 7 complete enough for current production flow: Clerk webhook sync into Payload `customers`, cookie consent, and share buttons.
+- Layer 8 shipped: OTA click tracking, widgets, and `/internal/affiliate-clicks` dashboard.
+- Travel Platform Expansion local: car rentals, attractions, product categories, custom inquiries, team/settings, `/free-proposal`, `/car-rentals`, destination hub UX.
 - Production booking readiness: Upstash Redis REST rate limiting and Resend booking emails.
 - Media polish: public cropped images respect Payload `focalX` / `focalY`.
 
-Immediate production config still pending:
+Immediate priority after expansion commit/push:
 
-- Confirm Vercel Production envs match local `.env`, including Clerk webhook, Upstash Redis REST, and Resend booking email routing.
-- Configure Clerk webhook endpoint for `user.created` and `user.updated`.
-- Redeploy and verify Payload customer sync plus one production booking/email flow.
+- Verify Vercel deployment and migration path.
+- Finish frontend mobile QA/polish on public conversion surfaces.
+- Prioritize security, performance, and SEO backlog from `docs/toiuu.md`.
+- Defer runtime online payment until the end; keep schemas extensible but do not implement payment before the items above.
 
 ## Files To Read Before Continuing
 

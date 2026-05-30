@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+> Historical reference. The active agent instructions are the repository-root `CLAUDE.md` plus `docs/CURRENT_STATUS.md`. Do not use this file as the current implementation status.
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Repository state
