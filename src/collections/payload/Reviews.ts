@@ -1,5 +1,6 @@
 import type { CollectionConfig } from "payload";
 import { adminOnly, staffOnly } from "./access";
+import { sanitizeTextField } from "./hooks/sanitize-ugc";
 
 export const Reviews: CollectionConfig = {
   slug: "reviews",
@@ -9,6 +10,9 @@ export const Reviews: CollectionConfig = {
     create: staffOnly,
     update: staffOnly,
     delete: adminOnly
+  },
+  hooks: {
+    beforeValidate: [sanitizeTextField("comment")]
   },
   fields: [
     { name: "customer", type: "relationship", relationTo: "customers", required: true },
