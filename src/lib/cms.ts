@@ -3,7 +3,7 @@ import "server-only";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import { getPayloadClient } from "@/lib/payload";
-import type { Destination, Post, Tour } from "@/payload-types";
+import type { Destination, Post, Review, SiteSetting, Tour } from "@/payload-types";
 
 const DEFAULT_LIMIT = 24;
 
@@ -132,6 +132,44 @@ const getPostBySlugCached = cache((slug: string) =>
 
 export function getPostBySlug(slug: string): Promise<Post | null> {
   return getPostBySlugCached(slug);
+}
+
+async function fetchSiteSettings(): Promise<SiteSetting | null> {
+  const payload = await getPayloadClient();
+  const result = await payload.find({ collection: "site-settings", limit: 1, depth: 0 });
+  return (result.docs[0] as SiteSetting | undefined) ?? null;
+}
+
+const getSiteSettingsCached = cache(() =>
+  unstable_cache(() => fetchSiteSettings(), ["cms", "site-settings"], {
+    tags: ["site-settings"]
+  })()
+);
+
+export function getSiteSettings(): Promise<SiteSetting | null> {
+  return getSiteSettingsCached();
+}
+
+async function fetchFeaturedReviews(limit: number): Promise<Review[]> {
+  const payload = await getPayloadClient();
+  const result = await payload.find({
+    collection: "reviews",
+    where: { status: { equals: "approved" } },
+    limit,
+    depth: 1,
+    sort: "-createdAt"
+  });
+  return result.docs as Review[];
+}
+
+const getFeaturedReviewsCached = cache((limit: number) =>
+  unstable_cache(() => fetchFeaturedReviews(limit), ["cms", "featured-reviews", String(limit)], {
+    tags: ["reviews"]
+  })()
+);
+
+export function getFeaturedReviews(limit = 3): Promise<Review[]> {
+  return getFeaturedReviewsCached(limit);
 }
 
 export type PublicCarRental = {
