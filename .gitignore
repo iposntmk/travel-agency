@@ -17,6 +17,11 @@ dev-server.log
 Screenshot_*.png
 tiến độ.txt
 
+# build/dev scratch logs and local data dumps — never commit
+*.log
+/data/
+frontend.txt
+
 # clerk configuration (can include secrets)
 /.clerk/
 
