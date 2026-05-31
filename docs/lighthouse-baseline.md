@@ -32,11 +32,14 @@ Ngưỡng mục tiêu (docs/toiuu.md §1.2 + Điểm 22): Perf ≥ 90; LCP < 2.0
 ### Caveat quan trọng về con số LCP
 Đây là **kịch bản bi quan nhất**: Lighthouse cục bộ áp simulated Slow-4G (~1.6 Mbps) + 4× CPU slowdown, cộng RTT mạng máy đo. TTFB thực 40ms cho thấy server nhanh; LCP cao chủ yếu là thời gian tải ảnh hero dưới throttle mô phỏng. User thật ở SG/4G-5G/wifi và PSI (datacenter) sẽ cho LCP/điểm tốt hơn đáng kể. Đừng coi LCP lab này là số người dùng thật thấy.
 
-## Triage — follow-up (CHƯA sửa trong lần đo này)
+## Triage — follow-up
 
-1. **LCP hero pages (`/`, `/tours/[slug]`)** — lever lớn nhất. Cần xác minh: phần tử LCP (hero `<Image>`) có `priority` + `sizes` chính xác (không phục vụ 1920w cho mobile) + cân nhắc `quality` thấp hơn / preload. Bytes & format đã ổn, nên tập trung vào kích thước phục vụ + ưu tiên tải.
-2. **`/free-proposal` TBT 420ms** — code-split / defer JS form nhiều bước; cân nhắc hydrate từng bước.
-3. **unused-javascript ~22 KiB** — nhỏ, ưu tiên thấp.
+1. ✅ **LCP request discovery (`fetchPriority`)** — ĐÃ SỬA (commit `ad89b8d`). Chẩn đoán qua `lcp-discovery-insight`: hero `<Image>` có `priority` nhưng `priorityHinted=false` (score 0) vì Next 15.4 KHÔNG tự set `fetchpriority=high` từ `priority` — phải truyền prop `fetchPriority` riêng (get-img-props forward vào cả `<img>` lẫn `ReactDOM.preload` opts). Đã thêm `fetchPriority="high"` cho cả 5 hero (home, tour/destination/blog/car-rental detail). **Re-measure home (live):** discovery score 0→1 (`priorityHinted` true), `resourceLoadDelay` 287ms→30ms, perf 67→75, LCP 5.2s→5.1s.
+2. ⚠️ **Tour detail LCP** — KHÔNG phải lỗi tối ưu ảnh: `lcp-breakdown` cho thấy ảnh tải 57ms nhưng `elementRenderDelay`=2454ms (main-thread dưới 4× CPU throttle), và hero hiện là **SVG fallback** (`/og-fallback.svg`) vì seed tour thiếu `featuredImage`. → đo lại với content thật; render-delay phần lớn là throttle lab.
+3. ⚠️ **`/free-proposal` TBT 420ms** — code-split / defer JS form nhiều bước; cân nhắc hydrate từng bước.
+4. **unused-javascript ~22 KiB** — nhỏ, ưu tiên thấp.
+
+> **Ghi chú về con số LCP tuyệt đối:** sau fix #1, LCP của home vẫn ~5s dưới lab vì bị chi phối bởi simulated Slow-4G (TTFB throttled + elementRenderDelay), KHÔNG phải resource-load nữa. Đây là giới hạn của đo lab cục bộ — user thật (SG/4G-5G/wifi) và PSI datacenter sẽ thấy LCP thấp hơn nhiều. Lever thật còn lại cho LCP tuyệt đối nằm ở real-user/PSI re-measure, không phải thêm code.
 
 ## Đo lại sau (post-launch)
 
