@@ -21,32 +21,31 @@ export function HomeHero({ destinations }: HomeHeroProps) {
 
   return (
     <section className="relative bg-white">
-      <div className="relative min-h-[660px] overflow-hidden md:min-h-[720px]">
+      <div className="relative isolate min-h-[660px] overflow-hidden md:min-h-[720px]">
         <Image
           src={image.url}
           alt={image.alt}
           fill
           priority
           sizes="100vw"
-          className="object-cover"
+          className="z-0 object-cover"
           style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined}
         />
-        <div className="absolute inset-0 bg-white/70" aria-hidden />
-        <div className="relative mx-auto flex min-h-[660px] max-w-page flex-col justify-center px-4 pb-28 pt-20 md:min-h-[720px]">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700">
+        <div className="relative z-10 mx-auto flex min-h-[660px] max-w-page flex-col justify-center px-4 pb-40 pt-20 md:min-h-[720px]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-gold [text-shadow:0_1px_3px_rgb(0_0_0/0.45)]">
             Private tailor-made trips in Vietnam
           </p>
-          <h1 className="mt-5 max-w-3xl font-display text-4xl font-bold leading-tight tracking-tight text-slate-950 md:text-6xl">
+          <h1 className="mt-5 max-w-3xl text-balance break-words font-display text-4xl font-bold leading-tight tracking-tight text-white [text-shadow:0_2px_8px_rgb(0_0_0/0.5)] md:text-6xl">
             Local journeys shaped around your pace.
           </h1>
-          <p className="mt-6 max-w-2xl text-base leading-7 text-slate-700 md:text-lg md:leading-8">
+          <p className="mt-6 max-w-2xl text-base leading-7 text-white [text-shadow:0_1px_4px_rgb(0_0_0/0.5)] md:text-lg md:leading-8">
             Private guides, small groups, car transfers, and flexible proposals across Hội An, Huế, Đà Nẵng, and beyond.
             No payment is required until your trip is confirmed.
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
             <Link
               href="/free-proposal"
-              className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#047857] px-6 text-sm font-semibold text-white shadow-elevated transition hover:bg-[#065F46]"
+              className="inline-flex min-h-11 items-center gap-2 rounded-full bg-brand-green px-6 text-sm font-semibold text-white shadow-elevated transition hover:bg-brand-green-dark"
             >
               Start your travel project
               <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden="true" />
@@ -60,7 +59,7 @@ export function HomeHero({ destinations }: HomeHeroProps) {
           </div>
           <TrustStrip />
         </div>
-        <div className="absolute inset-x-4 bottom-0 translate-y-1/2 md:left-1/2 md:right-auto md:w-[min(760px,calc(100%-2rem))] md:-translate-x-1/2">
+        <div className="absolute inset-x-4 bottom-0 z-20 translate-y-1/2 md:left-1/2 md:right-auto md:w-[min(760px,calc(100%-2rem))] md:-translate-x-1/2">
           <QuickProposal destinations={destinations} />
         </div>
       </div>

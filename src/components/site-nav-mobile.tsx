@@ -93,7 +93,7 @@ function PrimaryMobileLink({ item }: { item: HeaderNavItem }) {
         href={item.href}
         target={item.target}
         rel={item.target === "_blank" ? "noopener noreferrer" : undefined}
-        className="block rounded-xl bg-[#047857] px-4 py-3 text-center text-base font-semibold text-white transition hover:bg-[#065F46]"
+        className="block rounded-xl bg-brand-green px-4 py-3 text-center text-base font-semibold text-white transition hover:bg-brand-green-dark"
       >
         {item.label}
       </Link>

@@ -30,7 +30,7 @@ export function PrimaryLink({ item }: { item: HeaderNavItem }) {
       href={item.href}
       target={item.target}
       rel={item.target === "_blank" ? "noopener noreferrer" : undefined}
-      className="hidden rounded-full bg-[#047857] px-4 py-2 text-sm font-semibold text-white shadow-card transition hover:bg-[#065F46] md:inline-flex"
+      className="hidden rounded-full bg-brand-green px-4 py-2 text-sm font-semibold text-white shadow-card transition hover:bg-brand-green-dark md:inline-flex"
     >
       {item.label}
     </Link>

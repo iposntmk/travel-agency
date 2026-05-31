@@ -49,12 +49,12 @@ export default async function CarRentalDetailPage({ params }: PageProps) {
             </p>
           </div>
           <aside className="self-start rounded-lg border border-slate-200 bg-slate-50 p-6">
-            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-emerald-700">Private car</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-green">Private car</p>
             <p className="mt-3 text-2xl font-semibold text-slate-950">
               {rental.priceFrom ? `From ${rental.currency ?? "USD"} ${rental.priceFrom}` : "Quote on request"}
             </p>
             <p className="mt-2 text-sm leading-6 text-slate-600">{rental.durationText ?? "Timing confirmed before departure."}</p>
-            <Link href="/free-proposal" className="mt-6 inline-flex w-full justify-center rounded-full bg-[#047857] px-5 py-3 text-sm font-semibold text-white">
+            <Link href="/free-proposal" className="mt-6 inline-flex w-full justify-center rounded-full bg-brand-green px-5 py-3 text-sm font-semibold text-white">
               Request this route
             </Link>
           </aside>

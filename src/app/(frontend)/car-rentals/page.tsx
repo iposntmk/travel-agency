@@ -50,7 +50,7 @@ export default async function CarRentalsPage({ searchParams }: PageProps) {
       <section className="bg-white py-12 md:py-16">
         <div className="mx-auto max-w-page px-4">
           <MobileScrollRow className="mb-6 gap-2 pb-2">
-            <Link className="shrink-0 rounded-full bg-[#047857] px-4 py-2 text-sm font-semibold text-white" href="/car-rentals">
+            <Link className="shrink-0 rounded-full bg-brand-green px-4 py-2 text-sm font-semibold text-white" href="/car-rentals">
               All routes
             </Link>
             {destinations.map((destination) => (

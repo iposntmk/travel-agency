@@ -3,8 +3,10 @@ import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ConsentBanner } from "@/components/consent-banner";
+import { SiteFloating } from "@/components/site-floating";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { SiteTopbar } from "@/components/site-topbar";
 import { getNextConfigEnv, getSeoEnv, getSiteUrl } from "@/config/env";
 import "../globals.css";
 
@@ -40,9 +42,13 @@ export default function FrontendLayout({ children }: Readonly<{ children: React.
         <a className="skip-link sr-only" href="#main-content">
           Skip to content
         </a>
-        <SiteHeader />
+        <div className="sticky top-0 z-50">
+          <SiteTopbar />
+          <SiteHeader />
+        </div>
         <div id="main-content">{children}</div>
         <SiteFooter />
+        <SiteFloating />
         <ConsentBanner />
         <Analytics />
         <SpeedInsights />

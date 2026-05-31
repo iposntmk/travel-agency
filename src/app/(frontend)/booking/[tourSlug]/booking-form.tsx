@@ -8,6 +8,7 @@ import { z } from "zod";
 import { contactChannelSchema, bookingSourceSchema } from "@/schemas/booking";
 import { customerSchema } from "@/schemas/customer";
 import { submitBooking } from "@/app/actions/submit-booking";
+import { clientUuid } from "@/lib/client-uuid";
 
 const formSchema = customerSchema.extend({
   numPax: z.coerce.number().int().min(1).max(40),
@@ -53,7 +54,7 @@ export function BookingForm({ tourSlug, tourTitle, source = "direct" }: Props) {
         ...values,
         tourSlug,
         source,
-        idempotencyKey: crypto.randomUUID()
+        idempotencyKey: clientUuid()
       });
       if (result.ok) {
         router.push("/booking/confirmation");

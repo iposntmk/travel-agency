@@ -25,14 +25,14 @@ export function QuickProposal({ destinations }: Props) {
         </button>
         <div className="hidden items-center gap-3 md:flex">
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-emerald-700">Start here</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-green">Start here</p>
             <p className="truncate text-sm font-medium text-slate-700">
               Tell us where you want to go and we will shape a private route.
             </p>
           </div>
           <Link
             href="/free-proposal"
-            className="inline-flex min-h-11 items-center rounded-full bg-[#047857] px-5 text-sm font-semibold text-white transition hover:bg-[#065F46]"
+            className="inline-flex min-h-11 items-center rounded-full bg-brand-green px-5 text-sm font-semibold text-white transition hover:bg-brand-green-dark"
           >
             Free proposal
           </Link>
@@ -42,7 +42,7 @@ export function QuickProposal({ destinations }: Props) {
       {open ? (
         <div className="fixed inset-0 z-50 bg-white p-4 md:hidden">
           <div className="flex items-center justify-between">
-            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-emerald-700">Find your trip</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-green">Find your trip</p>
             <button
               type="button"
               onClick={() => setOpen(false)}
@@ -69,7 +69,7 @@ export function QuickProposal({ destinations }: Props) {
             </div>
             <Link
               href="/free-proposal"
-              className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#047857] px-5 text-sm font-semibold text-white"
+              className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-brand-green px-5 text-sm font-semibold text-white"
             >
               Start a free proposal
             </Link>

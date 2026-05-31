@@ -24,13 +24,13 @@ export function TourMobileTabs() {
 
 export function TourMobileBottomCta({ slug, isFree, currency, priceFrom }: Props) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white p-3 shadow-elevated md:hidden">
+    <div className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white p-3 shadow-elevated md:hidden">
       <div className="mx-auto flex max-w-page items-center justify-between gap-3">
         <div>
           <p className="text-[11px] uppercase tracking-[0.14em] text-slate-500">From</p>
           <p className="font-semibold text-slate-950">{isFree ? "Free" : `${currency ?? "USD"} ${priceFrom ?? ""}`}</p>
         </div>
-        <Link href={`/booking/${slug}`} className="rounded-full bg-[#047857] px-5 py-3 text-sm font-semibold text-white">
+        <Link href={`/booking/${slug}`} className="rounded-full bg-brand-green px-5 py-3 text-sm font-semibold text-white">
           Request this tour
         </Link>
       </div>

@@ -12,7 +12,7 @@ const cspReportOnly = [
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
   "connect-src 'self' https: wss:",
-  "frame-src 'self' https://*.clerk.accounts.dev https://*.clerk.com https://challenges.cloudflare.com",
+  "frame-src 'self' https://*.clerk.accounts.dev https://*.clerk.com https://challenges.cloudflare.com https://www.google.com https://maps.google.com",
   "media-src 'self' https: blob:",
   "object-src 'none'",
   "base-uri 'self'",

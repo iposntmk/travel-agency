@@ -74,4 +74,4 @@ export function useFieldError(name: FieldName): string | undefined {
   return typeof error?.message === "string" ? error.message : undefined;
 }
 
-const fieldClass = "w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/15 disabled:cursor-not-allowed disabled:bg-slate-100";
+const fieldClass = "w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-brand-green focus:ring-2 focus:ring-brand-green/15 disabled:cursor-not-allowed disabled:bg-slate-100";

@@ -17,7 +17,7 @@ export function CarRentalCard({ rental }: Props) {
         <Image src={image.url} alt={image.alt} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover" />
       </Link>
       <div className="space-y-3 p-5">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-emerald-700">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-green">
           {rental.vehicleType?.replace(/-/g, " ") ?? "Private car"}
         </p>
         <h3 className="text-lg font-semibold tracking-tight text-slate-950">
@@ -30,7 +30,7 @@ export function CarRentalCard({ rental }: Props) {
           </span>
           <Link
             href={`/car-rentals/${rental.slug}`}
-            className="rounded-full bg-[#047857] px-4 py-2 text-sm font-semibold text-white"
+            className="rounded-full bg-brand-green px-4 py-2 text-sm font-semibold text-white"
           >
             Details
           </Link>

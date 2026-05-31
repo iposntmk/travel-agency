@@ -9,7 +9,9 @@ const config: Config = {
           blue: "#0f67b1",
           red: "#c83232",
           gold: "#f4b545",
-          ink: "#111827"
+          ink: "#111827",
+          green: "#047857",
+          "green-dark": "#065f46"
         },
         navy: {
           50: "#f1f7fd",

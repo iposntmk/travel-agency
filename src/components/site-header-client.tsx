@@ -53,7 +53,7 @@ export function SiteHeaderClient({ items }: Props) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 border-b transition-shadow duration-200 ease-out-soft",
+        "relative z-40 border-b transition-shadow duration-200 ease-out-soft",
         scrolled
           ? "border-navy-100/80 bg-white/95 shadow-card backdrop-blur"
           : "border-transparent bg-white/85 backdrop-blur"

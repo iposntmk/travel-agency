@@ -110,4 +110,4 @@ function toggleValue(selected: string[], value: string): string[] {
 
 const iconButtonClass = "inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-700 disabled:cursor-not-allowed disabled:opacity-40";
 const chipClass = "rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 disabled:cursor-not-allowed disabled:opacity-60";
-const selectedChipClass = "rounded-full bg-[#047857] px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60";
+const selectedChipClass = "rounded-full bg-brand-green px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60";

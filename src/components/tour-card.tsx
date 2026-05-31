@@ -48,7 +48,7 @@ export function TourCard({ tour, ctaHref, ctaLabel }: TourCardProps) {
           className={
             isFree
               ? "absolute right-3 top-3 inline-flex items-center rounded-full bg-[#C65A3A] px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white shadow-card"
-              : "absolute right-3 top-3 inline-flex items-center rounded-full bg-[#047857] px-3 py-1 text-[11px] font-semibold text-white shadow-card"
+              : "absolute right-3 top-3 inline-flex items-center rounded-full bg-brand-green px-3 py-1 text-[11px] font-semibold text-white shadow-card"
           }
         >
           {isFree ? "Free" : `From $${tour.priceFrom}`}
@@ -79,7 +79,7 @@ export function TourCard({ tour, ctaHref, ctaLabel }: TourCardProps) {
           </span>
           <Link
             href={href}
-            className="inline-flex items-center gap-1 rounded-full bg-[#047857] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#065F46]"
+            className="inline-flex items-center gap-1 rounded-full bg-brand-green px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-green-dark"
           >
             {label}
             <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden="true" />

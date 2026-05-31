@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getSiteSettings } from "@/lib/cms";
 import { getFooterNavigation } from "@/lib/cms-navigation";
+import { SOCIAL_ICONS, type SocialPlatform } from "@/components/icons";
 import type { NavItem } from "@/types/navigation";
 
 export async function SiteFooter() {
@@ -10,6 +11,7 @@ export async function SiteFooter() {
   const whatsapp = settings?.whatsapp ?? "+84-903-111-222";
   const address = settings?.footer?.address ?? "Hội An · Huế · Đà Nẵng · Quảng Trị";
   const company = settings?.footer?.companyName ?? "TC Travel Vietnam";
+  const social = (settings?.social ?? []).filter((item) => item?.platform && item?.url);
 
   return (
     <footer className="mt-20 border-t border-navy-100 bg-white">
@@ -31,6 +33,26 @@ export async function SiteFooter() {
               Private, small group, and free walking tours across Hội An, Huế, Đà Nẵng, and Quảng Trị. Book now,
               pay when you meet your guide.
             </p>
+            {social.length > 0 ? (
+              <div className="mt-5 flex items-center gap-3">
+                {social.map((item, index) => {
+                  const Icon = SOCIAL_ICONS[item.platform as SocialPlatform] ?? null;
+                  if (!Icon) return null;
+                  return (
+                    <a
+                      key={`${item.platform}-${index}`}
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={item.label ?? item.platform}
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-navy-100 text-navy-700 transition hover:border-navy-300 hover:text-navy-900"
+                    >
+                      <Icon className="h-4 w-4" />
+                    </a>
+                  );
+                })}
+              </div>
+            ) : null}
           </div>
 
           {columns.map((col) => (
