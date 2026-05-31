@@ -36,10 +36,4 @@ Repository hiện có ứng dụng Next.js 15 + Payload CMS đang hoạt động
 - `../agents.md` (repo root): cross-agent read/write protocol + repository guidance for all coding agents (Claude Code, Codex, Gemini, Grok, opencode).
 - `../CLAUDE.md` (repo root): Claude Code-specific working context + guardrails.
 
-## Reference / superseded analysis
-
-- `Phan_tich.md`: phân tích tính khả thi và layer build ban đầu.
-- `proposal.md`: proposal build order ban đầu.
-- `gemini-code-1779596446260.md`: generated architecture draft, giữ làm reference.
-
-Các quyết định trong reference files không tự động thắng các nguồn chính. Khi có xung đột, cập nhật nguồn chính trước.
+> Các bản phân tích/proposal nháp ban đầu (`Phan_tich.md`, `proposal.md`, `gemini-code-*.md`) đã được xoá khỏi repo (superseded bởi app đang chạy + các nguồn chính ở trên); xem git history nếu cần tham khảo. Khi có xung đột, nguồn chính (git docs + code) thắng — chi tiết ở root `agents.md`.
