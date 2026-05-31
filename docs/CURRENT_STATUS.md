@@ -1,6 +1,6 @@
 # Current Status
 
-**Updated:** 2026-05-31 (Production-verified through `8c7afd6`; OTA widgets now default-off in code, production verification pending)
+**Updated:** 2026-05-31 (Production-verified through `8c7afd6`; OTA widgets now default-off in `81693f6`, production verification pending)
 
 ## Current Layer / Stage
 
@@ -61,6 +61,7 @@ Latest production-readiness verification:
 
 Last shipped commits (top to bottom = newest to oldest):
 
+- `81693f6 fix(ota): require explicit CMS opt-in` — OTA widgets now render only when Payload `SiteSettings.ota.enabled` and the specific placement are both explicitly enabled; SiteSettings OTA defaults and DB defaults are false via `20260531_232000_disable_ota_defaults`.
 - `003b32e` / `cd733ee` docs — removed obsolete `docs/CLAUDE.md` + duplicate `docs/AGENTS.md` (both carried drifted status); the single agents file is now root `agents.md`.
 - `a2dc2a3` / `da2c19c docs(agents)` — codified the cross-agent knowledge-store read/write protocol in root `agents.md` (Claude/Codex/Gemini/Grok/opencode share agentmemory `:3111`; project status lives only in this file).
 - `06e6844` / `529f3ef docs` — mobile Lighthouse baseline (`docs/lighthouse-baseline.md`).
@@ -168,7 +169,7 @@ For the current Clerk handoff, also inspect:
 
 ## Verification Baseline
 
-Latest local verification for the OTA default-off patch (2026-05-31):
+Latest local verification for the OTA default-off patch (2026-05-31, implementation commit `81693f6`):
 
 - Pre-change `pnpm typecheck` passed.
 - Pre-change `pnpm test` passed: 28 files, 156 tests.
