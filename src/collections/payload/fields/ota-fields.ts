@@ -15,7 +15,7 @@ function placementGroup(name: string, description: string): Field {
     type: "group",
     admin: { description },
     fields: [
-      { name: "enabled", type: "checkbox", defaultValue: true },
+      { name: "enabled", type: "checkbox", defaultValue: false },
       {
         name: "providers",
         type: "select",
@@ -41,7 +41,7 @@ export const otaField: Field = {
     {
       name: "enabled",
       type: "checkbox",
-      defaultValue: true,
+      defaultValue: false,
       admin: { description: "Master switch for all OTA widgets across the site." }
     },
     {

@@ -1,6 +1,6 @@
 # Current Status
 
-**Updated:** 2026-05-31 (Production-verified through `8c7afd6`; SEO title/OG + LCP hero polish and docs dedupe shipped — HEAD `003b32e`)
+**Updated:** 2026-05-31 (Production-verified through `8c7afd6`; OTA widgets now default-off in code, production verification pending)
 
 ## Current Layer / Stage
 
@@ -30,8 +30,8 @@ Layer 8 implementation status:
 
 - **Click tracking infra (done)** — `affiliate-clicks` collection (`src/collections/payload/AffiliateClicks.ts`), `POST /api/events/click` with Zod + rate-limit (30/min/IP under `affiliate-click` prefix) + SHA-256 IP hashing, `<TrackedLink>` component (sendBeacon with fetch keepalive fallback, `rel="noopener noreferrer sponsored"`). Add-on partner clicks on tour detail also flow through this.
 - **OTA provider catalog (done)** — `src/lib/ota-providers.ts` defines 5 providers: GetYourGuide, Viator, Klook, Civitatis, GuruWalk. `buildUrl(city)` returns generic search URLs (no `partner_id` yet).
-- **OTA widget (done)** — `src/components/ota-widget.tsx` server component, renders provider label + "More things to do in {city}" + external-partner disclosure + `<TrackedLink>` to the provider search.
-- **OTA surfaces live (done)** — homepage Featured Experiences strip (3 destination cards × GetYourGuide), destination detail `Top things to do in {city}` (GetYourGuide + Viator pair), tour detail `Similar experiences in {destination}` (GetYourGuide + Viator pair). Each surface passes a distinct `source` for attribution.
+- **OTA widget (done, default-off)** — `src/components/ota-widget.tsx` server component, renders provider label + "More things to do in {city}" + external-partner disclosure + `<TrackedLink>` to the provider search. `resolveOtaWidgets()` now returns `[]` unless Payload `SiteSettings.ota.enabled === true` and the specific placement is also explicitly enabled.
+- **OTA surfaces wired (default-off)** — homepage Featured Experiences, destination detail `Top things to do in {city}`, and tour detail `Similar experiences in {destination}` remain wired, but no OTA cards render by default. Staff must enable the master OTA switch plus the placement in Payload; leaving provider selection blank still uses the placement's built-in provider defaults.
 - **Affiliate IDs (pending)** — partner accounts not yet registered. Revenue = 0 until partner IDs are appended to `buildUrl()` per provider. See `docs/OTA_INTEGRATIONS.md` § "Adding affiliate IDs".
 - **Internal clicks dashboard (done)** — `/internal/affiliate-clicks` (admin-only, Payload session gate) renders totals, top targets, top sources, OTA provider breakdown, day-by-day bar chart, and recent rows. Range selector `?range=7|30|90`. Aggregation lives in `src/services/affiliate-stats.ts` (pure aggregator + Payload loader). Disallowed in `robots.txt` and noindex'd via the internal layout. Verified with `pnpm test` (13 new tests) + `pnpm build`.
 
@@ -168,12 +168,14 @@ For the current Clerk handoff, also inspect:
 
 ## Verification Baseline
 
-Latest verification before this status update (2026-05-31, commit `8c7afd6`):
+Latest local verification for the OTA default-off patch (2026-05-31):
 
-- `pnpm typecheck` passed.
-- `pnpm test` passed: 28 files, 156 tests.
-- `pnpm lint` passed with 0 errors and 12 pre-existing migration warnings (tooling dirs `.opencode/.grok/.codegraph/tools` now excluded from eslint).
-- `pnpm build` passed.
-- `pnpm qa:smoke https://tc-travel-vietnam.vercel.app` passed 20/20 against the live production deploy (0 failed, 0 warnings).
+- Pre-change `pnpm typecheck` passed.
+- Pre-change `pnpm test` passed: 28 files, 156 tests.
+- Post-change `pnpm typecheck` passed.
+- Post-change `pnpm test` passed: 29 files, 157 tests.
+- Post-change `pnpm lint` passed with 0 errors and 12 pre-existing migration warnings.
+- Post-change `pnpm build` passed; the local build applied `20260531_232000_disable_ota_defaults` during page generation.
+- Previous production smoke remains `pnpm qa:smoke https://tc-travel-vietnam.vercel.app` passed 20/20 against `8c7afd6` (0 failed, 0 warnings).
 
 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, and `pnpm build` before committing code changes.

@@ -125,20 +125,15 @@ export function resolveOtaProvider(
   };
 }
 
-// Given the CMS `ota` group (or null), return the ordered widgets to render for a
-// placement + city. Falls back to current hardcoded behavior when config is absent.
 export function resolveOtaWidgets(
   ota: OtaConfig | null | undefined,
   placement: OtaPlacementName,
   city: string
 ): ResolvedOtaWidget[] {
-  if (!ota) {
-    return DEFAULT_PLACEMENT_PROVIDERS[placement].map((key) => resolveOtaProvider(key, city));
-  }
-  if (ota.enabled === false) return [];
+  if (ota?.enabled !== true) return [];
 
   const placementConfig = ota.placements?.[placement] ?? undefined;
-  if (placementConfig?.enabled === false) return [];
+  if (placementConfig?.enabled !== true) return [];
 
   const catalog = new Map<OtaProvider, OtaProviderConfig>();
   for (const provider of ota.providers ?? []) {

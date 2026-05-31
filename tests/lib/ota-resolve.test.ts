@@ -29,13 +29,10 @@ describe("resolveOtaProvider", () => {
 });
 
 describe("resolveOtaWidgets", () => {
-  it("uses hardcoded defaults when settings are null", () => {
-    expect(resolveOtaWidgets(null, "home", "Huế").map((w) => w.key)).toEqual(["getyourguide"]);
-    expect(resolveOtaWidgets(undefined, "destination", "Huế").map((w) => w.key)).toEqual([
-      "getyourguide",
-      "viator"
-    ]);
-    expect(resolveOtaWidgets(null, "tour", "Huế").map((w) => w.key)).toEqual(["getyourguide", "viator"]);
+  it("returns nothing when settings are absent", () => {
+    expect(resolveOtaWidgets(null, "home", "Huế")).toEqual([]);
+    expect(resolveOtaWidgets(undefined, "destination", "Huế")).toEqual([]);
+    expect(resolveOtaWidgets(null, "tour", "Huế")).toEqual([]);
   });
 
   it("returns nothing when the master switch is off", () => {
@@ -43,7 +40,9 @@ describe("resolveOtaWidgets", () => {
     expect(resolveOtaWidgets(ota, "home", "Huế")).toEqual([]);
   });
 
-  it("returns nothing when a placement is disabled", () => {
+  it("returns nothing when a placement is missing or disabled", () => {
+    expect(resolveOtaWidgets({ enabled: true }, "tour", "Huế")).toEqual([]);
+
     const ota: OtaConfig = { enabled: true, placements: { tour: { enabled: false } } };
     expect(resolveOtaWidgets(ota, "tour", "Huế")).toEqual([]);
   });

@@ -9,6 +9,7 @@ import * as migration_20260529_124032_travel_platform_expansion from './20260529
 import * as migration_20260530_140701_navigation_collection from './20260530_140701_navigation_collection';
 import * as migration_20260530_163402_site_settings_social from './20260530_163402_site_settings_social';
 import * as migration_20260531_010452_site_settings_features from './20260531_010452_site_settings_features';
+import * as migration_20260531_232000_disable_ota_defaults from './20260531_232000_disable_ota_defaults';
 
 export const migrations = [
   {
@@ -65,5 +66,10 @@ export const migrations = [
     up: migration_20260531_010452_site_settings_features.up,
     down: migration_20260531_010452_site_settings_features.down,
     name: '20260531_010452_site_settings_features'
+  },
+  {
+    up: migration_20260531_232000_disable_ota_defaults.up,
+    down: migration_20260531_232000_disable_ota_defaults.down,
+    name: '20260531_232000_disable_ota_defaults'
   },
 ];

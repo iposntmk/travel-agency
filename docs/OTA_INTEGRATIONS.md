@@ -2,11 +2,12 @@
 
 **Phạm vi:** Chiến lược tích hợp các Online Travel Agency để bổ sung doanh thu affiliate, đa dạng sản phẩm cho khách, và tăng tính chuyên nghiệp. Dùng để align sales/marketing/dev về phương án hợp tác.
 
-## Trạng thái triển khai (2026-05-27)
+## Trạng thái triển khai (2026-05-31)
 
 Layer 8 đã có **scaffold + click tracking sẵn sàng**, **chưa có affiliate account**:
 
-- `<OtaWidget provider city source />` render card link sang trang search của provider, đã wire trên tour detail (section "Similar experiences in {destination}").
+- OTA widgets đang **tắt mặc định**. Frontend chỉ render khi Payload `SiteSettings.ota.enabled` bật và placement tương ứng (`home`, `destination`, hoặc `tour`) cũng bật rõ ràng.
+- `<OtaWidget provider city source />` render card link sang trang search của provider; đã wire sẵn trên homepage, destination detail, và tour detail nhưng không tự hiện khi thiếu CMS config.
 - Click → `/api/events/click` ghi `affiliate-clicks` row với `targetType: "ota"`, `targetId: "{provider}:{citySlug}"`, `source`, `ipHash` ẩn danh.
 - URL hiện tại trỏ trang search chung của provider — **revenue = 0 cho tới khi affiliate ID được thêm**.
 
