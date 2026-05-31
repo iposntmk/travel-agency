@@ -49,6 +49,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: destination.seo?.metaTitle ?? destination.title,
       description,
       images: [{ url: ogImage }],
+      type: "website",
+      siteName: "TC Travel Vietnam",
+      locale: "en_US",
       url: `${siteUrl.replace(/\/$/, "")}/destinations/${destination.slug}`
     }
   };

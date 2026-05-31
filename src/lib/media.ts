@@ -11,6 +11,9 @@ export interface ResolvedImage {
 }
 
 const FALLBACK_URL = "/og-fallback.svg";
+// Social platforms don't render SVG OG images, so OG-specific fallbacks use a
+// raster route (/og-default) instead of the on-page SVG placeholder.
+const OG_FALLBACK_URL = "/og-default";
 const FALLBACK_ALT = "TC Travel Vietnam";
 
 type MaybeMedia = number | Media | null | undefined;
@@ -147,7 +150,7 @@ export function resolveOgImage(input: MaybeMedia, siteUrl: string): string {
   const resolved = resolveImage(input, undefined, { publicBaseUrl });
 
   if (resolved.isFallback) {
-    return `${siteUrl.replace(/\/$/, "")}${FALLBACK_URL}`;
+    return `${siteUrl.replace(/\/$/, "")}${OG_FALLBACK_URL}`;
   }
   return resolved.url;
 }

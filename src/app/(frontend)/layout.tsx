@@ -31,6 +31,18 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.svg"
   },
+  openGraph: {
+    type: "website",
+    siteName: "TC Travel Vietnam",
+    locale: "en_US",
+    url: siteUrl,
+    title: "TC Travel Vietnam",
+    description: "Private, small group, and free walking tours in Hội An, Huế, and Đà Nẵng. Book now, pay later.",
+    images: [{ url: "/og-default", width: 1200, height: 630, alt: "TC Travel Vietnam" }]
+  },
+  twitter: {
+    card: "summary_large_image"
+  },
   robots: indexingAllowed ? { index: true, follow: true } : { index: false, follow: false }
 };
 

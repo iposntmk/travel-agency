@@ -109,12 +109,12 @@ describe("resolveImage", () => {
 });
 
 describe("resolveOgImage", () => {
-  it("prefixes site URL to the fallback path", () => {
-    expect(resolveOgImage(undefined, "https://example.com")).toBe("https://example.com/og-fallback.svg");
+  it("prefixes site URL to the raster OG fallback (not the on-page SVG)", () => {
+    expect(resolveOgImage(undefined, "https://example.com")).toBe("https://example.com/og-default");
   });
 
   it("trims trailing slash on the site URL", () => {
-    expect(resolveOgImage(undefined, "https://example.com/")).toBe("https://example.com/og-fallback.svg");
+    expect(resolveOgImage(undefined, "https://example.com/")).toBe("https://example.com/og-default");
   });
 
   it("uses the media publicUrl when ready", () => {
