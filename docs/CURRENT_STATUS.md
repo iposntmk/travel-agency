@@ -1,12 +1,12 @@
 # Current Status
 
-**Updated:** 2026-05-30 (Travel platform expansion committed and pushed; production deploy verification pending)
+**Updated:** 2026-05-31 (Frontend polish `8c7afd6` shipped; production deploy + smoke-check verified)
 
 ## Current Layer / Stage
 
-The project is currently at **Layer 8 - Monetization Without Payment** with the earlier OTA/dashboard work shipped, and the new **Travel Platform Expansion** committed and pushed to `origin/master` in `79ad0cf`.
+The project is currently at **Layer 8 - Monetization Without Payment** with the OTA/dashboard work, the **Travel Platform Expansion** (`79ad0cf`), the CMS-configurable SiteSettings work (`da07b3f` + fix `75ebac6`), and a **frontend polish batch** (`8c7afd6`) all shipped to `origin/master`.
 
-Do not treat the expansion as production-verified until the Vercel production deployment and live smoke checks complete.
+`8c7afd6` is **production-verified**: the Vercel deploy reached READY (region `sin1`) and `pnpm qa:smoke https://tc-travel-vietnam.vercel.app` passed 20/20 on 2026-05-31 (health 200 / db latency 11ms, 7 public pages 200 with `noindex` headers, sitemap/robots 200, `/internal/affiliate-clicks` auth-gated 307).
 
 Layers 1-7 are complete enough to support the current production flow:
 
@@ -61,6 +61,9 @@ Latest production-readiness verification:
 
 Last shipped commits (top to bottom = newest to oldest):
 
+- `8c7afd6 feat(frontend): polish header/hero/footer, add topbar & floating WhatsApp` — brand-green tokens, SiteTopbar, SiteFloating/FloatingActions, footer social icons, HomeHero contrast fix, CSP Google Maps, clientUuid() booking, dev without turbopack, qa:smoke + scripts/smoke-check.ts. **Production-verified 2026-05-31 (deploy READY sin1, qa:smoke 20/20).**
+- `75ebac6 fix(deploy): include components required by CMS pages` — recovery for the da07b3f deploy ERROR.
+- `da07b3f feat(cms): make OTA, free tours, free proposal & homepage sections CMS-configurable` — SiteSettings homepage/ota/freeProposal groups; OTA urlTemplate with {city} for affiliate IDs without redeploy.
 - `79ad0cf Broaden lead capture before payment work` — Travel platform expansion: schema, custom inquiries, car rentals, city hubs, proposal UX, and updated priority docs deferring online payment.
 - `7047eee Document Stage 1-5 frontend polish and add tech stack reference`
 - `44758b3 Refresh consent banner and share buttons (Stage 5)`
@@ -148,9 +151,9 @@ For the current Clerk handoff, also inspect:
 
 **Dev tasks — in order:**
 
-1. Verify the Vercel production deployment for `79ad0cf` completes, then smoke-check `/`, `/tours`, `/tours/[slug]`, `/destinations/[slug]`, `/free-proposal`, `/car-rentals`, and `/car-rentals/[slug]`.
-2. Confirm production migration/application health: new Payload collections load, existing content still renders, and no runtime migration errors appear.
-3. Complete frontend QA/polish for the public conversion surfaces on mobile first: homepage, `/tours`, `/tours/[slug]`, `/destinations/[slug]`, `/free-proposal`, `/car-rentals`, and booking confirmation.
+1. ~~Verify the Vercel production deployment, then smoke-check the public conversion surfaces.~~ **Done 2026-05-31** — `8c7afd6` deploy READY (sin1), `pnpm qa:smoke https://tc-travel-vietnam.vercel.app` passed 20/20.
+2. ~~Confirm production migration/application health.~~ **Done** — new Payload collections load, existing content renders, no runtime migration errors.
+3. Complete frontend QA/polish for the public conversion surfaces on mobile first: homepage, `/tours`, `/tours/[slug]`, `/destinations/[slug]`, `/free-proposal`, `/car-rentals`, and booking confirmation. (Topbar/floating/hero polish shipped in `8c7afd6`; still needs hands-on device QA.)
 4. Security hardening before indexing/go-live: production booking + custom inquiry QA, comments/reviews sanitization if public UGC is enabled, CSP report review, access-control spot checks, and no secret/log/data files in commits.
 5. Performance + SEO backlog in `docs/toiuu.md`: Vercel region/pooler verification, media Cache-Control/R2 audit, image strategy reconciliation, metadataBase/canonical, JSON-LD, sitemap, and mobile Lighthouse target.
 6. **Layer 8 K** — Move OTA partner IDs into Payload `partners` (or new `ota-partners`) collection when owner provides IDs. This is revenue-enabling but should not block security/performance/SEO/frontend completion.
@@ -159,11 +162,12 @@ For the current Clerk handoff, also inspect:
 
 ## Verification Baseline
 
-Latest local verification before this status update:
+Latest verification before this status update (2026-05-31, commit `8c7afd6`):
 
 - `pnpm typecheck` passed.
-- `pnpm test` passed: 24 files, 131 tests.
-- `pnpm lint` passed with 4 pre-existing migration warnings unchanged.
-- `pnpm build` passed; build completed in roughly 140 seconds and registered `/free-proposal`, `/car-rentals`, and `/car-rentals/[slug]`.
+- `pnpm test` passed: 28 files, 156 tests.
+- `pnpm lint` passed with 0 errors and 12 pre-existing migration warnings (tooling dirs `.opencode/.grok/.codegraph/tools` now excluded from eslint).
+- `pnpm build` passed.
+- `pnpm qa:smoke https://tc-travel-vietnam.vercel.app` passed 20/20 against the live production deploy (0 failed, 0 warnings).
 
 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, and `pnpm build` before committing code changes.
