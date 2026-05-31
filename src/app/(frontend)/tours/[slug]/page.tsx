@@ -166,6 +166,7 @@ export default async function TourDetailPage({ params }: PageProps) {
                 alt={heroImage.alt}
                 fill
                 priority
+                fetchPriority="high"
                 sizes="(min-width: 768px) 60vw, 100vw"
                 className="object-cover"
                 style={heroImage.objectPosition ? { objectPosition: heroImage.objectPosition } : undefined}

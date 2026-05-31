@@ -27,6 +27,7 @@ export function HomeHero({ destinations }: HomeHeroProps) {
           alt={image.alt}
           fill
           priority
+          fetchPriority="high"
           sizes="100vw"
           className="z-0 object-cover"
           style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined}

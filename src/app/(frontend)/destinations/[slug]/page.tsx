@@ -129,6 +129,7 @@ export default async function DestinationDetailPage({ params }: PageProps) {
                 alt={image.alt}
                 fill
                 priority
+                fetchPriority="high"
                 sizes="(min-width: 768px) 60vw, 100vw"
                 className="object-cover"
                 style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined}

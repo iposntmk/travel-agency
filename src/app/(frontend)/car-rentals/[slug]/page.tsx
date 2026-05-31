@@ -39,7 +39,7 @@ export default async function CarRentalDetailPage({ params }: PageProps) {
         <div className="mt-8 grid gap-8 md:grid-cols-[1.3fr_0.7fr]">
           <div>
             <div className="relative aspect-[16/10] overflow-hidden rounded-lg bg-slate-100">
-              <Image src={image.url} alt={image.alt} fill priority sizes="(min-width: 768px) 60vw, 100vw" className="object-cover" />
+              <Image src={image.url} alt={image.alt} fill priority fetchPriority="high" sizes="(min-width: 768px) 60vw, 100vw" className="object-cover" />
             </div>
             <h1 className="mt-8 font-display text-4xl font-bold tracking-tight text-slate-950 md:text-5xl">
               {rental.title}
