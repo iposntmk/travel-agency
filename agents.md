@@ -1,6 +1,36 @@
 # agents.md
 
-Guidelines for AI coding agents (Claude Code, Codex) working in this repository.
+Guidelines for AI coding agents — **Claude Code, Codex, Gemini CLI, Grok, opencode** — working in this repository. This file is the canonical, git-tracked protocol shared by every agent; `CLAUDE.md`, `GEMINI.md`, and `.grok/` point here.
+
+## Knowledge stores: what to read and what to update
+
+Three stores hold project knowledge. They are **not** interchangeable — know which is authoritative.
+
+| Store | Holds | Shared? | Authoritative? |
+|---|---|---|---|
+| **Repo `.md` + code (git)** | Intent, status, roadmap, guardrails, the code | Yes — every agent, human, machine, CI | **Yes — source of truth** |
+| **agentmemory** (local MCP server `:3111`, shared by all agents on this machine) | Cross-session recall: decisions, gotchas, "what we did" | This machine only (not in git) | No — a fast notebook; verify against code |
+| **codegraph** (`.codegraph/`, local) | Derived code-structure index | This machine only | No — regenerated from code, never hand-edited |
+
+**Conflict order:** code > git `.md` (for intent/status) > agentmemory (treat as a hint, verify before trusting).
+
+### Read — before starting work
+1. **Always** read `CLAUDE.md` / this file (guardrails) + `docs/CURRENT_STATUS.md` (current layer/stage, last commits, next work). Mandatory and cheap.
+2. **Recall agentmemory** for the topic/files you'll touch (`memory_recall`, project `Travel-Agency`). Hits are hints — verify against current code; memory can be stale.
+3. Use codegraph / grep to locate code as the task needs (not an up-front read).
+
+### Write — after a task, or after finishing/advancing a layer or stage
+Update **both git docs and agentmemory** whenever progress is non-trivial (task done, layer/stage changed, a decision made, or a non-obvious gotcha learned):
+1. **git `.md`** — update `docs/CURRENT_STATUS.md` (what shipped + commit hash, what's verified, next work). Update `CLAUDE.md` / this file only when a guardrail or architecture rule changes. Commit with a clear "why" message.
+2. **agentmemory** — `memory_save` a concise entry (project `Travel-Agency`) mirroring that progress + any decision/gotcha, so the next session (any agent) recalls it fast.
+3. **codegraph** — do **not** hand-edit; it regenerates from code.
+
+Skip both for trivial changes (typo, one-line refactor) — the commit message is enough. Over-documenting causes drift.
+
+### Keep the stores in sync (avoid drift)
+- git is the single source of truth for anything shared. If memory and docs disagree, fix the stale one; git docs win for shared facts.
+- agentmemory is per-machine — a teammate or a fresh clone only sees git. Anything that must survive a machine switch or be read by humans/CI goes in git.
+- All agents share **one** agentmemory backend (`:3111`); run in the same project/cwd (or pass project `Travel-Agency`) so scope matches. The backend must be running (`agentmemory`).
 
 ## Before writing any code
 
@@ -53,3 +83,4 @@ git commit → git push origin master → Vercel auto-deploys production
 3. `pnpm lint` — fix any new lint errors
 4. Commit with a clear message describing why, not what
 5. Push — Vercel will auto-deploy
+6. If the work completed a task or changed a layer/stage: update `docs/CURRENT_STATUS.md` **and** `memory_save` to agentmemory (see **Knowledge stores** above). Skip for trivial changes.
