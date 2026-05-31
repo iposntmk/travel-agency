@@ -789,7 +789,7 @@ Ba điểm này giải quyết 70% vấn đề. Các điểm còn lại là tinh
 - ⚠️ **Có 2 file `robots.ts`**: `src/app/robots.ts` đang **`disallow: "/"`** (block toàn bộ crawler!) tồn tại song song với `src/app/(frontend)/robots.ts` (allow `/`, disallow `/admin`, `/api`). Cả hai cùng target `/robots.txt`, tạo route conflict/ambiguity và có thể làm Google bị chặn crawl hoàn toàn. **PHẢI xóa `src/app/robots.ts` ngay** trước khi triển khai bất cứ SEO point nào dưới đây.
 - Không có JSON-LD, canonical, alternates ở bất kỳ page frontend nào.
 - `sitemap.ts` fetch toàn bộ tour/destination/post field, không `select`, không cache function-level.
-- `ClerkProvider` bao toàn bộ `src/app/(frontend)/layout.tsx` — pax public load Clerk SDK không cần thiết (đã đề cập note 685, chưa fix).
+- ~~`ClerkProvider` bao toàn bộ `src/app/(frontend)/layout.tsx`~~ — **không còn đúng (2026-05-31)**: public layout không có ClerkProvider; `@clerk/nextjs` chỉ dùng server-side ở webhook route. Public bundle không tải Clerk SDK. Xem Điểm 23.
 
 ### 9.2. Danh sách 13 điểm bổ sung
 
@@ -805,7 +805,7 @@ Ba điểm này giải quyết 70% vấn đề. Các điểm còn lại là tinh
 | 20 | Cold start mitigation | Request đầu tiên sau deploy không chậm 200–500ms | P3 |
 | 21 | LCP breakdown ngoài ảnh (font, CSS) | LCP text block, không chỉ ảnh | P2 |
 | 22 | Mobile performance target riêng | Lighthouse mobile ≥ 90 | P2 |
-| 23 | Tách Clerk khỏi public layout | Giảm 100–200KB JS cho 90% traffic public | P1 |
+| 23 | ~~Tách Clerk khỏi public layout~~ ✅ đã thỏa mãn (Clerk không nằm trong public layout) | — | done |
 | 24 | Core Web Vitals monitoring liên tục | RUM từ pax thật, không chỉ synthetic | P3 |
 | 25 | Geographic test matrix cụ thể | Test đúng thị trường/thiết bị/network | P3 |
 
@@ -1109,11 +1109,13 @@ Next docs hiện tại gọi flag này là `experimental.inlineCss` và ghi rõ 
 
 ---
 
-### Điểm 23 — Tách Clerk khỏi public layout (P1)
+### Điểm 23 — Tách Clerk khỏi public layout (P1) — ✅ ĐÃ THỎA MÃN (2026-05-31)
 
-**Vấn đề:** `ClerkProvider` bao toàn bộ `src/app/(frontend)/layout.tsx` → tải Clerk script (~100–200KB) ngay cả trên `/`, `/tours`, `/destinations`, `/blog` — nơi 90% traffic không cần auth. Tăng TBT, chậm hydration mobile. (Đã được note 685 đề cập, đây là phương án triển khai cụ thể.)
+> **Cập nhật 2026-05-31:** vấn đề này KHÔNG còn tồn tại. `src/app/(frontend)/layout.tsx` hiện **không** có `ClerkProvider`, và không có client Clerk (`useUser`/`SignIn`/`ClerkProvider`) ở bất kỳ component nào. `@clerk/nextjs` chỉ được import server-side tại `src/app/api/webhooks/clerk/route.ts` (subpath `@clerk/nextjs/webhooks`, không kéo client SDK). Public client bundle không chứa Clerk → không cần tách route group. Phần mô tả dưới đây giữ lại làm tham khảo nếu sau này thêm Clerk auth vào trang public.
 
-**Hành động — tách route group:**
+**Vấn đề (lịch sử):** `ClerkProvider` từng bao toàn bộ `src/app/(frontend)/layout.tsx` → tải Clerk script (~100–200KB) ngay cả trên `/`, `/tours`, `/destinations`, `/blog`.
+
+**Hành động — tách route group (chỉ áp dụng nếu Clerk quay lại public layout):**
 
 ```
 src/app/(frontend)/
@@ -1202,7 +1204,7 @@ Tích hợp vào CI post-deploy qua WebPageTest API hoặc Lighthouse CI multi-c
 - [ ] **Điểm 15**: canonical URLs cho filter param trên `/tours`, `/destinations`.
 - [ ] **Điểm 14**: JSON-LD cho tour detail, destination, blog, breadcrumb.
 - [ ] **Điểm 19**: `getToursForList` với `select` fields — giảm payload list view.
-- [ ] **Điểm 23**: tách Clerk khỏi public layout — route group `(public)` / `(auth)`.
+- [x] **Điểm 23**: ✅ đã thỏa mãn — public layout không có ClerkProvider; Clerk chỉ dùng server-side ở webhook route.
 - [ ] **Điểm 27 (media variants reconciliation)**: đồng bộ `docs/MEDIA_STRATEGY.md` với implementation — mặc định dùng pre-rendered R2 variants đã được docs chọn, hoặc đổi rõ sang Vercel Image Optimization (xem dưới).
 
 ### Giai đoạn 8 — P2 Mobile + SEO depth (Day 5–6)
@@ -1241,7 +1243,7 @@ Kết hợp với 3 điểm P0 gốc (Điểm 1, 8, 2), 4 điểm bổ sung cấ
 1. **Điểm 17 — Xóa `src/app/robots.ts`** → fix bug block Google ngay (P0 tuyệt đối, không có lý do hoãn).
 2. **Điểm 15 — Canonical filter URL** → ngăn duplicate content penalty cho `/tours`.
 3. **Điểm 19 — Payload `select` cho list** → giảm 50–80% payload mỗi request.
-4. **Điểm 23 — Tách Clerk** → giảm 100–200KB JS cho 90% traffic public.
+4. ~~**Điểm 23 — Tách Clerk**~~ ✅ đã thỏa mãn (Clerk không nằm trong public layout).
 
 3 điểm P0 gốc + 4 điểm bổ sung này = 7 điểm giải quyết ~85% vấn đề.
 
@@ -1349,7 +1351,7 @@ export const metadata: Metadata = {
 | Form sanitization | **Có cho booking** — `submitBooking` sanitizes `specialRequest` as plain text; comments/reviews still need the same policy | Layer 5 cho booking, Layer 7 cho comments/reviews | Add hooks/tests for `Comments.content` and `Reviews.comment` before public UGC |
 | Rate limit | **Có production path** — `src/services/rate-limit.ts` uses Upstash Redis REST with local fallback; tests cover Redis allow/reject/fallback | Layer 5 | Verify Vercel Production envs and submit flow uses Redis across instances |
 | CORS/CSRF | **Có** — `payload.config.ts` có `cors` và `csrf` allowlist từ env; `next.config.ts` has CSP report-only/security headers | Layer 1/2 | Verify CSP reports with Clerk/Payload/R2/analytics before enforcing |
-| Auth | **Có nền + sync route** — ClerkProvider ở public layout + Payload Auth; Clerk webhook route/service syncs `customers.clerkUserId` | Layer 1, Layer 7 | Configure Clerk webhook live in dashboard and verify production customer sync |
+| Auth | **Có nền + sync route** — Payload Auth cho admin; Clerk chỉ dùng server-side ở webhook route/service để sync `customers.clerkUserId` (KHÔNG có ClerkProvider ở public layout) | Layer 1, Layer 7 | Configure Clerk webhook live in dashboard and verify production customer sync |
 | Collections travel agency | **Có** — `payload.config.ts` đã wire Tours, Destinations, Bookings, Customers, Reviews, Posts, Media, Partners, Promotions, Payments | Layer 2 | `CLAUDE.md` stale; docs hygiene đã đưa vào Điểm 28 |
 | Access control Bookings/Payments | **Có cơ bản** — `Bookings.read/update` staff-only, delete admin-only; `Payments` staff-only/admin delete | Layer 2 | Booking `create: () => true` phải đi qua Server Action + rate limit/idempotency; cần test public không đọc booking người khác |
 | Booking status enum | **Có, nhưng khác đề xuất lowercase** — repo dùng business enum `Pending`, `Confirmed - Pay Later`, `Confirmed - Paid`, `Completed`, `Cancelled` | Layer 2/5 | Không đổi sang `pending | confirmed | paid | cancelled`; giữ state machine hiện tại để không mất nghĩa Pay Later |
@@ -1415,7 +1417,7 @@ export const metadata: Metadata = {
 - `tests/api/clerk-webhook.test.ts`
 - `tests/services/clerk-customer-sync.test.ts`
 
-Vẫn còn cần cấu hình Clerk Dashboard endpoint live và Vercel Production env/redeploy. `src/app/(frontend)/layout.tsx` còn bọc toàn bộ public site bằng `ClerkProvider` (đã có Điểm 23 để tách).
+Vẫn còn cần cấu hình Clerk Dashboard endpoint live và Vercel Production env/redeploy. (Lưu ý 2026-05-31: public layout KHÔNG còn bọc `ClerkProvider` — Điểm 23 đã thỏa mãn.)
 
 **Hành động:**
 - Tạo route handler external webhook, ví dụ `src/app/api/webhooks/clerk/route.ts`. **Done.**
