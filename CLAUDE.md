@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Knowledge stores & progress protocol
+
+Before coding, read `docs/CURRENT_STATUS.md` (current layer/stage + next work) and recall agentmemory for the area you're touching. After completing a task or changing a layer/stage, update **both** `docs/CURRENT_STATUS.md` and agentmemory (`memory_save`, project `Travel-Agency`). codegraph is derived from code — never hand-edit it. The full read/write protocol, shared by all agents (Claude Code, Codex, Gemini, Grok, opencode), lives in **`AGENTS.md`**.
+
 ## Commands
 
 ```bash
