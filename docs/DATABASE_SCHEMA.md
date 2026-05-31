@@ -23,8 +23,9 @@
 | 15 | **product-categories** | Category chung cho tour/car rental/guide. |
 | 16 | **custom-inquiries** | Lead form cho tailor-made/free proposal, tách khỏi `bookings`. |
 | 17 | **team-members** | Team/trust content public. |
-| 18 | **site-settings** | Hotline, WhatsApp, sales email, footer legal/trust summary. |
+| 18 | **site-settings** | Singleton global: hotline/WhatsApp/email/social, footer, trust, + cấu hình CMS cho homepage sections, OTA, free proposal (bật/tắt + sửa nội dung không cần deploy). |
 | 19 | **navigation** | Header/footer menu do admin quản lý trong Payload. |
+| 20 | **affiliate-clicks** | Log click affiliate/OTA để đo lường (admin-only read, Layer 8). |
 
 ## 2. Quan hệ chính
 
@@ -45,7 +46,7 @@
 - `Post → Destination`
 - `Post → Tour` (optional)
 - `Post → Post[]` (Related Posts, manual hoặc auto)
-- `Post → Tags / Categories`
+- `Post → Tags[]` (text array — KHÔNG có quan hệ categories; phân loại qua `guideCategory` enum)
 - `Promotion → Tour[]` (áp dụng cho tour nào)
 - `Payment → Booking` (Phase 5)
 
@@ -132,11 +133,11 @@
 
 ### `posts`
 - `title`, `slug`, `featuredImage`, `content` (rich)
-- `categories[]` (relationship)
-- `tags[]` (text array)
-- `relatedPosts[]` (manual hoặc auto — gợi ý theo category/tag/season/destination)
+- `status`: `draft` | `published` | `archived`
+- `tags[]` (array of `{ tag }`)
+- `relatedPosts[]` (manual hoặc auto — gợi ý theo tag/season/destination)
 - `destination` (optional relationship)
-- `guideCategory`: `eat` | `drink` | `do` | `shop` | `before-trip` | `service` | `general`
+- `guideCategory`: `eat` | `drink` | `do` | `shop` | `before-trip` | `service` | `general` (phân loại bài — KHÔNG có quan hệ `categories`)
 - `attractions[]` (relationship → attractions)
 - `sortWeight`
 - `relatedTour` (optional relationship — cho CTA Booking cuối bài)
@@ -170,11 +171,39 @@
 - `season`: link với seasonal strategy
 
 ### `media`
-- `filename`, `mimeType`, `originalSize`
-- `variants` (JSON): `thumb`, `card`, `hero`, `og` — mỗi variant có URL R2
 - `alt`, `caption`
-- `width`, `height`
+- `status`: `uploading` | `processing` | `ready` | `failed` (public chỉ đọc `ready`)
+- `filename`, `mimeType`, `filesize`, `width`, `height`
+- `r2Key`, `publicUrl`, `url`, `thumbnailURL`
+- `focalX`, `focalY` (focal point cho crop public — dùng trong `resolveImage`)
+- `variants` (JSON): biến thể `thumb`/`card`/`hero`/`og` (URL R2)
+- `processingError` (admin only)
 - Xem `MEDIA_STRATEGY.md` cho chi tiết variant generation.
+
+### `customers`
+- `name`, `email`, `phone`, `nationality`
+- `clerkUserId` (set ở lần SSO đầu — link với Clerk user)
+- `preferredContactChannel`: `whatsapp` | `email` | `zalo` | `phone`
+- `notes` (internal CRM, không hiện cho khách)
+
+### `reviews`
+- `customer` (relationship), `tour` (relationship), `booking` (optional relationship)
+- `rating` (number), `comment` (text)
+- `status`: `pending` | `approved` | `hidden` (public chỉ đọc `approved`)
+
+### `site-settings` (singleton)
+- Liên hệ: `hotline`, `whatsapp`, `salesEmail`, `social[]` (`platform`: facebook|instagram|youtube|tiktok|whatsapp, `url`, `label`)
+- `footer` (companyName, legalText, address), `trust` (reviewAverage, reviewCount)
+- CMS-configurable groups (bật/tắt + sửa nội dung không cần deploy): `homepage` (toggles + copy override per section), `ota` (master switch + `providers[]` với `urlTemplate` chứa `{city}` cho affiliate + `placements`), `freeProposal` (`enabled`, `stages[]`, `themes[]`, `hero`)
+- Field modules: `src/collections/payload/fields/` (`homepage-fields`, `ota-fields`, `free-proposal-fields`)
+
+### `affiliate-clicks`
+- `targetType`: `addon` | `ota`
+- `targetId`, `targetUrl`
+- `source`: path của trang xảy ra click
+- `referrer`, `userAgent`
+- `ipHash`: SHA-256 một chiều của client IP (salted bằng `PAYLOAD_SECRET`) — KHÔNG lưu IP thô
+- Admin-only read (Layer 8 click tracking).
 
 ### Cross-cutting fields
 
