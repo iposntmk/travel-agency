@@ -55,7 +55,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const ogImage = resolveOgImage(tour.seo?.ogImage ?? tour.featuredImage, siteUrl);
 
   return {
-    title: tour.seo?.metaTitle ?? tour.title,
+    title: tour.seo?.metaTitle ? { absolute: tour.seo.metaTitle } : tour.title,
     description,
     alternates: { canonical: `/tours/${tour.slug}` },
     openGraph: {

@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const ogImage = resolveOgImage(post.seo?.ogImage ?? post.featuredImage, siteUrl);
 
   return {
-    title: post.seo?.metaTitle ?? post.title,
+    title: post.seo?.metaTitle ? { absolute: post.seo.metaTitle } : post.title,
     description,
     alternates: { canonical: `/blog/${post.slug}` },
     openGraph: {

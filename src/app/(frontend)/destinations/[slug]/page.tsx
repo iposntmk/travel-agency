@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const ogImage = resolveOgImage(destination.seo?.ogImage ?? destination.featuredImage, siteUrl);
 
   return {
-    title: destination.seo?.metaTitle ?? destination.title,
+    title: destination.seo?.metaTitle ? { absolute: destination.seo.metaTitle } : destination.title,
     description,
     alternates: { canonical: `/destinations/${destination.slug}` },
     openGraph: {
