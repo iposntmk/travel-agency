@@ -35,8 +35,9 @@ Skip both for trivial changes (typo, one-line refactor) — the commit message i
 ## Before writing any code
 
 1. Read `CLAUDE.md` — architecture rules, design constraints, file size limits
-2. Read the relevant doc in `docs/` for the area you are touching
-3. Run `pnpm typecheck` and `pnpm test` to confirm the baseline is green before making changes
+2. Read `docs/CURRENT_STATUS.md` — current layer/stage, last shipped commits, next work (the single source of truth for status; do not duplicate status into other files)
+3. Read the relevant domain doc for the area you touch: booking → `docs/BOOKING_FLOW.md` + `docs/DATABASE_SCHEMA.md`; media → `docs/MEDIA_STRATEGY.md`; perf/SEO/security → `docs/toiuu.md`; roadmap → `docs/DEVELOPMENT_APPROACH.md`; coding rules → `docs/CODING_GUIDELINES.md` (authoritative)
+4. Run `pnpm typecheck` and `pnpm test` to confirm the baseline is green before making changes
 
 ## Workflow
 
