@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { EmptyState, PageHero } from "@/components/section";
 import { TourCard } from "@/components/tour-card";
+import { getSiteSettings } from "@/lib/cms";
 import { getToursForList } from "@/lib/cms-list";
+
+function text(value: unknown, fallback: string): string {
+  return typeof value === "string" && value.trim().length > 0 ? value : fallback;
+}
 
 export const revalidate = 300;
 
@@ -14,14 +20,22 @@ export const metadata: Metadata = {
 };
 
 export default async function FreeToursPage() {
-  const freeTours = await getToursForList({ freeOnly: true, limit: 24 });
+  const [freeTours, siteSettings] = await Promise.all([
+    getToursForList({ freeOnly: true, limit: 24 }),
+    getSiteSettings()
+  ]);
+  const config = siteSettings?.homepage?.freeTours;
+  if (config?.pageEnabled === false) notFound();
 
   return (
     <main>
       <PageHero
-        eyebrow="Tips appreciated"
-        title="Free Tours"
-        subtitle="Free walking and cycling tours led by locals. Registration uses the same Book Now · Pay Later inquiry — tagged separately for sales follow-up."
+        eyebrow={text(config?.eyebrow, "Tips appreciated")}
+        title={text(config?.title, "Free Tours")}
+        subtitle={text(
+          config?.subtitle,
+          "Free walking and cycling tours led by locals. Registration uses the same Book Now · Pay Later inquiry — tagged separately for sales follow-up."
+        )}
       >
         <div className="mt-6">
           <Breadcrumb

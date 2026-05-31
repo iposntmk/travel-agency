@@ -7,6 +7,8 @@ import * as migration_20260526_145531 from './20260526_145531';
 import * as migration_20260527_041941 from './20260527_041941';
 import * as migration_20260529_124032_travel_platform_expansion from './20260529_124032_travel_platform_expansion';
 import * as migration_20260530_140701_navigation_collection from './20260530_140701_navigation_collection';
+import * as migration_20260530_163402_site_settings_social from './20260530_163402_site_settings_social';
+import * as migration_20260531_010452_site_settings_features from './20260531_010452_site_settings_features';
 
 export const migrations = [
   {
@@ -52,6 +54,16 @@ export const migrations = [
   {
     up: migration_20260530_140701_navigation_collection.up,
     down: migration_20260530_140701_navigation_collection.down,
-    name: '20260530_140701_navigation_collection'
+    name: '20260530_140701_navigation_collection',
+  },
+  {
+    up: migration_20260530_163402_site_settings_social.up,
+    down: migration_20260530_163402_site_settings_social.down,
+    name: '20260530_163402_site_settings_social',
+  },
+  {
+    up: migration_20260531_010452_site_settings_features.up,
+    down: migration_20260531_010452_site_settings_features.down,
+    name: '20260531_010452_site_settings_features'
   },
 ];

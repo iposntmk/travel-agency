@@ -7,14 +7,23 @@ import { submitCustomInquiry } from "@/app/actions/submit-custom-inquiry";
 import { clientUuid } from "@/lib/client-uuid";
 import type { Destination } from "@/payload-types";
 import { customInquirySchema, type CustomInquiryInput } from "@/schemas/custom-inquiry";
-import { PROPOSAL_STAGES, PROPOSAL_STEP_FIELDS, type CustomInquiryFormValues } from "./proposal-form-options";
+import {
+  PROPOSAL_STAGES,
+  PROPOSAL_STEP_FIELDS,
+  PROPOSAL_THEMES,
+  type CustomInquiryFormValues
+} from "./proposal-form-options";
 import { ProposalFormStep } from "./proposal-form-steps";
 
 interface Props {
   destinations: Destination[];
+  themes?: string[];
+  stages?: string[];
 }
 
-export function FreeProposalForm({ destinations }: Props) {
+export function FreeProposalForm({ destinations, themes, stages }: Props) {
+  const stageOptions = stages && stages.length > 0 ? stages : PROPOSAL_STAGES;
+  const themeOptions = themes && themes.length > 0 ? themes : PROPOSAL_THEMES;
   const idempotencyKey = useMemo(() => clientUuid(), []);
   const [step, setStep] = useState(0);
   const [pending, startTransition] = useTransition();
@@ -24,7 +33,7 @@ export function FreeProposalForm({ destinations }: Props) {
     resolver: zodResolver(customInquirySchema),
     mode: "onTouched",
     defaultValues: {
-      planningStage: PROPOSAL_STAGES[0],
+      planningStage: stageOptions[0],
       adults: 2,
       children: 0,
       exactDatesKnown: false,
@@ -96,7 +105,7 @@ export function FreeProposalForm({ destinations }: Props) {
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(submit, handleInvalid)} className="rounded-lg border border-slate-200 bg-white p-4 shadow-elevated md:p-6" noValidate>
         <div className="h-1 overflow-hidden rounded-full bg-slate-100">
-          <div className="h-full bg-[#047857]" style={{ width: `${progress}%` }} />
+          <div className="h-full bg-brand-green" style={{ width: `${progress}%` }} />
         </div>
         <div className="mt-6">
           <ProposalFormStep
@@ -104,6 +113,8 @@ export function FreeProposalForm({ destinations }: Props) {
             destinations={destinations}
             destinationLabels={destinationLabels}
             busy={busy}
+            stages={stageOptions}
+            themes={themeOptions}
           />
         </div>
         {serverError ? <p className="mt-4 text-sm font-medium text-red-600">{serverError}</p> : null}
@@ -130,5 +141,5 @@ function firstStepWithError(fields: string[]): number | undefined {
   return index === -1 ? undefined : index;
 }
 
-const primaryButtonClass = "rounded-full bg-[#047857] px-5 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60";
+const primaryButtonClass = "rounded-full bg-brand-green px-5 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60";
 const secondaryButtonClass = "rounded-full border border-slate-200 px-5 py-2 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-40";

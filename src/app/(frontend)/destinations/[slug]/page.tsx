@@ -9,7 +9,8 @@ import { OtaWidget } from "@/components/ota-widget";
 import { SectionHead } from "@/components/section";
 import { TourCard } from "@/components/tour-card";
 import { getSiteUrl } from "@/config/env";
-import { getDestinationBySlug, getDestinationHub, getDestinations } from "@/lib/cms";
+import { getDestinationBySlug, getDestinationHub, getDestinations, getSiteSettings } from "@/lib/cms";
+import { resolveOtaWidgets } from "@/lib/ota-providers";
 import { destinationRegionBestSeason, destinationRegionLabel } from "@/lib/destination-regions";
 import { lexicalToHtml, lexicalToPlainText } from "@/lib/lexical";
 import { resolveImage, resolveOgImage } from "@/lib/media";
@@ -55,9 +56,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function DestinationDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const hub = await getDestinationHub(slug);
+  const [hub, siteSettings] = await Promise.all([getDestinationHub(slug), getSiteSettings()]);
   if (!hub) notFound();
   const { destination, tours } = hub;
+  const otaWidgets = resolveOtaWidgets(siteSettings?.ota, "destination", destination.title);
   const details = destination as typeof destination & {
     summary?: string;
     bestTimeToVisit?: string;
@@ -177,25 +179,25 @@ export default async function DestinationDetailPage({ params }: PageProps) {
 
         <DestinationHubSections hub={hub} />
 
-        <section className="mt-16">
-          <SectionHead
-            eyebrow="External partners"
-            title={`Top things to do in ${destination.title}`}
-            subtitle="From trusted travel partners — booked externally, not through TC Travel."
-          />
-          <div className="grid gap-6 md:grid-cols-2">
-            <OtaWidget
-              provider="getyourguide"
-              city={destination.title}
-              source={`/destinations/${destination.slug}`}
+        {otaWidgets.length > 0 ? (
+          <section className="mt-16">
+            <SectionHead
+              eyebrow="External partners"
+              title={`Top things to do in ${destination.title}`}
+              subtitle="From trusted travel partners — booked externally, not through TC Travel."
             />
-            <OtaWidget
-              provider="viator"
-              city={destination.title}
-              source={`/destinations/${destination.slug}`}
-            />
-          </div>
-        </section>
+            <div className="grid gap-6 md:grid-cols-2">
+              {otaWidgets.map((widget) => (
+                <OtaWidget
+                  key={widget.key}
+                  widget={widget}
+                  city={destination.title}
+                  source={`/destinations/${destination.slug}`}
+                />
+              ))}
+            </div>
+          </section>
+        ) : null}
       </div>
     </main>
   );

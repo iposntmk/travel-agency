@@ -60,3 +60,102 @@ export function otaProviderLabel(provider: OtaProvider): string {
 export function otaTargetId(provider: OtaProvider, city: string): string {
   return `${provider}:${citySlug(city)}`;
 }
+
+export function isOtaProvider(value: unknown): value is OtaProvider {
+  return typeof value === "string" && (OTA_PROVIDERS as readonly string[]).includes(value);
+}
+
+// CMS-driven config (a subset of the SiteSettings `ota` group). Kept loose so it
+// can be fed directly from payload-types without a hard import cycle.
+export interface OtaProviderConfig {
+  key?: string | null;
+  label?: string | null;
+  urlTemplate?: string | null;
+  enabled?: boolean | null;
+}
+
+export interface OtaPlacementConfig {
+  enabled?: boolean | null;
+  providers?: (string | null)[] | null;
+  heading?: string | null;
+  blurb?: string | null;
+}
+
+export interface OtaConfig {
+  enabled?: boolean | null;
+  providers?: OtaProviderConfig[] | null;
+  placements?: {
+    home?: OtaPlacementConfig | null;
+    destination?: OtaPlacementConfig | null;
+    tour?: OtaPlacementConfig | null;
+  } | null;
+}
+
+export type OtaPlacementName = "home" | "destination" | "tour";
+
+export interface ResolvedOtaWidget {
+  key: OtaProvider;
+  label: string;
+  url: string;
+  targetId: string;
+  heading?: string;
+  blurb?: string;
+}
+
+const DEFAULT_PLACEMENT_PROVIDERS: Record<OtaPlacementName, OtaProvider[]> = {
+  home: ["getyourguide"],
+  destination: ["getyourguide", "viator"],
+  tour: ["getyourguide", "viator"]
+};
+
+// Resolve a single provider for a city, layering CMS overrides over code defaults.
+export function resolveOtaProvider(
+  key: OtaProvider,
+  city: string,
+  cmsProvider?: OtaProviderConfig
+): ResolvedOtaWidget {
+  const url = cmsProvider?.urlTemplate
+    ? cmsProvider.urlTemplate.replaceAll("{city}", encodeURIComponent(city))
+    : buildOtaUrl(key, city);
+  return {
+    key,
+    label: cmsProvider?.label || otaProviderLabel(key),
+    url,
+    targetId: otaTargetId(key, city)
+  };
+}
+
+// Given the CMS `ota` group (or null), return the ordered widgets to render for a
+// placement + city. Falls back to current hardcoded behavior when config is absent.
+export function resolveOtaWidgets(
+  ota: OtaConfig | null | undefined,
+  placement: OtaPlacementName,
+  city: string
+): ResolvedOtaWidget[] {
+  if (!ota) {
+    return DEFAULT_PLACEMENT_PROVIDERS[placement].map((key) => resolveOtaProvider(key, city));
+  }
+  if (ota.enabled === false) return [];
+
+  const placementConfig = ota.placements?.[placement] ?? undefined;
+  if (placementConfig?.enabled === false) return [];
+
+  const catalog = new Map<OtaProvider, OtaProviderConfig>();
+  for (const provider of ota.providers ?? []) {
+    if (isOtaProvider(provider?.key)) catalog.set(provider.key, provider ?? {});
+  }
+
+  const selected = (placementConfig?.providers ?? []).filter(isOtaProvider);
+  const keys = selected.length > 0 ? selected : DEFAULT_PLACEMENT_PROVIDERS[placement];
+
+  const widgets: ResolvedOtaWidget[] = [];
+  for (const key of keys) {
+    const cmsProvider = catalog.get(key);
+    if (cmsProvider?.enabled === false) continue;
+    const widget = resolveOtaProvider(key, city, cmsProvider);
+    if (placementConfig?.heading) widget.heading = placementConfig.heading.replaceAll("{city}", city);
+    if (placementConfig?.blurb) widget.blurb = placementConfig.blurb;
+    widgets.push(widget);
+  }
+  return widgets;
+}

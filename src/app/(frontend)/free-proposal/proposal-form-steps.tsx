@@ -2,7 +2,6 @@
 
 import type { Destination } from "@/payload-types";
 import { CounterField, MultiChoiceField, SingleChoiceField } from "./proposal-choice-fields";
-import { PROPOSAL_STAGES, PROPOSAL_THEMES } from "./proposal-form-options";
 import { CheckboxField, Step, TextAreaField, TextField } from "./proposal-form-controls";
 
 interface ProposalFormStepProps {
@@ -10,13 +9,15 @@ interface ProposalFormStepProps {
   destinations: Destination[];
   destinationLabels: Record<string, string>;
   busy: boolean;
+  stages: string[];
+  themes: string[];
 }
 
-export function ProposalFormStep({ step, destinations, destinationLabels, busy }: ProposalFormStepProps) {
+export function ProposalFormStep({ step, destinations, destinationLabels, busy, stages, themes }: ProposalFormStepProps) {
   if (step === 0) {
     return (
       <Step title="Planning">
-        <SingleChoiceField values={PROPOSAL_STAGES} disabled={busy} />
+        <SingleChoiceField values={stages} disabled={busy} />
       </Step>
     );
   }
@@ -41,7 +42,7 @@ export function ProposalFormStep({ step, destinations, destinationLabels, busy }
           labels={destinationLabels}
           disabled={busy}
         />
-        <MultiChoiceField name="themes" values={PROPOSAL_THEMES} disabled={busy} />
+        <MultiChoiceField name="themes" values={themes} disabled={busy} />
         <TextAreaField name="message" label="Notes, pace, must-sees, hotel style..." disabled={busy} />
       </Step>
     );

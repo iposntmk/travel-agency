@@ -7,8 +7,9 @@ import { OtaWidget } from "@/components/ota-widget";
 import { SectionHead } from "@/components/section";
 import { TourCard } from "@/components/tour-card";
 import { getSiteUrl } from "@/config/env";
-import { getReviewsForTour, getTourBySlug } from "@/lib/cms";
+import { getReviewsForTour, getSiteSettings, getTourBySlug } from "@/lib/cms";
 import { getToursForDestinationList, getToursForList } from "@/lib/cms-list";
+import { resolveOtaWidgets } from "@/lib/ota-providers";
 import { getPayloadClient } from "@/lib/payload";
 import { lexicalToHtml, lexicalToPlainText } from "@/lib/lexical";
 import { resolveImage, resolveOgImage } from "@/lib/media";
@@ -18,6 +19,7 @@ import { TourAddOns } from "./tour-addons";
 import { TourBookingAside } from "./tour-booking-aside";
 import { badgesFor, destinationOf } from "./tour-detail-helpers";
 import { TourItinerary } from "./tour-itinerary";
+import { TourMap } from "./tour-map";
 import { TourMobileBottomCta, TourMobileTabs } from "./tour-mobile-cta";
 import { TourReviews } from "./tour-reviews";
 
@@ -72,11 +74,15 @@ export default async function TourDetailPage({ params }: PageProps) {
   if (!tour) notFound();
 
   const destination = destinationOf(tour);
-  const [sameDestinationTours, fallbackTours, reviews] = await Promise.all([
+  const [sameDestinationTours, fallbackTours, reviews, siteSettings] = await Promise.all([
     destination ? getToursForDestinationList(destination.id, 4) : Promise.resolve([]),
     getToursForList({ limit: 8 }),
-    getReviewsForTour(tour.id, 5)
+    getReviewsForTour(tour.id, 5),
+    getSiteSettings()
   ]);
+  const otaWidgets = destination
+    ? resolveOtaWidgets(siteSettings?.ota, "tour", destination.title)
+    : [];
   const relatedTours = [...sameDestinationTours, ...fallbackTours]
     .filter((candidate, index, list) => candidate.id !== tour.id && list.findIndex((t) => t.id === candidate.id) === index)
     .slice(0, 3);
@@ -96,7 +102,7 @@ export default async function TourDetailPage({ params }: PageProps) {
   const tourUrl = absoluteUrl(siteUrl, `/tours/${tour.slug}`);
 
   return (
-    <main className="bg-mist pb-20">
+    <main className="bg-mist pb-24">
       <JsonLd
         data={[
           breadcrumbJsonLd([
@@ -197,6 +203,10 @@ export default async function TourDetailPage({ params }: PageProps) {
 
             <div id="itinerary">{tour.itinerary ? <TourItinerary items={tour.itinerary} /> : null}</div>
 
+            {destination ? (
+              <TourMap query={`${destination.title}, Vietnam`} label={`${destination.title}, Central Vietnam`} />
+            ) : null}
+
             <TourAddOns addOns={addOns} tourSlug={tour.slug} />
 
             <TourReviews reviews={reviews} />
@@ -220,7 +230,7 @@ export default async function TourDetailPage({ params }: PageProps) {
           </section>
         ) : null}
 
-        {destination ? (
+        {destination && otaWidgets.length > 0 ? (
           <section className="mt-16">
             <SectionHead
               eyebrow="External partners"
@@ -228,8 +238,9 @@ export default async function TourDetailPage({ params }: PageProps) {
               subtitle="From trusted travel partners — not booked through TC Travel."
             />
             <div className="grid gap-6 md:grid-cols-2">
-              <OtaWidget provider="getyourguide" city={destination.title} source={`/tours/${tour.slug}`} />
-              <OtaWidget provider="viator" city={destination.title} source={`/tours/${tour.slug}`} />
+              {otaWidgets.map((widget) => (
+                <OtaWidget key={widget.key} widget={widget} city={destination.title} source={`/tours/${tour.slug}`} />
+              ))}
             </div>
           </section>
         ) : null}

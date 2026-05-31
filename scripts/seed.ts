@@ -438,6 +438,11 @@ async function main() {
     hotline: "+84-236-555-0100",
     whatsapp: "+84-903-111-222",
     salesEmail: "hello@tctravel.example",
+    social: [
+      { platform: "facebook", url: "https://facebook.com/tctravelvietnam", label: "TC Travel on Facebook" },
+      { platform: "instagram", url: "https://instagram.com/tctravelvietnam", label: "TC Travel on Instagram" },
+      { platform: "youtube", url: "https://youtube.com/@tctravelvietnam", label: "TC Travel on YouTube" }
+    ],
     footer: {
       companyName: "TC Travel Vietnam Co., Ltd.",
       legalText: "Licensed local travel operator for private tours, free walking tours, transfers, and tailor-made Central Vietnam trips.",
@@ -447,6 +452,111 @@ async function main() {
       reviewAverage: 4.8,
       reviewCount: 1250,
       summary: "Local team, clear pay-later booking, and verified traveller feedback across tours and transfers.",
+    },
+    homepage: {
+      hero: {
+        enabled: true,
+        trustItems: [
+          { label: "4.9★ rating", hint: "From inbound travellers" },
+          { label: "Book now · Pay later", hint: "No prepayment required" },
+          { label: "Local guides", hint: "Hội An · Huế · Đà Nẵng" },
+        ],
+      },
+      seasonalBanner: { enabled: true },
+      featuredTours: {
+        enabled: true,
+        eyebrow: "Hand-picked",
+        title: "Featured Tours",
+        subtitle: "Curated departures for the current season — private guides, small groups, and free walking tours.",
+        actionLabel: "View all tours",
+        actionHref: "/tours",
+      },
+      destinations: {
+        enabled: true,
+        eyebrow: "Where to go",
+        title: "Popular Destinations",
+        subtitle: "Central Vietnam and beyond — explore tours, car transfers, guides, and things to do in each city hub.",
+        actionLabel: "All destinations",
+        actionHref: "/destinations",
+      },
+      freeTours: {
+        sectionEnabled: true,
+        pageEnabled: true,
+        eyebrow: "Lead with experience",
+        title: "Join Our Free Tours",
+        subtitle: "Free walking and cycling tours in Central Vietnam. Tips appreciated — registration uses the same Book Now · Pay Later inquiry flow.",
+        actionLabel: "See free tours",
+        actionHref: "/free-tours",
+      },
+      featuredExperiences: {
+        enabled: true,
+        eyebrow: "External partners",
+        title: "Featured Experiences",
+        subtitle: "Day tours, tickets, and activities curated by trusted travel partners — booked externally, not through TC Travel.",
+      },
+      testimonials: { enabled: true },
+      team: {
+        enabled: true,
+        eyebrow: "Meet the team",
+        title: "People behind your trip",
+        subtitle: "A small local team that plans, guides, and follows up before every departure.",
+        actionLabel: "About us",
+        actionHref: "/about-us",
+      },
+      whyUs: {
+        enabled: true,
+        eyebrow: "Why travellers choose us",
+        title: "Local, trusted, low-pressure.",
+        subtitle: "A small inbound agency built around hospitality, not high-volume sales.",
+        items: [
+          { icon: "compass", title: "Local Specialists", body: "Every tour is run by guides who live in Hội An, Huế and Đà Nẵng. Real stories, real recommendations." },
+          { icon: "shield", title: "Trusted Local Operator", body: "A licensed Central Vietnam agency with real follow-up by phone and WhatsApp before every departure." },
+          { icon: "wallet", title: "Book Now, Pay Later", body: "Submit an inquiry, confirm details with our team, then pay when you meet your guide. No prepayment." },
+          { icon: "heart", title: "Value for Money", body: "Fair, transparent pricing with no hidden fees — including genuinely free walking and cycling tours." },
+          { icon: "sparkle", title: "Authentic Experiences", body: "Small groups and private routes built around local life, realistic pacing, and the places we love." },
+        ],
+      },
+      newsletter: {
+        enabled: true,
+        title: "Seasonal trip ideas, no spam",
+        subtitle: "Join our newsletter for the best time to visit and practical Central Vietnam planning notes.",
+      },
+    },
+    ota: {
+      enabled: true,
+      providers: [
+        { key: "getyourguide", enabled: true },
+        { key: "viator", enabled: true },
+        { key: "klook", enabled: true },
+        { key: "civitatis", enabled: true },
+        { key: "guruwalk", enabled: true },
+      ],
+      placements: {
+        home: { enabled: true, providers: ["getyourguide"] },
+        destination: { enabled: true, providers: ["getyourguide", "viator"] },
+        tour: { enabled: true, providers: ["getyourguide", "viator"] },
+      },
+    },
+    freeProposal: {
+      enabled: true,
+      stages: [
+        { value: "I have an idea" },
+        { value: "I need advice" },
+        { value: "Ready to book" },
+      ],
+      themes: [
+        { value: "Culture" },
+        { value: "Food" },
+        { value: "Nature" },
+        { value: "Family" },
+        { value: "Beach" },
+        { value: "Photography" },
+      ],
+      hero: {
+        eyebrow: "Start your travel project",
+        title: "A private Vietnam itinerary, shaped by locals.",
+        subtitle: "Share your dates, interests, destinations, and budget. Our team replies with a practical route and next steps. No online payment is required at this stage.",
+      },
     },
   });
 

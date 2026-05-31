@@ -642,6 +642,20 @@ export interface SiteSetting {
   hotline?: string | null;
   whatsapp?: string | null;
   salesEmail?: string | null;
+  /**
+   * Links shown in the sticky top bar and footer (Facebook, Instagram, language icons, etc.).
+   */
+  social?:
+    | {
+        platform: 'facebook' | 'instagram' | 'youtube' | 'tiktok' | 'whatsapp';
+        url: string;
+        /**
+         * Accessible label, e.g. "TC Travel on Facebook".
+         */
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   footer?: {
     companyName?: string | null;
     legalText?: string | null;
@@ -651,6 +665,224 @@ export interface SiteSetting {
     reviewAverage?: number | null;
     reviewCount?: number | null;
     summary?: string | null;
+  };
+  /**
+   * Toggle each homepage section on/off and override its copy. Leave a text field blank to keep the built-in default.
+   */
+  homepage?: {
+    hero?: {
+      /**
+       * Show this section on the homepage.
+       */
+      enabled?: boolean | null;
+      title?: string | null;
+      subtitle?: string | null;
+      body?: string | null;
+      trustItems?:
+        | {
+            label: string;
+            hint?: string | null;
+            id?: string | null;
+          }[]
+        | null;
+    };
+    seasonalBanner?: {
+      /**
+       * Show this section on the homepage.
+       */
+      enabled?: boolean | null;
+    };
+    featuredTours?: {
+      /**
+       * Show this section on the homepage.
+       */
+      enabled?: boolean | null;
+      eyebrow?: string | null;
+      title?: string | null;
+      subtitle?: string | null;
+      actionLabel?: string | null;
+      actionHref?: string | null;
+    };
+    destinations?: {
+      /**
+       * Show this section on the homepage.
+       */
+      enabled?: boolean | null;
+      eyebrow?: string | null;
+      title?: string | null;
+      subtitle?: string | null;
+      actionLabel?: string | null;
+      actionHref?: string | null;
+    };
+    freeTours?: {
+      /**
+       * Show the Free Tours section on the homepage.
+       */
+      sectionEnabled?: boolean | null;
+      /**
+       * Keep the /free-tours page reachable (off returns 404).
+       */
+      pageEnabled?: boolean | null;
+      eyebrow?: string | null;
+      title?: string | null;
+      subtitle?: string | null;
+      actionLabel?: string | null;
+      actionHref?: string | null;
+    };
+    /**
+     * External partner (OTA) section header. Providers are configured in the OTA group.
+     */
+    featuredExperiences?: {
+      /**
+       * Show this section on the homepage.
+       */
+      enabled?: boolean | null;
+      eyebrow?: string | null;
+      title?: string | null;
+      subtitle?: string | null;
+    };
+    testimonials?: {
+      /**
+       * Show this section on the homepage.
+       */
+      enabled?: boolean | null;
+    };
+    team?: {
+      /**
+       * Show this section on the homepage.
+       */
+      enabled?: boolean | null;
+      eyebrow?: string | null;
+      title?: string | null;
+      subtitle?: string | null;
+      actionLabel?: string | null;
+      actionHref?: string | null;
+    };
+    whyUs?: {
+      /**
+       * Show this section on the homepage.
+       */
+      enabled?: boolean | null;
+      eyebrow?: string | null;
+      title?: string | null;
+      subtitle?: string | null;
+      items?:
+        | {
+            icon?: ('compass' | 'shield' | 'wallet' | 'heart' | 'sparkle') | null;
+            title: string;
+            body: string;
+            id?: string | null;
+          }[]
+        | null;
+    };
+    newsletter?: {
+      /**
+       * Show this section on the homepage.
+       */
+      enabled?: boolean | null;
+      title?: string | null;
+      subtitle?: string | null;
+    };
+  };
+  /**
+   * Configure external travel-partner (OTA) widgets. Add an affiliate URL template per provider to earn commission without a code change.
+   */
+  ota?: {
+    /**
+     * Master switch for all OTA widgets across the site.
+     */
+    enabled?: boolean | null;
+    /**
+     * Per-provider affiliate config. Empty URL template = generic search link.
+     */
+    providers?:
+      | {
+          key: 'getyourguide' | 'viator' | 'klook' | 'civitatis' | 'guruwalk';
+          /**
+           * Optional display name override.
+           */
+          label?: string | null;
+          /**
+           * Affiliate URL with a {city} token, e.g. https://www.getyourguide.com/s/?q={city}&partner_id=ABC123. Leave blank for the default search URL.
+           */
+          urlTemplate?: string | null;
+          enabled?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+    placements?: {
+      /**
+       * Homepage "Featured Experiences" section.
+       */
+      home?: {
+        enabled?: boolean | null;
+        /**
+         * Which providers to show here. Leave empty to use the built-in default.
+         */
+        providers?: ('getyourguide' | 'viator' | 'klook' | 'civitatis' | 'guruwalk')[] | null;
+        /**
+         * Override the card heading (default: "More things to do in {city}").
+         */
+        heading?: string | null;
+        blurb?: string | null;
+      };
+      /**
+       * Destination detail pages.
+       */
+      destination?: {
+        enabled?: boolean | null;
+        /**
+         * Which providers to show here. Leave empty to use the built-in default.
+         */
+        providers?: ('getyourguide' | 'viator' | 'klook' | 'civitatis' | 'guruwalk')[] | null;
+        /**
+         * Override the card heading (default: "More things to do in {city}").
+         */
+        heading?: string | null;
+        blurb?: string | null;
+      };
+      /**
+       * Tour detail pages.
+       */
+      tour?: {
+        enabled?: boolean | null;
+        /**
+         * Which providers to show here. Leave empty to use the built-in default.
+         */
+        providers?: ('getyourguide' | 'viator' | 'klook' | 'civitatis' | 'guruwalk')[] | null;
+        /**
+         * Override the card heading (default: "More things to do in {city}").
+         */
+        heading?: string | null;
+        blurb?: string | null;
+      };
+    };
+  };
+  /**
+   * Control the /free-proposal page: enable it, and edit the planning stages and theme chips.
+   */
+  freeProposal?: {
+    /**
+     * Keep the /free-proposal page reachable (off returns 404).
+     */
+    enabled?: boolean | null;
+    stages?:
+      | {
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
+    themes?:
+      | {
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
+    hero?: {
+      eyebrow?: string | null;
+      title?: string | null;
+      subtitle?: string | null;
+    };
   };
   updatedAt: string;
   createdAt: string;
@@ -1307,6 +1539,14 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   hotline?: T;
   whatsapp?: T;
   salesEmail?: T;
+  social?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        label?: T;
+        id?: T;
+      };
   footer?:
     | T
     | {
@@ -1320,6 +1560,173 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         reviewAverage?: T;
         reviewCount?: T;
         summary?: T;
+      };
+  homepage?:
+    | T
+    | {
+        hero?:
+          | T
+          | {
+              enabled?: T;
+              title?: T;
+              subtitle?: T;
+              body?: T;
+              trustItems?:
+                | T
+                | {
+                    label?: T;
+                    hint?: T;
+                    id?: T;
+                  };
+            };
+        seasonalBanner?:
+          | T
+          | {
+              enabled?: T;
+            };
+        featuredTours?:
+          | T
+          | {
+              enabled?: T;
+              eyebrow?: T;
+              title?: T;
+              subtitle?: T;
+              actionLabel?: T;
+              actionHref?: T;
+            };
+        destinations?:
+          | T
+          | {
+              enabled?: T;
+              eyebrow?: T;
+              title?: T;
+              subtitle?: T;
+              actionLabel?: T;
+              actionHref?: T;
+            };
+        freeTours?:
+          | T
+          | {
+              sectionEnabled?: T;
+              pageEnabled?: T;
+              eyebrow?: T;
+              title?: T;
+              subtitle?: T;
+              actionLabel?: T;
+              actionHref?: T;
+            };
+        featuredExperiences?:
+          | T
+          | {
+              enabled?: T;
+              eyebrow?: T;
+              title?: T;
+              subtitle?: T;
+            };
+        testimonials?:
+          | T
+          | {
+              enabled?: T;
+            };
+        team?:
+          | T
+          | {
+              enabled?: T;
+              eyebrow?: T;
+              title?: T;
+              subtitle?: T;
+              actionLabel?: T;
+              actionHref?: T;
+            };
+        whyUs?:
+          | T
+          | {
+              enabled?: T;
+              eyebrow?: T;
+              title?: T;
+              subtitle?: T;
+              items?:
+                | T
+                | {
+                    icon?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+            };
+        newsletter?:
+          | T
+          | {
+              enabled?: T;
+              title?: T;
+              subtitle?: T;
+            };
+      };
+  ota?:
+    | T
+    | {
+        enabled?: T;
+        providers?:
+          | T
+          | {
+              key?: T;
+              label?: T;
+              urlTemplate?: T;
+              enabled?: T;
+              id?: T;
+            };
+        placements?:
+          | T
+          | {
+              home?:
+                | T
+                | {
+                    enabled?: T;
+                    providers?: T;
+                    heading?: T;
+                    blurb?: T;
+                  };
+              destination?:
+                | T
+                | {
+                    enabled?: T;
+                    providers?: T;
+                    heading?: T;
+                    blurb?: T;
+                  };
+              tour?:
+                | T
+                | {
+                    enabled?: T;
+                    providers?: T;
+                    heading?: T;
+                    blurb?: T;
+                  };
+            };
+      };
+  freeProposal?:
+    | T
+    | {
+        enabled?: T;
+        stages?:
+          | T
+          | {
+              value?: T;
+              id?: T;
+            };
+        themes?:
+          | T
+          | {
+              value?: T;
+              id?: T;
+            };
+        hero?:
+          | T
+          | {
+              eyebrow?: T;
+              title?: T;
+              subtitle?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;
