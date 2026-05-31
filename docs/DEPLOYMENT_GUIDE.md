@@ -15,7 +15,7 @@
 
 ## 3. Quy trình Deploy
 ```bash
-git push origin main
+git push origin master
 ```
 
-Mọi thay đổi app phải pass Vercel Preview trước khi merge/push production.
+Push lên `master` → Vercel auto-deploy production. Push lên branch khác tạo Preview URL; validate trên Preview trước khi merge vào `master`.

@@ -33,8 +33,8 @@ Repository hiện có ứng dụng Next.js 15 + Payload CMS đang hoạt động
 
 - `DEVELOPMENT_SETUP.md`: local setup, env, required scripts.
 - `DEPLOYMENT_GUIDE.md`: production env and deploy rules.
-- `AGENTS.md`: repository guidance for coding agents.
-- `CLAUDE.md`: Claude Code-specific working context.
+- `../agents.md` (repo root): cross-agent read/write protocol + repository guidance for all coding agents (Claude Code, Codex, Gemini, Grok, opencode).
+- `../CLAUDE.md` (repo root): Claude Code-specific working context + guardrails.
 
 ## Reference / superseded analysis
 

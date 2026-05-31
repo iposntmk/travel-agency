@@ -9,12 +9,14 @@
 
 ## Setup Local
 
-```bash
-# 1. Tạo project
-npx create-payload-app@latest travel-agency
+App đã được scaffold và đang chạy production — **KHÔNG** tạo lại bằng `create-payload-app`. Setup là clone repo có sẵn:
 
-# 2. Cài dependencies
+```bash
+# 1. Clone repo
+git clone https://github.com/iposntmk/travel-agency.git
 cd travel-agency
+
+# 2. Cài dependencies (pnpm only — không dùng npm/yarn)
 pnpm install
 
 # 3. Config environment
@@ -24,11 +26,11 @@ cp .env.example .env
 
 ## Environment Validation
 
-Sau khi scaffold app, tạo một env loader tập trung bằng Zod (ví dụ `src/config/env.ts`) và chỉ đọc `process.env` trong file đó. App phải fail fast nếu thiếu hoặc sai `DATABASE_URL`, Clerk keys, R2 config, QStash token, Resend key, hoặc public site URL.
+Env validation tập trung ở `src/config/env.ts` (Zod) — chỉ đọc `process.env` trong file đó qua `getEnv()`/helpers. App fail fast nếu thiếu hoặc sai `DATABASE_URL`, Clerk keys, R2 config, QStash token, Resend key, hoặc public site URL.
 
-## Required Scripts After Scaffold
+## Scripts
 
-`travel-agency/package.json` là nguồn chuẩn cho command. Sau khi scaffold, bảo đảm có các script tối thiểu:
+`package.json` là nguồn chuẩn cho command. Các script chính:
 
 ```bash
 pnpm dev
@@ -53,11 +55,11 @@ pnpm test
 pnpm build
 ```
 
-Nếu một command chưa cấu hình ở giai đoạn scaffold đầu tiên, ghi rõ trong PR và tạo issue/todo để bổ sung ngay trong Layer 1.
+Cả 4 command phải xanh trước khi commit (xem `agents.md`).
 
 ## Local Environment Checklist
 
-`.env.example` sau scaffold cần có tối thiểu:
+`.env.example` liệt kê env cần thiết (tối thiểu):
 
 ```text
 DATABASE_URL=

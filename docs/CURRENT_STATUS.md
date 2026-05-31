@@ -1,6 +1,6 @@
 # Current Status
 
-**Updated:** 2026-05-31 (Frontend polish `8c7afd6` shipped; production deploy + smoke-check verified)
+**Updated:** 2026-05-31 (Production-verified through `8c7afd6`; SEO title/OG + LCP hero polish and docs dedupe shipped — HEAD `003b32e`)
 
 ## Current Layer / Stage
 
@@ -61,6 +61,12 @@ Latest production-readiness verification:
 
 Last shipped commits (top to bottom = newest to oldest):
 
+- `003b32e` / `cd733ee` docs — removed obsolete `docs/CLAUDE.md` + duplicate `docs/AGENTS.md` (both carried drifted status); the single agents file is now root `agents.md`.
+- `a2dc2a3` / `da2c19c docs(agents)` — codified the cross-agent knowledge-store read/write protocol in root `agents.md` (Claude/Codex/Gemini/Grok/opencode share agentmemory `:3111`; project status lives only in this file).
+- `06e6844` / `529f3ef docs` — mobile Lighthouse baseline (`docs/lighthouse-baseline.md`).
+- `ad89b8d perf(lcp): add fetchPriority=high to hero images` — Next 15.4 `priority` doesn't set fetchpriority; LCP discovery audit now passes (home perf 67→75). Verified live.
+- `8a4b721 feat(seo): add OpenGraph/Twitter defaults and a raster OG fallback` — `/og-default` route (next/og 1200×630), twitter card site-wide. Verified live.
+- `fdf01f0 fix(seo): stop double-appending site name in detail page titles` — `{absolute}` bypasses the title template. Verified live.
 - `8c7afd6 feat(frontend): polish header/hero/footer, add topbar & floating WhatsApp` — brand-green tokens, SiteTopbar, SiteFloating/FloatingActions, footer social icons, HomeHero contrast fix, CSP Google Maps, clientUuid() booking, dev without turbopack, qa:smoke + scripts/smoke-check.ts. **Production-verified 2026-05-31 (deploy READY sin1, qa:smoke 20/20).**
 - `75ebac6 fix(deploy): include components required by CMS pages` — recovery for the da07b3f deploy ERROR.
 - `da07b3f feat(cms): make OTA, free tours, free proposal & homepage sections CMS-configurable` — SiteSettings homepage/ota/freeProposal groups; OTA urlTemplate with {city} for affiliate IDs without redeploy.

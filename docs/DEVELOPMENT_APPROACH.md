@@ -42,7 +42,7 @@ Nếu chỉ có 1-2 dev, đi tuần tự theo đúng thứ tự trên. Không đ
 
 ### Trạng thái hiện tại
 
-**Cập nhật 2026-05-30:** dự án đang ở **Layer 8 - Monetization Without Payment**, với nhánh mở rộng travel platform đã pass full local gate, được review migration, commit và push lên `origin/master` trong `79ad0cf`. Chưa coi là production-verified cho tới khi Vercel deploy và smoke checks xong.
+**Cập nhật 2026-05-31:** dự án đang ở **Layer 8 - Monetization Without Payment**; travel platform expansion (`79ad0cf`) và các đợt polish sau đó đã **production-verified** (Vercel deploy READY region `sin1` + `pnpm qa:smoke` 20/20). Trạng thái/handoff chi tiết là `CURRENT_STATUS.md` — nguồn chuẩn DUY NHẤT cho status; không nhân bản status vào file này (xem `agents.md`).
 
 - Layer 1-6 đã landed đầy đủ cho luồng MVP. Layer 7 (Trust + Engagement) hoàn tất phần lõi: Clerk customer sync verified end-to-end (`pnpm qa:clerk-sync`), cookie consent banner + UTM share buttons live.
 - Layer 8 đã ship scaffold + UI/UX trên 3 surfaces:
@@ -58,10 +58,10 @@ Nếu chỉ có 1-2 dev, đi tuần tự theo đúng thứ tự trên. Không đ
   - Migration/types: generated `20260529_124032_travel_platform_expansion`.
   - Verification: `pnpm typecheck`, `pnpm test`, `pnpm lint`, `pnpm build` pass on 2026-05-30. Build previously timed out twice on 2026-05-29 but is no longer the blocker.
 
-**Việc đang chờ trước khi đi tiếp:**
+**Việc còn lại (chi tiết & cập nhật ở `CURRENT_STATUS.md`):**
 
-1. Verify Vercel production deploy cho `79ad0cf`, gồm smoke checks các route mới/cũ quan trọng.
-2. Confirm production migration/application health: các collection mới load được, content cũ vẫn render, không có runtime migration error.
+1. ~~Verify Vercel production deploy + smoke checks.~~ **Done 2026-05-31** (`qa:smoke` 20/20).
+2. ~~Confirm production migration/application health.~~ **Done** — collection mới load, content cũ render, không có runtime migration error.
 3. Hoàn thiện frontend public conversion surfaces bằng mobile QA trước: homepage, tours/list/detail, destination hub, `/free-proposal`, `/car-rentals`, booking confirmation.
 4. Làm security hardening trước khi mở indexing: production QA form, access-control spot checks, UGC sanitization nếu bật comment/review, CSP report review, không commit log/secret/data.
 5. Làm performance + SEO backlog trong `docs/toiuu.md`: region/pooler, media cache/R2, image strategy, metadataBase/canonical, JSON-LD, sitemap, Lighthouse mobile.
@@ -307,7 +307,7 @@ Inquiry mới **luôn** bắt đầu là `Pending`. Sales/ops chỉ chuyển san
 - ⏳ Owner: đăng ký partner programs theo thứ tự ở `OTA_INTEGRATIONS.md` §3.
 - ⏭ **Sprint K – CMS-driven partner IDs**: extend Payload `partners` (hoặc tạo `ota-partners`) collection, migration, đọc partner ID ở request time trong `src/lib/ota-providers.ts`. Mục tiêu: bật doanh thu mà không redeploy.
 - ✅ **Sprint L – Affiliate clicks dashboard** (2026-05-27): trang `/internal/affiliate-clicks` (admin-only, Payload session gate) aggregate clicks theo `targetType`, `targetId`, `source`, ngày. Pure aggregator + Payload loader trong `src/services/affiliate-stats.ts`, render trong `src/app/(internal)/internal/affiliate-clicks/`. Robots disallow + noindex layout. 13 unit tests cho aggregator.
-- 🟡 **Sprint M – Travel platform expansion** (`79ad0cf`, pushed 2026-05-30): CMS city hub + car rental + attractions + product categories + custom inquiries + team/settings; `/free-proposal`; `/car-rentals`; richer destination/tour UX. Local gate and migration review complete; awaiting Vercel deploy verification and live smoke checks.
+- ✅ **Sprint M – Travel platform expansion** (`79ad0cf`, pushed 2026-05-30): CMS city hub + car rental + attractions + product categories + custom inquiries + team/settings; `/free-proposal`; `/car-rentals`; richer destination/tour UX. **Production-verified 2026-05-31** (Vercel deploy READY + `qa:smoke` 20/20).
 
 ### Sprint M exit criteria before production verification
 
