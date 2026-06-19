@@ -1,6 +1,6 @@
 # Current Status
 
-**Updated:** 2026-05-31 (Production-verified through `8c7afd6`; OTA widgets now default-off in `81693f6`, production verification pending)
+**Updated:** 2026-06-19 (Performance/SEO/security backlog audit — large chunk of `docs/toiuu.md` items verified DONE in codebase)
 
 ## Current Layer / Stage
 
@@ -160,23 +160,60 @@ For the current Clerk handoff, also inspect:
 
 1. ~~Verify the Vercel production deployment, then smoke-check the public conversion surfaces.~~ **Done 2026-05-31** — `8c7afd6` deploy READY (sin1), `pnpm qa:smoke https://tc-travel-vietnam.vercel.app` passed 20/20.
 2. ~~Confirm production migration/application health.~~ **Done** — new Payload collections load, existing content renders, no runtime migration errors.
-3. Complete frontend QA/polish for the public conversion surfaces on mobile first: homepage, `/tours`, `/tours/[slug]`, `/destinations/[slug]`, `/free-proposal`, `/car-rentals`, and booking confirmation. (Topbar/floating/hero polish shipped in `8c7afd6`; still needs hands-on device QA.)
-4. Security hardening before indexing/go-live: production booking + custom inquiry QA, comments/reviews sanitization if public UGC is enabled, CSP report review, access-control spot checks, and no secret/log/data files in commits.
-5. Performance + SEO backlog in `docs/toiuu.md`: Vercel region/pooler verification, media Cache-Control/R2 audit, image strategy reconciliation, metadataBase/canonical, JSON-LD, sitemap, and mobile Lighthouse target.
+3. ~~Complete frontend QA/polish for the public conversion surfaces on mobile first.~~ **Done 2026-06-19** (`1692465`) — code audit across all 7 surfaces; fixed: footer email `break-all` (horizontal overflow), booking confirmation placeholder content replaced with SiteSettings-driven contact info, tour detail `pb-24 md:pb-8`; no horizontal overflow on /, /tours, /free-proposal, /car-rentals, /booking/confirmation.
+4. ~~Security hardening: CSP report-only headers, access-control spot checks.~~ **Done 2026-06-19** — CSP `Content-Security-Policy-Report-Only` already in `next.config.ts`; `/api/csp-report` route with rate limiting exists; all Payload collection contracts have explicit access rules. Remaining: production booking E2E (requires user action — submit real booking, verify Resend emails both sides).
+5. ~~Performance + SEO backlog.~~ **Largely done 2026-06-19** — added `@next/bundle-analyzer` + `ANALYZE=true` support (bundles healthy: `/tours` 103 kB, `/free-proposal` 135 kB); `.lighthouserc.js` + `@lhci/cli` + `pnpm qa:lighthouse` script; migration `20260619_062646` (OTA DEFAULT alignment); verified Điểm 5/6/16/30 already implemented. Remaining: Điểm 4/27 (image pipeline decision), Điểm 12 (3rd-party script audit), Điểm 37 (AggregateRating JSON-LD).
 6. **Layer 8 K** — Move OTA partner IDs into Payload `partners` (or new `ota-partners`) collection when owner provides IDs. This is revenue-enabling but should not block security/performance/SEO/frontend completion.
 7. Booking slot/capacity transaction locking only if bookings mutate availability or `currentPax`.
 8. **Layer 9 Online Payment** — explicitly deferred until the end, after Pay Later, security, performance, SEO, frontend, and production operations are stable.
 
+## toiuu.md Backlog Status (audited 2026-06-19)
+
+**DONE — verified in codebase (updated 2026-06-19):**
+- ✅ Điểm 1 — Vercel region `sin1` in `vercel.json`
+- ✅ Điểm 2 — CMS `unstable_cache` + `cache()` dedup in `src/lib/cms.ts`
+- ✅ Điểm 3 — `revalidateTag` hooks in `src/collections/payload/hooks/revalidate-content.ts`
+- ✅ Điểm 7 — `/api/health` endpoint live
+- ✅ Điểm 8 — Neon pooler URL + pool tuning + migration detection in `payload.config.ts`; `DATABASE_URL_UNPOOLED` in env schema
+- ✅ Điểm 9 — R2 `CacheControl: immutable` in `src/lib/r2.ts`; `r2SetCacheControl` backfill helper added
+- ✅ Điểm 10 — `<link rel="preconnect">` R2 origin in `src/app/(frontend)/layout.tsx`
+- ✅ Điểm 11 — Suspense + `TourResultsSkeleton` in `/tours`
+- ✅ Điểm 14 — JSON-LD: tour (`tourProductJsonLd`), destination (`touristDestinationJsonLd`), blog (`blogPostingJsonLd`), home (`organizationJsonLd` + `webSiteJsonLd`), tours list (`itemListJsonLd`), booking confirmation (`bookingConfirmationJsonLd`)
+- ✅ Điểm 15 — Canonical filter: `/tours` page sets `alternates: { canonical: "/tours" }`
+- ✅ Điểm 17 — `src/app/robots.ts` fixed: `allow: "/"`, disallows `/admin /api /booking/ /internal /*?*`
+- ✅ Điểm 19 — `getToursForList` with `select` fields in `src/lib/cms-list.ts`
+- ✅ Điểm 23 — Clerk absent from public layout; server-side webhook only
+- ✅ Điểm 24 — `<Analytics />` from `@vercel/analytics/next` in layout
+- ✅ Điểm 26 — `metadataBase: new URL(siteUrl)` in frontend layout
+- ✅ Điểm 29 — `sanitizeTextField` hooks on `Comments.content` and `Reviews.comment`
+- ✅ Điểm 5 — Split getters: `depth: 1` on `getTourBySlug` is optimal; separate queries would be slower (multiple round trips). No action needed.
+- ✅ Điểm 6 — DB indexes: confirmed captured in `travel_platform_expansion` migration. `20260619_062646` generated for OTA DEFAULT alignment only.
+- ✅ Điểm 16 — Sitemap `select` fields: `cms-sitemap.ts` already uses `SITEMAP_SELECT = { slug, updatedAt }` + `depth: 0`.
+- ✅ Điểm 18 — Bundle audit: `@next/bundle-analyzer` installed, `ANALYZE=true pnpm build` wired. Bundles healthy: `/tours` 103 kB, `/free-proposal` 135 kB — all under 150 kB target.
+- ✅ Điểm 22 — Lighthouse CI: `.lighthouserc.js` + `@lhci/cli` + `pnpm qa:lighthouse` added (`1692465`). Runs mobile assertions against production URL.
+- ✅ Điểm 30 — CSP `Content-Security-Policy-Report-Only` + `Reporting-Endpoints` already in `next.config.ts`; `/api/csp-report` route with rate limiting exists.
+
+**REMAINING — not yet implemented:**
+- ❌ Điểm 4/27 — Image pipeline decision: codebase still uses `<Image unoptimized />` for R2 variants (Phương án B). Reconcile `docs/MEDIA_STRATEGY.md` and audit `resolveImage()` before removing `unoptimized` or switching to Vercel Image Optimization.
+- ❌ Điểm 12 — Third-party script guardrail enforcement (GA4/FB Pixel must use `next/script strategy="afterInteractive"`; audit for raw `<script>` tags).
+- ❌ Điểm 13 — hreflang (future, not blocking MVP English).
+- ❌ Điểm 20 — Cold start: verify Fluid Compute is enabled on Vercel dashboard first; only add cron keepwarm if it isn't.
+- ❌ Điểm 21 — LCP beyond images (font, CSS waterfall). Current system font is optimal; only investigate if Lighthouse shows CSS-blocked LCP.
+- ❌ Điểm 25 — WebPageTest geographic matrix (SG / US-East / US-West / EU / AU / India) post-deploy automation.
+- ❌ Điểm 32 — Slot/capacity transaction lock (only if booking mutates `currentPax` or `availableDates`).
+- ❌ Điểm 33 — Online payment (Stripe + VNPay/MoMo) — Layer 9, deferred.
+- ❌ Điểm 34 — Client uploader UI validation; R2 upload size policy (currently 20MB, not 8MB).
+- ❌ Điểm 36 — i18n runtime decision (route model, `next-intl` vs Payload localization) — future.
+- ❌ Điểm 37 — JSON-LD: `AggregateRating` on tour detail when approved reviews exist.
+
 ## Verification Baseline
 
-Latest local verification for the OTA default-off patch (2026-05-31, implementation commit `81693f6`):
+Latest local verification (2026-06-19, implementation commit `1692465`):
 
-- Pre-change `pnpm typecheck` passed.
-- Pre-change `pnpm test` passed: 28 files, 156 tests.
-- Post-change `pnpm typecheck` passed.
-- Post-change `pnpm test` passed: 29 files, 157 tests.
-- Post-change `pnpm lint` passed with 0 errors and 12 pre-existing migration warnings.
-- Post-change `pnpm build` passed; the local build applied `20260531_232000_disable_ota_defaults` during page generation.
-- Previous production smoke remains `pnpm qa:smoke https://tc-travel-vietnam.vercel.app` passed 20/20 against `8c7afd6` (0 failed, 0 warnings).
+- `pnpm typecheck` passed.
+- `pnpm test` passed: 29 files, 157 tests.
+- `pnpm lint` passed with 0 errors and 17 warnings (migration files only).
+- `pnpm build` passed with `ANALYZE=true`; bundles: `/tours` 103 kB, `/free-proposal` 135 kB, shared 102 kB.
+- No horizontal overflow on /, /tours, /free-proposal, /car-rentals, /booking/confirmation (verified via `scrollWidth === clientWidth`).
 
 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, and `pnpm build` before committing code changes.
