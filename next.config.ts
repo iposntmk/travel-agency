@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import { withPayload } from "@payloadcms/next/withPayload";
+import withBundleAnalyzer from "@next/bundle-analyzer";
 import { getNextConfigEnv } from "./src/config/env";
 
 const env = getNextConfigEnv();
@@ -86,4 +87,5 @@ const nextConfig: NextConfig = {
   }
 };
 
-export default withPayload(nextConfig);
+const analyze = withBundleAnalyzer({ enabled: process.env.ANALYZE === "true", openAnalyzer: false });
+export default analyze(withPayload(nextConfig));

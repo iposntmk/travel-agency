@@ -104,7 +104,7 @@ export default async function TourDetailPage({ params }: PageProps) {
   const tourUrl = absoluteUrl(siteUrl, `/tours/${tour.slug}`);
 
   return (
-    <main className="bg-mist pb-24">
+    <main className="bg-mist pb-24 md:pb-8">
       <JsonLd
         data={[
           breadcrumbJsonLd([

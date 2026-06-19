@@ -82,7 +82,7 @@ export async function SiteFooter() {
             <ul className="mt-4 space-y-2 text-sm text-slate-600">
               <li>WhatsApp · {whatsapp}</li>
               <li>
-                <a className="hover:text-navy-900" href={`mailto:${email}`}>
+                <a className="break-all hover:text-navy-900" href={`mailto:${email}`}>
                   {email}
                 </a>
               </li>

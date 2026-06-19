@@ -17,7 +17,8 @@
     "payload:migrate": "payload migrate",
     "r2:backfill-cache-control": "node --env-file=.env --import=tsx/esm scripts/backfill-r2-cache-control.ts",
     "qa:clerk-sync": "node --env-file=.env --import=tsx/esm scripts/verify-clerk-sync.ts",
-    "qa:smoke": "node --import=tsx/esm scripts/smoke-check.ts"
+    "qa:smoke": "node --import=tsx/esm scripts/smoke-check.ts",
+    "qa:lighthouse": "lhci autorun"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1053.0",
@@ -47,6 +48,8 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.27.0",
+    "@lhci/cli": "^0.15.1",
+    "@next/bundle-analyzer": "^16.2.9",
     "@next/eslint-plugin-next": "^15.3.2",
     "@testing-library/react": "^16.3.0",
     "@types/node": "^22.15.21",

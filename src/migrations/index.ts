@@ -10,6 +10,7 @@ import * as migration_20260530_140701_navigation_collection from './20260530_140
 import * as migration_20260530_163402_site_settings_social from './20260530_163402_site_settings_social';
 import * as migration_20260531_010452_site_settings_features from './20260531_010452_site_settings_features';
 import * as migration_20260531_232000_disable_ota_defaults from './20260531_232000_disable_ota_defaults';
+import * as migration_20260619_062646 from './20260619_062646';
 
 export const migrations = [
   {
@@ -65,11 +66,16 @@ export const migrations = [
   {
     up: migration_20260531_010452_site_settings_features.up,
     down: migration_20260531_010452_site_settings_features.down,
-    name: '20260531_010452_site_settings_features'
+    name: '20260531_010452_site_settings_features',
   },
   {
     up: migration_20260531_232000_disable_ota_defaults.up,
     down: migration_20260531_232000_disable_ota_defaults.down,
-    name: '20260531_232000_disable_ota_defaults'
+    name: '20260531_232000_disable_ota_defaults',
+  },
+  {
+    up: migration_20260619_062646.up,
+    down: migration_20260619_062646.down,
+    name: '20260619_062646'
   },
 ];
