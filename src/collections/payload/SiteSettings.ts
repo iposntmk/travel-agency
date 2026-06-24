@@ -17,6 +17,11 @@ export const SiteSettings: CollectionConfig = {
     { name: "name", type: "text", required: true, defaultValue: "Default" },
     { name: "hotline", type: "text" },
     { name: "whatsapp", type: "text" },
+    {
+      name: "messenger",
+      type: "text",
+      admin: { description: "Messenger m.me username (e.g. \"tctravel\") or full URL." }
+    },
     { name: "salesEmail", type: "email" },
     {
       name: "social",

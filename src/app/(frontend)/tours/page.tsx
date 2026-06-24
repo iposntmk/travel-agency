@@ -32,6 +32,7 @@ export async function generateMetadata({ searchParams }: ToursPageProps): Promis
 
 interface ToursPageProps {
   searchParams?: Promise<{
+    q?: SearchParamValue;
     destination?: SearchParamValue;
     type?: SearchParamValue;
     season?: SearchParamValue;
@@ -47,6 +48,7 @@ interface ToursPageProps {
 export default async function ToursPage({ searchParams }: ToursPageProps) {
   const params = (await searchParams) ?? {};
   const query: ToursPageQuery = {
+    q: readParam(params.q),
     destination: readParam(params.destination),
     type: readParam(params.type),
     season: readParam(params.season),

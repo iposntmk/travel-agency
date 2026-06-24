@@ -10,6 +10,7 @@ import { Attractions } from "@/collections/payload/Attractions";
 import { Bookings } from "@/collections/payload/Bookings";
 import { CarRentals } from "@/collections/payload/CarRentals";
 import { Comments } from "@/collections/payload/Comments";
+import { Cruises } from "@/collections/payload/Cruises";
 import { CustomInquiries } from "@/collections/payload/CustomInquiries";
 import { Customers } from "@/collections/payload/Customers";
 import { Destinations } from "@/collections/payload/Destinations";
@@ -76,6 +77,7 @@ export default buildConfig({
     Destinations,
     Partners,
     Tours,
+    Cruises,
     CarRentals,
     Customers,
     Bookings,

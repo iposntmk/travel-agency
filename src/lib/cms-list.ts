@@ -31,6 +31,7 @@ const TOUR_LIST_SELECT = {
 
 function stableToursQuery(input: ToursQuery = {}): ToursQuery {
   return {
+    q: input.q,
     attractionSlug: input.attractionSlug,
     categorySlug: input.categorySlug,
     destinationSlug: input.destinationSlug,

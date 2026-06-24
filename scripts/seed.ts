@@ -307,6 +307,46 @@ async function main() {
     });
   }
 
+  const cruiseSeeds = [
+    ["lan-ha-bay-overnight-cruise", "Lan Hạ Bay Overnight Cruise", "da-nang", 1, "2 days · 1 night", "Karst islands, kayaking, sunset deck, and an overnight cabin away from the crowds.", 180],
+    ["mekong-delta-luxury-cruise", "Mekong Delta Luxury Cruise", "hue", 2, "3 days · 2 nights", "Slow river journey through floating markets, orchards, and riverside villages.", 320],
+    ["perfume-river-heritage-cruise", "Perfume River Heritage Cruise", "hue", 1, "2 days · 1 night", "Royal tombs, riverside pagodas, and Huế imperial context from the water.", 150],
+  ] as const;
+
+  const cruises: Record<string, SeedDoc> = {};
+  for (let index = 0; index < cruiseSeeds.length; index += 1) {
+    const [slug, title, destinationSlug, nights, durationText, routeSummary, priceFrom] = cruiseSeeds[index];
+    cruises[slug] = await upsertBySlug("cruises", {
+      title,
+      slug,
+      destination: destinations[destinationSlug].id,
+      status: "active",
+      nights,
+      durationText,
+      routeSummary,
+      priceFrom,
+      currency: "USD",
+      isFeatured: index < 3,
+      sortWeight: 100 - index,
+      ratingAverage: 5,
+      ratingCount: 8,
+      description: richText(`${routeSummary} Cabins, meals, and onboard activities are confirmed with a Book Now - Pay Later inquiry flow.`),
+      cabinTypes: [
+        { label: "Deluxe cabin", price: priceFrom, maxPax: 2 },
+        { label: "Suite cabin", price: priceFrom + 90, maxPax: 2 },
+      ],
+      itinerary: [
+        { time: "Day 1 · 12:00", activity: richText("Board, welcome lunch, and cabin check-in as the cruise departs.") },
+        { time: "Day 1 · 16:00", activity: richText(`Afternoon activities and scenery for ${title}, then sunset on the deck.`) },
+        { time: "Day 2 · 07:00", activity: richText("Morning excursion, brunch, and return transfer briefing.") },
+      ],
+      seo: {
+        metaTitle: `${title} | TC Travel Vietnam`,
+        metaDescription: `${title} with cabins, meals, and pay-later booking.`,
+      },
+    });
+  }
+
   const customers: SeedDoc[] = [];
   for (const customer of [
     ["Olivia Carter", "olivia.carter@example.com", "+1-415-555-0101", "US", "email"],
@@ -437,6 +477,7 @@ async function main() {
     name: "TC Travel Vietnam",
     hotline: "+84-236-555-0100",
     whatsapp: "+84-903-111-222",
+    messenger: "tctravelvietnam",
     salesEmail: "hello@tctravel.example",
     social: [
       { platform: "facebook", url: "https://facebook.com/tctravelvietnam", label: "TC Travel on Facebook" },
@@ -462,6 +503,12 @@ async function main() {
           { label: "Local guides", hint: "Hội An · Huế · Đà Nẵng" },
         ],
       },
+      search: {
+        enabled: true,
+        eyebrow: "Plan your trip",
+        title: "Find your tour",
+        subtitle: "Search by keyword, destination, and tour type — we'll take you straight to matching departures.",
+      },
       seasonalBanner: { enabled: true },
       featuredTours: {
         enabled: true,
@@ -470,6 +517,14 @@ async function main() {
         subtitle: "Curated departures for the current season — private guides, small groups, and free walking tours.",
         actionLabel: "View all tours",
         actionHref: "/tours",
+      },
+      cruises: {
+        enabled: true,
+        eyebrow: "On the water",
+        title: "Best Cruises",
+        subtitle: "Overnight bay and river cruises with cabins, meals, and onboard activities — Book Now · Pay Later.",
+        actionLabel: "View all cruises",
+        actionHref: "/cruises",
       },
       destinations: {
         enabled: true,
@@ -515,6 +570,14 @@ async function main() {
           { icon: "heart", title: "Value for Money", body: "Fair, transparent pricing with no hidden fees — including genuinely free walking and cycling tours." },
           { icon: "sparkle", title: "Authentic Experiences", body: "Small groups and private routes built around local life, realistic pacing, and the places we love." },
         ],
+      },
+      blog: {
+        enabled: true,
+        eyebrow: "Travel journal",
+        title: "From the Blog",
+        subtitle: "Practical planning notes, food guides, and local context before you commit to a tour.",
+        actionLabel: "Read the blog",
+        actionHref: "/blog",
       },
       newsletter: {
         enabled: true,

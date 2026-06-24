@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import { BestCruises } from "@/components/home/best-cruises";
+import { HomeBlog } from "@/components/home/home-blog";
 import { HomeHero } from "@/components/home/home-hero";
+import { HomeSearchForm } from "@/components/home/home-search-form";
 import { HomeTeam } from "@/components/home/home-team";
 import { NewsletterSignup } from "@/components/home/newsletter-signup";
 import { SeasonalBanner } from "@/components/home/seasonal-banner";
@@ -12,7 +15,8 @@ import { OtaWidget } from "@/components/ota-widget";
 import { EmptyState, SectionBand, SectionHead } from "@/components/section";
 import { TourCard } from "@/components/tour-card";
 import { getSiteUrl } from "@/config/env";
-import { getDestinations, getFeaturedReviews, getSiteSettings, getTeamMembers } from "@/lib/cms";
+import { getDestinations, getFeaturedReviews, getPublishedPosts, getSiteSettings, getTeamMembers } from "@/lib/cms";
+import { getCruisesForList } from "@/lib/cms-cruises";
 import { getToursForList } from "@/lib/cms-list";
 import { resolveOtaWidgets } from "@/lib/ota-providers";
 import { organizationJsonLd, webSiteJsonLd } from "@/lib/structured-data";
@@ -29,13 +33,17 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   const siteUrl = getSiteUrl().replace(/\/$/, "");
-  const [featuredTours, freeTours, destinations, reviews, siteSettings, team] = await Promise.all([
+  const [featuredTours, freeTours, cruises, destinations, reviews, posts, siteSettings, team] = await Promise.all([
     getToursForList({ featuredOnly: true, limit: 3 }).then((tours) =>
       tours.length > 0 ? tours : getToursForList({ limit: 3 })
     ),
     getToursForList({ freeOnly: true, limit: 3 }),
+    getCruisesForList({ featuredOnly: true, limit: 3 }).then((items) =>
+      items.length > 0 ? items : getCruisesForList({ limit: 3 })
+    ),
     getDestinations(6),
     getFeaturedReviews(3),
+    getPublishedPosts(3),
     getSiteSettings(),
     getTeamMembers(4)
   ]);
@@ -59,6 +67,15 @@ export default async function HomePage() {
       <JsonLd data={[organizationJsonLd(siteUrl), webSiteJsonLd(siteUrl)]} />
 
       {hp?.hero?.enabled !== false ? <HomeHero destinations={destinations.slice(0, 3)} /> : null}
+
+      {hp?.search?.enabled !== false ? (
+        <HomeSearchForm
+          destinations={destinations.map((d) => ({ id: d.id, slug: d.slug, title: d.title }))}
+          eyebrow={hp?.search?.eyebrow ?? undefined}
+          title={text(hp?.search?.title, "Find your tour")}
+          subtitle={hp?.search?.subtitle ?? undefined}
+        />
+      ) : null}
 
       {hp?.seasonalBanner?.enabled !== false ? <SeasonalBanner /> : null}
 
@@ -86,6 +103,17 @@ export default async function HomePage() {
             </MobileScrollRow>
           )}
         </SectionBand>
+      ) : null}
+
+      {hp?.cruises?.enabled !== false ? (
+        <BestCruises
+          cruises={cruises}
+          eyebrow={hp?.cruises?.eyebrow ?? undefined}
+          title={hp?.cruises?.title ?? undefined}
+          subtitle={hp?.cruises?.subtitle ?? undefined}
+          actionLabel={hp?.cruises?.actionLabel ?? undefined}
+          actionHref={hp?.cruises?.actionHref ?? undefined}
+        />
       ) : null}
 
       {destinations.length > 0 && hp?.destinations?.enabled !== false ? (
@@ -166,6 +194,17 @@ export default async function HomePage() {
           title={hp?.whyUs?.title ?? undefined}
           subtitle={hp?.whyUs?.subtitle ?? undefined}
           items={whyUsItems.length > 0 ? whyUsItems : undefined}
+        />
+      ) : null}
+
+      {hp?.blog?.enabled !== false ? (
+        <HomeBlog
+          posts={posts}
+          eyebrow={hp?.blog?.eyebrow ?? undefined}
+          title={hp?.blog?.title ?? undefined}
+          subtitle={hp?.blog?.subtitle ?? undefined}
+          actionLabel={hp?.blog?.actionLabel ?? undefined}
+          actionHref={hp?.blog?.actionHref ?? undefined}
         />
       ) : null}
 

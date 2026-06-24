@@ -9,6 +9,7 @@ import type { ToursPageQuery } from "./query";
 export async function TourResults({ query }: { query: ToursPageQuery }) {
   const siteUrl = getSiteUrl().replace(/\/$/, "");
   const tours = await getToursForList({
+    q: query.q,
     destinationSlug: query.destination,
     categorySlug: query.category,
     attractionSlug: query.attraction,

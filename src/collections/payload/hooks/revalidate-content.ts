@@ -56,6 +56,8 @@ function afterCollectionDelete(listTag: string): CollectionAfterDeleteHook {
 
 export const revalidateTourAfterChange = afterChange("tours", "tour");
 export const revalidateTourAfterDelete = afterDelete("tours", "tour");
+export const revalidateCruiseAfterChange = afterChange("cruises", "cruise");
+export const revalidateCruiseAfterDelete = afterDelete("cruises", "cruise");
 export const revalidateDestinationAfterChange = afterChange("destinations", "destination");
 export const revalidateDestinationAfterDelete = afterDelete("destinations", "destination");
 export const revalidatePostAfterChange = afterChange("posts", "post");

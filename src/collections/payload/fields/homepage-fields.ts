@@ -54,8 +54,15 @@ export const homepageField: Field = {
         }
       ]
     },
+    {
+      name: "search",
+      type: "group",
+      admin: { description: "Tour search form shown under the hero." },
+      fields: [enabled, { name: "eyebrow", type: "text" }, { name: "title", type: "text" }, { name: "subtitle", type: "textarea" }]
+    },
     { name: "seasonalBanner", type: "group", fields: [enabled] },
     { name: "featuredTours", type: "group", fields: [enabled, ...headFields()] },
+    { name: "cruises", type: "group", fields: [enabled, ...headFields()] },
     { name: "destinations", type: "group", fields: [enabled, ...headFields()] },
     {
       name: "freeTours",
@@ -103,6 +110,7 @@ export const homepageField: Field = {
         }
       ]
     },
+    { name: "blog", type: "group", fields: [enabled, ...headFields()] },
     {
       name: "newsletter",
       type: "group",

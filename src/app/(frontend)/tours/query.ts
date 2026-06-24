@@ -17,6 +17,7 @@ export const SEASONS = [
 export type SearchParamValue = string | string[] | undefined;
 
 export interface ToursPageQuery {
+  q?: string;
   destination?: string;
   category?: string;
   attraction?: string;
@@ -55,6 +56,7 @@ export function hasSearchParams(params: Record<string, SearchParamValue>): boole
 
 export function queryString(query: ToursPageQuery, overrides: Record<string, string | undefined>): string {
   const merged: Record<string, string | undefined> = {
+    q: query.q,
     destination: query.destination,
     category: query.category,
     attraction: query.attraction,

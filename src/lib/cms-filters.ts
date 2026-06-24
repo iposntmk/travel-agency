@@ -1,4 +1,5 @@
 export interface ToursQuery {
+  q?: string;
   destinationSlug?: string;
   categorySlug?: string;
   attractionSlug?: string;
@@ -18,6 +19,7 @@ export interface ToursQuery {
 export function buildToursWhere(input: ToursQuery): { and: Record<string, unknown>[] } {
   const and: Record<string, unknown>[] = [{ status: { equals: "active" } }];
 
+  if (input.q) and.push({ title: { like: input.q } });
   if (input.tourType) and.push({ tourType: { equals: input.tourType } });
   if (input.season) and.push({ season: { equals: input.season } });
   if (input.operationType) and.push({ operationType: { equals: input.operationType } });

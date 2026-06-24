@@ -74,6 +74,7 @@ export interface Config {
     destinations: Destination;
     partners: Partner;
     tours: Tour;
+    cruises: Cruise;
     'car-rentals': CarRental;
     customers: Customer;
     bookings: Booking;
@@ -101,6 +102,7 @@ export interface Config {
     destinations: DestinationsSelect<false> | DestinationsSelect<true>;
     partners: PartnersSelect<false> | PartnersSelect<true>;
     tours: ToursSelect<false> | ToursSelect<true>;
+    cruises: CruisesSelect<false> | CruisesSelect<true>;
     'car-rentals': CarRentalsSelect<false> | CarRentalsSelect<true>;
     customers: CustomersSelect<false> | CustomersSelect<true>;
     bookings: BookingsSelect<false> | BookingsSelect<true>;
@@ -501,6 +503,79 @@ export interface Post {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cruises".
+ */
+export interface Cruise {
+  id: number;
+  title: string;
+  slug: string;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  featuredImage?: (number | null) | Media;
+  gallery?: (number | Media)[] | null;
+  destination: number | Destination;
+  nights?: number | null;
+  durationText?: string | null;
+  routeSummary?: string | null;
+  cabinTypes?:
+    | {
+        label: string;
+        price: number;
+        maxPax?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  priceFrom?: number | null;
+  currency?: string | null;
+  ratingAverage?: number | null;
+  ratingCount?: number | null;
+  isFeatured?: boolean | null;
+  sortWeight?: number | null;
+  status: 'active' | 'seasonal' | 'sold-out' | 'paused';
+  itinerary?:
+    | {
+        time?: string | null;
+        activity?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        id?: string | null;
+      }[]
+    | null;
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "customers".
  */
 export interface Customer {
@@ -641,6 +716,10 @@ export interface SiteSetting {
   name: string;
   hotline?: string | null;
   whatsapp?: string | null;
+  /**
+   * Messenger m.me username (e.g. "tctravel") or full URL.
+   */
+  messenger?: string | null;
   salesEmail?: string | null;
   /**
    * Links shown in the sticky top bar and footer (Facebook, Instagram, language icons, etc.).
@@ -686,6 +765,18 @@ export interface SiteSetting {
           }[]
         | null;
     };
+    /**
+     * Tour search form shown under the hero.
+     */
+    search?: {
+      /**
+       * Show this section on the homepage.
+       */
+      enabled?: boolean | null;
+      eyebrow?: string | null;
+      title?: string | null;
+      subtitle?: string | null;
+    };
     seasonalBanner?: {
       /**
        * Show this section on the homepage.
@@ -693,6 +784,17 @@ export interface SiteSetting {
       enabled?: boolean | null;
     };
     featuredTours?: {
+      /**
+       * Show this section on the homepage.
+       */
+      enabled?: boolean | null;
+      eyebrow?: string | null;
+      title?: string | null;
+      subtitle?: string | null;
+      actionLabel?: string | null;
+      actionHref?: string | null;
+    };
+    cruises?: {
       /**
        * Show this section on the homepage.
        */
@@ -774,6 +876,17 @@ export interface SiteSetting {
             id?: string | null;
           }[]
         | null;
+    };
+    blog?: {
+      /**
+       * Show this section on the homepage.
+       */
+      enabled?: boolean | null;
+      eyebrow?: string | null;
+      title?: string | null;
+      subtitle?: string | null;
+      actionLabel?: string | null;
+      actionHref?: string | null;
     };
     newsletter?: {
       /**
@@ -1071,6 +1184,10 @@ export interface PayloadLockedDocument {
         value: number | Tour;
       } | null)
     | ({
+        relationTo: 'cruises';
+        value: number | Cruise;
+      } | null)
+    | ({
         relationTo: 'car-rentals';
         value: number | CarRental;
       } | null)
@@ -1361,6 +1478,52 @@ export interface ToursSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cruises_select".
+ */
+export interface CruisesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  description?: T;
+  featuredImage?: T;
+  gallery?: T;
+  destination?: T;
+  nights?: T;
+  durationText?: T;
+  routeSummary?: T;
+  cabinTypes?:
+    | T
+    | {
+        label?: T;
+        price?: T;
+        maxPax?: T;
+        id?: T;
+      };
+  priceFrom?: T;
+  currency?: T;
+  ratingAverage?: T;
+  ratingCount?: T;
+  isFeatured?: T;
+  sortWeight?: T;
+  status?: T;
+  itinerary?:
+    | T
+    | {
+        time?: T;
+        activity?: T;
+        id?: T;
+      };
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "car-rentals_select".
  */
 export interface CarRentalsSelect<T extends boolean = true> {
@@ -1538,6 +1701,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   name?: T;
   hotline?: T;
   whatsapp?: T;
+  messenger?: T;
   salesEmail?: T;
   social?:
     | T
@@ -1579,12 +1743,30 @@ export interface SiteSettingsSelect<T extends boolean = true> {
                     id?: T;
                   };
             };
+        search?:
+          | T
+          | {
+              enabled?: T;
+              eyebrow?: T;
+              title?: T;
+              subtitle?: T;
+            };
         seasonalBanner?:
           | T
           | {
               enabled?: T;
             };
         featuredTours?:
+          | T
+          | {
+              enabled?: T;
+              eyebrow?: T;
+              title?: T;
+              subtitle?: T;
+              actionLabel?: T;
+              actionHref?: T;
+            };
+        cruises?:
           | T
           | {
               enabled?: T;
@@ -1653,6 +1835,16 @@ export interface SiteSettingsSelect<T extends boolean = true> {
                     body?: T;
                     id?: T;
                   };
+            };
+        blog?:
+          | T
+          | {
+              enabled?: T;
+              eyebrow?: T;
+              title?: T;
+              subtitle?: T;
+              actionLabel?: T;
+              actionHref?: T;
             };
         newsletter?:
           | T

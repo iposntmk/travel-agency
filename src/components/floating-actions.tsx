@@ -1,13 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowUpIcon, WhatsAppIcon } from "@/components/icons";
+import Link from "next/link";
+import { Sparkles } from "lucide-react";
+import { ArrowUpIcon, MessengerIcon, WhatsAppIcon } from "@/components/icons";
 
 interface Props {
   whatsappHref: string;
+  messengerHref?: string;
+  proposalHref: string;
 }
 
-export function FloatingActions({ whatsappHref }: Props) {
+export function FloatingActions({ whatsappHref, messengerHref, proposalHref }: Props) {
   const [showTop, setShowTop] = useState(false);
 
   useEffect(() => {
@@ -28,6 +32,26 @@ export function FloatingActions({ whatsappHref }: Props) {
       >
         <WhatsAppIcon className="h-6 w-6" />
       </a>
+
+      {messengerHref ? (
+        <a
+          href={messengerHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Chat with us on Messenger"
+          className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-brand-green text-white shadow-elevated transition hover:bg-brand-green-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green/40"
+        >
+          <MessengerIcon className="h-6 w-6" />
+        </a>
+      ) : null}
+
+      <Link
+        href={proposalHref}
+        aria-label="Plan a custom trip"
+        className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-brand-green text-white shadow-elevated transition hover:bg-brand-green-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green/40"
+      >
+        <Sparkles className="h-5 w-5" strokeWidth={1.8} aria-hidden="true" />
+      </Link>
 
       <button
         type="button"

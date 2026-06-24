@@ -37,13 +37,34 @@ const GROUP_SIZES = [{ value: "2", label: "2 guests" }, { value: "4", label: "4 
 const SORTS = [{ value: "featured", label: "Featured" }, { value: "price", label: "Price" }, { value: "rating", label: "Rating" }, { value: "duration", label: "Duration" }];
 
 export function TourFilterPanel({ destinations, query }: TourFilterPanelProps) {
-  const hasFilters = Boolean(query.destination || query.type || query.season || query.operation || query.priceMax || query.duration || query.groupSize || query.rating || query.sort);
+  const hasFilters = Boolean(query.q || query.destination || query.type || query.season || query.operation || query.priceMax || query.duration || query.groupSize || query.rating || query.sort);
 
   return (
     <section
       aria-label="Filter tours"
       className="space-y-5 rounded-2xl border border-navy-100 bg-white p-5 shadow-card md:p-6"
     >
+      <form action="/tours" method="get" className="flex flex-wrap items-center gap-2">
+        {query.destination ? <input type="hidden" name="destination" value={query.destination} /> : null}
+        {query.type ? <input type="hidden" name="type" value={query.type} /> : null}
+        {query.season ? <input type="hidden" name="season" value={query.season} /> : null}
+        {query.sort ? <input type="hidden" name="sort" value={query.sort} /> : null}
+        <input
+          type="text"
+          name="q"
+          defaultValue={query.q ?? ""}
+          placeholder="Search tours by keyword"
+          aria-label="Search tours by keyword"
+          className="h-10 flex-1 rounded-full border border-navy-100 bg-white px-4 text-sm text-navy-900 outline-none transition focus:border-navy-300 focus:ring-2 focus:ring-navy-200"
+        />
+        <button
+          type="submit"
+          className="inline-flex h-10 items-center rounded-full bg-brand-green px-5 text-sm font-semibold text-white transition hover:bg-brand-green-dark"
+        >
+          Search
+        </button>
+      </form>
+
       <FilterGroup label="Destination">
         <Chip
           href={`/tours${queryString(query, { destination: undefined })}`}

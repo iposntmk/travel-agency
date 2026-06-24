@@ -11,6 +11,7 @@ import * as migration_20260530_163402_site_settings_social from './20260530_1634
 import * as migration_20260531_010452_site_settings_features from './20260531_010452_site_settings_features';
 import * as migration_20260531_232000_disable_ota_defaults from './20260531_232000_disable_ota_defaults';
 import * as migration_20260619_062646 from './20260619_062646';
+import * as migration_20260624_155344_homepage_cruises_search_messenger from './20260624_155344_homepage_cruises_search_messenger';
 
 export const migrations = [
   {
@@ -76,6 +77,11 @@ export const migrations = [
   {
     up: migration_20260619_062646.up,
     down: migration_20260619_062646.down,
-    name: '20260619_062646'
+    name: '20260619_062646',
+  },
+  {
+    up: migration_20260624_155344_homepage_cruises_search_messenger.up,
+    down: migration_20260624_155344_homepage_cruises_search_messenger.down,
+    name: '20260624_155344_homepage_cruises_search_messenger'
   },
 ];
