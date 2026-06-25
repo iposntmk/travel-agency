@@ -1,24 +1,30 @@
 import type { Metadata } from "next";
-import { BestCruises } from "@/components/home/best-cruises";
-import { HomeBlog } from "@/components/home/home-blog";
-import { HomeHero } from "@/components/home/home-hero";
-import { HomeSearchForm } from "@/components/home/home-search-form";
-import { HomeTeam } from "@/components/home/home-team";
-import { NewsletterSignup } from "@/components/home/newsletter-signup";
-import { SeasonalBanner } from "@/components/home/seasonal-banner";
-import { Testimonials } from "@/components/home/testimonials";
-import { WhyTcTravel } from "@/components/home/why-tc-travel";
-import { DestinationCard } from "@/components/destination-card";
 import { JsonLd } from "@/components/json-ld";
-import { MobileScrollRow } from "@/components/mobile-scroll-row";
-import { OtaWidget } from "@/components/ota-widget";
-import { EmptyState, SectionBand, SectionHead } from "@/components/section";
-import { TourCard } from "@/components/tour-card";
+import {
+  BestCruises,
+  Destinations,
+  Testimonials,
+  WhoWeAre,
+  WhyChooseUs
+} from "@/components/home/izitour/content-sections";
+import { BlogSection, TourCards } from "@/components/home/izitour/card-sections";
+import { IzitourHeroSlider } from "@/components/home/izitour/hero-slider";
+import { IzitourSearchForm } from "@/components/home/izitour/search-form";
+import {
+  heroCopy,
+  toBlogItems,
+  toCruiseItems,
+  toDestinationItems,
+  toHeroSlides,
+  toReviewItems,
+  toSearchStarts,
+  toTourCards,
+  toWhyItems
+} from "@/components/home/izitour/adapters";
 import { getSiteUrl } from "@/config/env";
-import { getDestinations, getFeaturedReviews, getPublishedPosts, getSiteSettings, getTeamMembers } from "@/lib/cms";
+import { getDestinations, getFeaturedReviews, getPublishedPosts, getSiteSettings } from "@/lib/cms";
 import { getCruisesForList } from "@/lib/cms-cruises";
 import { getToursForList } from "@/lib/cms-list";
-import { resolveOtaWidgets } from "@/lib/ota-providers";
 import { organizationJsonLd, webSiteJsonLd } from "@/lib/structured-data";
 
 function text(value: unknown, fallback: string): string {
@@ -33,182 +39,62 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   const siteUrl = getSiteUrl().replace(/\/$/, "");
-  const [featuredTours, freeTours, cruises, destinations, reviews, posts, siteSettings, team] = await Promise.all([
-    getToursForList({ featuredOnly: true, limit: 3 }).then((tours) =>
-      tours.length > 0 ? tours : getToursForList({ limit: 3 })
+  const [featuredTours, cruises, destinations, reviews, posts, siteSettings] = await Promise.all([
+    getToursForList({ featuredOnly: true, limit: 6 }).then((tours) =>
+      tours.length > 0 ? tours : getToursForList({ limit: 6 })
     ),
-    getToursForList({ freeOnly: true, limit: 3 }),
-    getCruisesForList({ featuredOnly: true, limit: 3 }).then((items) =>
-      items.length > 0 ? items : getCruisesForList({ limit: 3 })
+    getCruisesForList({ featuredOnly: true, limit: 4 }).then((items) =>
+      items.length > 0 ? items : getCruisesForList({ limit: 4 })
     ),
     getDestinations(6),
     getFeaturedReviews(3),
-    getPublishedPosts(3),
-    getSiteSettings(),
-    getTeamMembers(4)
+    getPublishedPosts(6),
+    getSiteSettings()
   ]);
 
   const hp = siteSettings?.homepage;
-  const whyUsItems = (hp?.whyUs?.items ?? [])
-    .filter((item) => Boolean(item?.title && item?.body))
-    .map((item) => ({ icon: item.icon ?? undefined, title: item.title as string, body: item.body as string }));
-
-  const heroExperiences = destinations
-    .slice(0, 3)
-    .flatMap((destination) =>
-      resolveOtaWidgets(siteSettings?.ota, "home", destination.title).map((widget) => ({
-        destination,
-        widget
-      }))
-    );
+  const copy = heroCopy(siteSettings);
+  const tourCards = toTourCards(featuredTours);
+  const destinationItems = toDestinationItems(destinations);
+  const blogItems = toBlogItems(posts);
+  const cruiseItems = toCruiseItems(cruises);
 
   return (
-    <main>
+    <main className="bg-white">
       <JsonLd data={[organizationJsonLd(siteUrl), webSiteJsonLd(siteUrl)]} />
 
-      {hp?.hero?.enabled !== false ? <HomeHero destinations={destinations.slice(0, 3)} /> : null}
+      {hp?.hero?.enabled !== false ? (
+        <IzitourHeroSlider slides={toHeroSlides(destinations, featuredTours)} title={copy.title} subtitle={copy.subtitle} />
+      ) : null}
 
       {hp?.search?.enabled !== false ? (
-        <HomeSearchForm
-          destinations={destinations.map((d) => ({ id: d.id, slug: d.slug, title: d.title }))}
-          eyebrow={hp?.search?.eyebrow ?? undefined}
-          title={text(hp?.search?.title, "Find your tour")}
-          subtitle={hp?.search?.subtitle ?? undefined}
-        />
+        <IzitourSearchForm starts={toSearchStarts(destinations)} />
       ) : null}
 
-      {hp?.seasonalBanner?.enabled !== false ? <SeasonalBanner /> : null}
+      <WhoWeAre
+        title={text(hp?.hero?.body, "A Vietnam travel agency built around local knowledge.")}
+        body={text(
+          hp?.search?.subtitle,
+          "TC Travel Vietnam designs private tours, small-group experiences, car transfers, cruises, and custom proposals with direct support from local specialists."
+        )}
+      />
 
-      {hp?.featuredTours?.enabled !== false ? (
-        <SectionBand>
-          <SectionHead
-            eyebrow={text(hp?.featuredTours?.eyebrow, "Hand-picked")}
-            title={text(hp?.featuredTours?.title, "Featured Tours")}
-            subtitle={text(
-              hp?.featuredTours?.subtitle,
-              "Curated departures for the current season — private guides, small groups, and free walking tours."
-            )}
-            actionHref={text(hp?.featuredTours?.actionHref, "/tours")}
-            actionLabel={text(hp?.featuredTours?.actionLabel, "View all tours")}
-          />
-          {featuredTours.length === 0 ? (
-            <EmptyState>No tours published yet. Check back soon.</EmptyState>
-          ) : (
-            <MobileScrollRow className="gap-5 pb-3 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
-              {featuredTours.map((tour) => (
-                <div key={tour.id} className="w-[82vw] shrink-0 sm:w-auto">
-                  <TourCard tour={tour} />
-                </div>
-              ))}
-            </MobileScrollRow>
-          )}
-        </SectionBand>
-      ) : null}
+      {hp?.whyUs?.enabled !== false ? <WhyChooseUs items={toWhyItems(siteSettings)} /> : null}
 
-      {hp?.cruises?.enabled !== false ? (
-        <BestCruises
-          cruises={cruises}
-          eyebrow={hp?.cruises?.eyebrow ?? undefined}
-          title={hp?.cruises?.title ?? undefined}
-          subtitle={hp?.cruises?.subtitle ?? undefined}
-          actionLabel={hp?.cruises?.actionLabel ?? undefined}
-          actionHref={hp?.cruises?.actionHref ?? undefined}
-        />
-      ) : null}
-
-      {destinations.length > 0 && hp?.destinations?.enabled !== false ? (
-        <SectionBand tone="soft">
-          <SectionHead
-            eyebrow={text(hp?.destinations?.eyebrow, "Where to go")}
-            title={text(hp?.destinations?.title, "Popular Destinations")}
-            subtitle={text(
-              hp?.destinations?.subtitle,
-              "Central Vietnam and beyond — explore tours, car transfers, guides, and things to do in each city hub."
-            )}
-            actionHref={text(hp?.destinations?.actionHref, "/destinations")}
-            actionLabel={text(hp?.destinations?.actionLabel, "All destinations")}
-          />
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {destinations.map((destination) => (
-              <DestinationCard key={destination.id} destination={destination} />
-            ))}
-          </div>
-        </SectionBand>
-      ) : null}
-
-      {freeTours.length > 0 && hp?.freeTours?.sectionEnabled !== false ? (
-        <SectionBand>
-          <SectionHead
-            eyebrow={text(hp?.freeTours?.eyebrow, "Lead with experience")}
-            title={text(hp?.freeTours?.title, "Join Our Free Tours")}
-            subtitle={text(
-              hp?.freeTours?.subtitle,
-              "Free walking and cycling tours in Central Vietnam. Tips appreciated — registration uses the same Book Now · Pay Later inquiry flow."
-            )}
-            actionHref={text(hp?.freeTours?.actionHref, "/free-tours")}
-            actionLabel={text(hp?.freeTours?.actionLabel, "See free tours")}
-          />
-          <MobileScrollRow className="gap-5 pb-3 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
-            {freeTours.map((tour) => (
-              <div key={tour.id} className="w-[82vw] shrink-0 sm:w-auto">
-                <TourCard
-                  tour={tour}
-                  ctaLabel="Register"
-                  ctaHref={`/booking/${tour.slug}?source=free-tour-upsell`}
-                />
-              </div>
-            ))}
-          </MobileScrollRow>
-        </SectionBand>
-      ) : null}
-
-      {heroExperiences.length > 0 && hp?.featuredExperiences?.enabled !== false ? (
-        <SectionBand tone="soft">
-          <SectionHead
-            eyebrow={text(hp?.featuredExperiences?.eyebrow, "External partners")}
-            title={text(hp?.featuredExperiences?.title, "Featured Experiences")}
-            subtitle={text(
-              hp?.featuredExperiences?.subtitle,
-              "Day tours, tickets, and activities curated by trusted travel partners — booked externally, not through TC Travel."
-            )}
-          />
-          <MobileScrollRow className="gap-5 pb-3 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
-            {heroExperiences.map(({ destination, widget }) => (
-              <div key={`${destination.id}-${widget.key}`} className="w-[82vw] shrink-0 sm:w-auto">
-                <OtaWidget widget={widget} city={destination.title} source="/" />
-              </div>
-            ))}
-          </MobileScrollRow>
-        </SectionBand>
-      ) : null}
+      {hp?.featuredTours?.enabled !== false && tourCards.length > 0 ? <TourCards items={tourCards} /> : null}
 
       {hp?.testimonials?.enabled !== false ? (
-        <Testimonials reviews={reviews} trust={siteSettings?.trust} />
-      ) : null}
-
-      {hp?.team?.enabled !== false ? <HomeTeam members={team} /> : null}
-
-      {hp?.whyUs?.enabled !== false ? (
-        <WhyTcTravel
-          eyebrow={hp?.whyUs?.eyebrow ?? undefined}
-          title={hp?.whyUs?.title ?? undefined}
-          subtitle={hp?.whyUs?.subtitle ?? undefined}
-          items={whyUsItems.length > 0 ? whyUsItems : undefined}
+        <Testimonials
+          reviews={toReviewItems(reviews)}
+          summary={siteSettings?.trust?.summary ?? `${siteSettings?.trust?.reviewAverage ?? 4.9}/5 from ${siteSettings?.trust?.reviewCount ?? 120}+ traveller reviews.`}
         />
       ) : null}
 
-      {hp?.blog?.enabled !== false ? (
-        <HomeBlog
-          posts={posts}
-          eyebrow={hp?.blog?.eyebrow ?? undefined}
-          title={hp?.blog?.title ?? undefined}
-          subtitle={hp?.blog?.subtitle ?? undefined}
-          actionLabel={hp?.blog?.actionLabel ?? undefined}
-          actionHref={hp?.blog?.actionHref ?? undefined}
-        />
-      ) : null}
+      {hp?.cruises?.enabled !== false && cruiseItems.length > 0 ? <BestCruises items={cruiseItems} /> : null}
 
-      {hp?.newsletter?.enabled !== false ? <NewsletterSignup /> : null}
+      {hp?.destinations?.enabled !== false && destinationItems.length > 0 ? <Destinations items={destinationItems} /> : null}
+
+      {hp?.blog?.enabled !== false && blogItems.length > 0 ? <BlogSection items={blogItems} /> : null}
     </main>
   );
 }

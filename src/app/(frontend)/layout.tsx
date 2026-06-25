@@ -6,7 +6,6 @@ import { ConsentBanner } from "@/components/consent-banner";
 import { SiteFloating } from "@/components/site-floating";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { SiteTopbar } from "@/components/site-topbar";
 import { getNextConfigEnv, getSeoEnv, getSiteUrl } from "@/config/env";
 import "../globals.css";
 
@@ -54,11 +53,8 @@ export default function FrontendLayout({ children }: Readonly<{ children: React.
         <a className="skip-link sr-only" href="#main-content">
           Skip to content
         </a>
-        <div className="sticky top-0 z-50">
-          <SiteTopbar />
-          <SiteHeader />
-        </div>
-        <div id="main-content">{children}</div>
+        <SiteHeader />
+        <div id="main-content" className="pt-[60px] lg:pt-[110px]">{children}</div>
         <SiteFooter />
         <SiteFloating />
         <ConsentBanner />

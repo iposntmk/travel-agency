@@ -1,6 +1,6 @@
 # Current Status
 
-**Updated:** 2026-06-19 (Performance/SEO/security backlog audit — large chunk of `docs/toiuu.md` items verified DONE in codebase)
+**Updated:** 2026-06-25 (Homepage/frontend shell redesigned toward Izitour structure with Payload-backed data)
 
 ## Current Layer / Stage
 
@@ -217,3 +217,13 @@ Latest local verification (2026-06-19, implementation commit `1692465`):
 - No horizontal overflow on /, /tours, /free-proposal, /car-rentals, /booking/confirmation (verified via `scrollWidth === clientWidth`).
 
 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, and `pnpm build` before committing code changes.
+
+Homepage redesign work-in-progress verification (2026-06-25):
+
+- Homepage `/` now renders Izitour-style section order from Payload-backed adapters: hero carousel, search tabs, who-we-are, why-us, featured tours, testimonials, cruises, destinations, blog.
+- Frontend shell now uses fixed Izitour-style header with desktop topbar/nav, mobile drawer, language toggle, `pt-[60px] lg:pt-[110px]` main offset, and floating widgets with pulse treatment.
+- Section styling was tightened against the local Izitour template: centered WhoWeAre copy + orange CTA, gray `#f8f9fa` alternating bands, border-bottom separators, WhyChooseUs compact cards, tour overlay cards with orange CTA strip, testimonial source-card proportions, BestCruises two-row narrative layout, destination 4+2 grid, blog white cards, and dark footer.
+- Tours/blog now use client carousels with responsive visible count, arrows, dots, and swipe handling. Destinations mobile now uses a single-card swipe carousel with arrows/dots instead of a simple scroll rail.
+- Removed `upgrade-insecure-requests` from report-only CSP because browsers ignore it there and log a warning.
+- Verified: `pnpm typecheck` passed, `pnpm test` passed (29 files, 157 tests), `pnpm lint` passed with 0 errors and 21 pre-existing warnings, local `/` returned 200 after `.next` reset and after the style tightening pass.
+- `pnpm build` still needs a clean run after stopping `pnpm dev`; do not run build concurrently with the dev server because both mutate `.next`.

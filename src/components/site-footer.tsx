@@ -14,22 +14,22 @@ export async function SiteFooter() {
   const social = (settings?.social ?? []).filter((item) => item?.platform && item?.url);
 
   return (
-    <footer className="mt-20 border-t border-navy-100 bg-white">
-      <div className="mx-auto max-w-page px-4 py-12">
+    <footer className="border-t border-white/10 bg-[#0f0f0f] text-white">
+      <div className="container-center py-12 md:py-16">
         <div className="grid gap-10 md:grid-cols-5">
           <div>
             <Link href="/" className="inline-flex items-center gap-2" aria-label="TC Travel Vietnam home">
-              <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-navy-900 text-white">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--izitour-primary)] text-white">
                 <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" aria-hidden="true">
                   <path d="M3 12L11 4l3 3-5 5h11v2H9l5 5-3 3z" fill="currentColor" />
                 </svg>
               </span>
               <span className="flex flex-col leading-none">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-navy-500">TC Travel</span>
-                <span className="text-base font-semibold tracking-tight text-navy-900">Vietnam</span>
+                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/55">TC Travel</span>
+                <span className="text-base font-semibold tracking-tight text-white">Vietnam</span>
               </span>
             </Link>
-            <p className="mt-4 max-w-xs text-sm leading-6 text-slate-600">
+            <p className="mt-4 max-w-xs text-sm leading-6 text-white/65">
               Private, small group, and free walking tours across Hội An, Huế, Đà Nẵng, and Quảng Trị. Book now,
               pay when you meet your guide.
             </p>
@@ -45,7 +45,7 @@ export async function SiteFooter() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={item.label ?? item.platform}
-                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-navy-100 text-navy-700 transition hover:border-navy-300 hover:text-navy-900"
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/75 transition hover:border-[var(--izitour-primary)] hover:text-white"
                     >
                       <Icon className="h-4 w-4" />
                     </a>
@@ -57,7 +57,7 @@ export async function SiteFooter() {
 
           {columns.map((col) => (
             <nav key={col.heading} aria-label={col.heading}>
-              <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-navy-500">
+              <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-white">
                 {col.heading}
               </h2>
               <ul className="mt-4 space-y-2 text-sm">
@@ -67,7 +67,7 @@ export async function SiteFooter() {
                       href={link.href}
                       target={link.target}
                       rel={link.target === "_blank" ? "noopener noreferrer" : undefined}
-                      className="text-slate-600 transition-colors hover:text-navy-900"
+                      className="text-white/60 transition-colors hover:text-[var(--izitour-orange)]"
                     >
                       {link.label}
                     </Link>
@@ -78,11 +78,11 @@ export async function SiteFooter() {
           ))}
 
           <div>
-            <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-navy-500">Contact</h2>
-            <ul className="mt-4 space-y-2 text-sm text-slate-600">
+            <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-white">Contact</h2>
+            <ul className="mt-4 space-y-2 text-sm text-white/60">
               <li>WhatsApp · {whatsapp}</li>
               <li>
-                <a className="break-all hover:text-navy-900" href={`mailto:${email}`}>
+                <a className="break-all hover:text-[var(--izitour-orange)]" href={`mailto:${email}`}>
                   {email}
                 </a>
               </li>
@@ -91,7 +91,7 @@ export async function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col-reverse gap-3 border-t border-navy-100 pt-6 text-xs text-slate-500 md:flex-row md:items-center md:justify-between">
+        <div className="mt-10 flex flex-col-reverse gap-3 border-t border-white/10 pt-6 text-xs text-white/45 md:flex-row md:items-center md:justify-between">
           <p>© {new Date().getFullYear()} {company}. Book Now — Pay Later.</p>
           <p>Local guides · Curated itineraries · Trusted by inbound travellers</p>
         </div>

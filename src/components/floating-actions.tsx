@@ -22,13 +22,13 @@ export function FloatingActions({ whatsappHref, messengerHref, proposalHref }: P
   }, []);
 
   return (
-    <div className="fixed bottom-20 right-4 z-40 flex flex-col items-end gap-3 md:bottom-6">
+    <div className="sticky-box flex flex-col items-end gap-3">
       <a
         href={whatsappHref}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat with us on WhatsApp"
-        className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-brand-green text-white shadow-elevated transition hover:bg-brand-green-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green/40"
+        className="row-needhelp inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--izitour-primary)] text-white shadow-elevated transition hover:bg-[var(--izitour-primary-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green/40"
       >
         <WhatsAppIcon className="h-6 w-6" />
       </a>
@@ -39,7 +39,7 @@ export function FloatingActions({ whatsappHref, messengerHref, proposalHref }: P
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Chat with us on Messenger"
-          className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-brand-green text-white shadow-elevated transition hover:bg-brand-green-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green/40"
+          className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--izitour-primary)] text-white shadow-elevated transition hover:bg-[var(--izitour-primary-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green/40"
         >
           <MessengerIcon className="h-6 w-6" />
         </a>
@@ -48,7 +48,7 @@ export function FloatingActions({ whatsappHref, messengerHref, proposalHref }: P
       <Link
         href={proposalHref}
         aria-label="Plan a custom trip"
-        className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-brand-green text-white shadow-elevated transition hover:bg-brand-green-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green/40"
+        className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--izitour-orange)] text-white shadow-elevated transition hover:bg-[var(--izitour-orange-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green/40"
       >
         <Sparkles className="h-5 w-5" strokeWidth={1.8} aria-hidden="true" />
       </Link>

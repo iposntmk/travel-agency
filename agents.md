@@ -196,6 +196,65 @@ git commit → git push origin master → Vercel auto-deploys production
 - Do not deploy from local for normal features — use git push
 - Do not commit `.vercel/` (in `.gitignore`)
 
+## ECC Integration (Agent Harness Operating System)
+
+This project integrates **ECC v2.0.0** (https://github.com/affaan-m/ECC) — the agent harness performance optimization system. ECC provides 271+ skills, 67+ agents, hooks, rules, and cross-harness workflows.
+
+### ECC Installation
+
+ECC is installed via npm package `ecc-universal@2.0.0`:
+```bash
+pnpm add -D ecc-universal
+```
+
+ECC files are in `node_modules/ecc-universal/`:
+- `agents/` — Agent definitions (markdown with YAML frontmatter)
+- `skills/` — Skill definitions (SKILL.md format)
+- `hooks/` — Hook scripts (pre/post tool use)
+- `rules/` — Coding rules (immutability, TypeScript, security)
+- `config/` — MCP configurations
+
+### ECC Skills (Loaded in .claude/skills/)
+
+| Skill | Purpose | When to Use |
+|-------|---------|-------------|
+| `ecc-planner` | Implementation planning | Complex features, refactoring |
+| `ecc-architect` | System design | Architectural decisions |
+| `ecc-tdd-guide` | Test-driven development | New features, bug fixes |
+| `ecc-code-review` | Code quality review | After writing/modifying code |
+| `ecc-security-review` | Security analysis | Before commits, sensitive code |
+| `ecc-build-fix` | Build error fixes | When build fails |
+| `ecc-e2e-testing` | E2E testing (Playwright) | Critical user flows |
+
+### ECC Agent Orchestration
+
+Use ECC skills proactively:
+- Complex feature requests → **ecc-planner**
+- Code just written/modified → **ecc-code-review**
+- Bug fix or new feature → **ecc-tdd-guide**
+- Architectural decision → **ecc-architect**
+- Security-sensitive code → **ecc-security-review**
+- Build errors → **ecc-build-fix**
+
+### ECC Rules
+
+ECC coding style and security rules are enforced via `.claude/rules/ecc-*.md`:
+- **Immutability**: Always create new objects, never mutate
+- **TypeScript**: Strict types, no `any`, explicit public APIs
+- **Security**: No hardcoded secrets, validate inputs, parameterized queries
+- **Code Quality**: Small functions (<50 lines), small files (<800 lines)
+
+### ECC Agent Files
+
+ECC agent definitions are available in `node_modules/ecc-universal/agents/`:
+- `planner.md` — Implementation planning
+- `architect.md` — System design
+- `tdd-guide.md` — Test-driven development
+- `code-reviewer.md` — Code review
+- `security-reviewer.md` — Security analysis
+- `build-error-resolver.md` — Build error fixes
+- `e2e-runner.md` — E2E testing
+
 ## After completing a task
 
 1. `pnpm typecheck` — zero errors

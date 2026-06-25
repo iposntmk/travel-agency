@@ -36,3 +36,16 @@ Neno-connnection-string.txt
 *credentials*
 
 .vercel
+
+# local agent/tooling infra — never commit
+.agentmemory/
+.agentmemory - Copy/
+.codegraph/
+.opencode/
+.claude.json
+tools/
+huong-dan.md
+start.ps1
+start.bat
+launch-codex.bat
+launch-opencode.bat

@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ChevronDown, Globe, Menu, Search, User, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { DesktopNavItem, PrimaryLink } from "@/components/site-header-links";
-import { SiteNavMobile } from "@/components/site-nav-mobile";
 import { cn } from "@/lib/utils";
 import type { HeaderNavItem } from "@/types/navigation";
 
@@ -16,15 +15,13 @@ export function SiteHeaderClient({ items }: Props) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const firstLinkRef = useRef<HTMLAnchorElement | null>(null);
-  const toggleRef = useRef<HTMLButtonElement | null>(null);
-  const primaryItem = items.at(-1);
-  const navItems = primaryItem ? items.slice(0, -1) : items;
+  const [lang, setLang] = useState<"EN" | "VI">("EN");
+  const closeRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => setOpen(false), [pathname]);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    const onScroll = () => setScrolled(window.scrollY > 50);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -33,14 +30,11 @@ export function SiteHeaderClient({ items }: Props) {
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setOpen(false);
-        toggleRef.current?.focus();
-      }
+      if (e.key === "Escape") setOpen(false);
     };
     document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
-    const focusTimer = window.setTimeout(() => firstLinkRef.current?.focus(), 50);
+    const focusTimer = window.setTimeout(() => closeRef.current?.focus(), 50);
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
@@ -52,63 +46,129 @@ export function SiteHeaderClient({ items }: Props) {
 
   return (
     <header
-      className={cn(
-        "relative z-40 border-b transition-shadow duration-200 ease-out-soft",
-        scrolled
-          ? "border-navy-100/80 bg-white/95 shadow-card backdrop-blur"
-          : "border-transparent bg-white/85 backdrop-blur"
-      )}
+      className={cn("fixed left-0 right-0 top-0 z-50 w-full bg-white transition-shadow duration-300", scrolled && "shadow-md")}
     >
-      <div className="mx-auto flex max-w-page items-center justify-between gap-6 px-4 py-3 md:py-4">
-        <Link href="/" className="group inline-flex items-center gap-2" aria-label="TC Travel Vietnam home">
-          <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-navy-900 text-white shadow-card transition-transform group-hover:scale-105">
-            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" aria-hidden="true">
-              <path d="M3 12L11 4l3 3-5 5h11v2H9l5 5-3 3z" fill="currentColor" />
-            </svg>
-          </span>
-          <span className="flex flex-col leading-none">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-navy-500">TC Travel</span>
-            <span className="text-base font-semibold tracking-tight text-navy-900">Vietnam</span>
-          </span>
-        </Link>
-
-        <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
-          {navItems.map((item) => (
-            <DesktopNavItem key={item.href} item={item} isActive={isActive} />
-          ))}
-        </nav>
-
-        <div className="flex items-center gap-2">
-          {primaryItem ? <PrimaryLink item={primaryItem} /> : null}
+      <div className="hidden bg-[#0f2421] text-white lg:block">
+        <div className="container-center flex h-[38px] items-center justify-between text-xs">
+          <div className="flex items-center gap-5">
+            <span>TC Travel Vietnam</span>
+            <span>Local guides · Custom proposals · Book now, pay later</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Link href="/contact" className="hover:text-[var(--izitour-orange)]">Contact</Link>
+            <Search className="size-4" />
+            <button type="button" onClick={() => setLang(lang === "EN" ? "VI" : "EN")} className="font-bold">{lang}</button>
+          </div>
+        </div>
+      </div>
+      <div className="border-b border-[var(--izitour-border)]">
+        <div className="container-center flex h-[60px] items-center justify-between lg:h-[72px]">
           <button
-            ref={toggleRef}
             type="button"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-navy-100 bg-white text-navy-900 transition hover:bg-navy-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy-500 md:hidden"
+            className="flex size-11 items-center justify-center rounded-md text-[var(--izitour-text)] hover:bg-gray-100 lg:hidden"
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
             aria-controls="site-mobile-nav"
-            onClick={() => setOpen((v) => !v)}
+            onClick={() => setOpen((value) => !value)}
           >
-            <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
-              <path
-                d={open ? "M6 6l12 12M18 6L6 18" : "M4 7h16M4 12h16M4 17h16"}
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-              />
-            </svg>
+            <Menu className="size-7" />
+          </button>
+          <Logo />
+          <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
+            {items.map((item) => (
+              <DesktopDropdown key={item.href} item={item} isActive={isActive} />
+            ))}
+            <span className="ml-3 flex size-11 items-center justify-center rounded-full border border-[var(--izitour-border)] text-[var(--izitour-text-light)]">
+              <User className="size-4" />
+            </span>
+          </nav>
+          <button
+            type="button"
+            onClick={() => setLang(lang === "EN" ? "VI" : "EN")}
+            className="flex items-center gap-1 rounded-full border border-[var(--izitour-border)] px-4 py-2 text-sm font-bold lg:hidden"
+          >
+            <Globe className="size-4" /> {lang}
           </button>
         </div>
       </div>
-
-      <SiteNavMobile
-        open={open}
-        items={navItems}
-        primaryItem={primaryItem}
-        isActive={isActive}
-        firstLinkRef={firstLinkRef}
-        onClose={() => setOpen(false)}
-      />
+      <MobileDrawer open={open} items={items} closeRef={closeRef} onClose={() => setOpen(false)} />
     </header>
+  );
+}
+
+function Logo() {
+  return (
+    <Link href="/" className="flex items-center gap-2" aria-label="TC Travel Vietnam home">
+      <span className="text-2xl font-black tracking-tight text-[var(--izitour-primary)]">TC</span>
+      <span className="hidden text-sm font-bold uppercase tracking-[0.16em] text-[var(--izitour-dark)] sm:inline">Travel Vietnam</span>
+    </Link>
+  );
+}
+
+function DesktopDropdown({ item, isActive }: { item: HeaderNavItem; isActive: (href: string) => boolean }) {
+  const children = item.children ?? [];
+  return (
+    <div className="group relative">
+      <Link
+        href={item.href}
+        target={item.target}
+        className={cn("flex min-h-11 items-center gap-1 rounded-md px-3 text-sm font-bold uppercase text-[var(--izitour-text)] hover:text-[var(--izitour-primary)]", isActive(item.href) && "text-[var(--izitour-primary)]")}
+      >
+        {item.label}
+        {children.length > 0 ? <ChevronDown className="size-3.5" /> : null}
+      </Link>
+      {children.length > 0 ? (
+        <div className="invisible absolute left-0 top-full z-50 w-64 rounded-lg border border-[var(--izitour-border)] bg-white p-2 opacity-0 shadow-lg transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
+          {children.map((child) => (
+            <Link key={child.href} href={child.href} className="block rounded-md px-3 py-2 text-sm font-medium text-[var(--izitour-text)] hover:bg-gray-50 hover:text-[var(--izitour-primary)]">
+              {child.label}
+            </Link>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function MobileDrawer({ open, items, closeRef, onClose }: { open: boolean; items: HeaderNavItem[]; closeRef: React.RefObject<HTMLButtonElement | null>; onClose: () => void }) {
+  const [expanded, setExpanded] = useState<string | null>(null);
+  if (!open) return null;
+
+  return (
+    <div id="site-mobile-nav" className="fixed inset-0 z-50 lg:hidden">
+      <button type="button" aria-label="Close menu overlay" className="absolute inset-0 bg-black/55" onClick={onClose} />
+      <aside className="absolute right-0 top-0 h-full w-[86vw] max-w-sm overflow-y-auto bg-white shadow-2xl">
+        <div className="flex h-[60px] items-center justify-between border-b border-[var(--izitour-border)] px-4">
+          <Logo />
+          <button ref={closeRef} type="button" onClick={onClose} className="flex size-10 items-center justify-center rounded-md hover:bg-gray-100" aria-label="Close menu">
+            <X className="size-6" />
+          </button>
+        </div>
+        <nav className="p-4">
+          {items.map((item) => {
+            const hasChildren = Boolean(item.children?.length);
+            return (
+              <div key={item.href} className="border-b border-[var(--izitour-border)] py-1">
+                <div className="flex items-center justify-between">
+                  <Link href={item.href} onClick={onClose} className="py-3 text-sm font-bold uppercase text-[var(--izitour-dark)]">{item.label}</Link>
+                  {hasChildren ? (
+                    <button type="button" onClick={() => setExpanded(expanded === item.href ? null : item.href)} className="size-10" aria-label={`Toggle ${item.label}`}>
+                      <ChevronDown className={cn("mx-auto size-4 transition", expanded === item.href && "rotate-180")} />
+                    </button>
+                  ) : null}
+                </div>
+                {hasChildren && expanded === item.href ? (
+                  <div className="pb-3 pl-4">
+                    {item.children?.map((child) => (
+                      <Link key={child.href} href={child.href} onClick={onClose} className="block py-2 text-sm text-[var(--izitour-body)]">{child.label}</Link>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            );
+          })}
+        </nav>
+      </aside>
+    </div>
   );
 }
