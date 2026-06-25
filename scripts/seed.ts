@@ -1,5 +1,9 @@
+import fs from "node:fs";
+import path from "node:path";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import config from "../payload.config";
 import { getPayload, type CollectionSlug, type Where } from "payload";
+import { destinationSeeds, destinationImageMap } from "./seed-data/destinations";
 
 type SeedDoc = Record<string, unknown> & { id: number | string };
 
@@ -94,6 +98,76 @@ async function deleteByField(collection: CollectionSlug, field: string, value: s
   console.log(`- ${collection}:${value}`);
 }
 
+async function getR2Client(): Promise<{ client: S3Client; bucket: string; publicUrl: string }> {
+  const accountId = process.env.R2_ACCOUNT_ID!;
+  const bucket = process.env.R2_BUCKET!;
+  const accessKeyId = process.env.R2_ACCESS_KEY_ID!;
+  const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY!;
+  const publicUrl = process.env.R2_PUBLIC_URL!;
+  const client = new S3Client({
+    region: "auto",
+    endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+    credentials: { accessKeyId, secretAccessKey },
+  });
+  return { client, bucket, publicUrl };
+}
+
+async function seedDestinationImage(
+  destinationSlug: string,
+  localImagePath: string,
+  alt: string
+): Promise<SeedDoc | null> {
+  const absPath = path.resolve(localImagePath);
+  if (!fs.existsSync(absPath)) {
+    console.log(`! image not found: ${absPath}`);
+    return null;
+  }
+  const buffer = fs.readFileSync(absPath);
+  const ext = path.extname(absPath).replace(".", "");
+  const mimeType = ext === "webp" ? "image/webp" : `image/${ext}`;
+  const filename = path.basename(absPath);
+  const now = new Date();
+  const r2Key = `originals/${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, "0")}/destinations/${destinationSlug}/original.${ext}`;
+
+  const { client: s3Client, bucket, publicUrl: r2PublicBase } = await getR2Client();
+  const cmd = new PutObjectCommand({
+    Bucket: bucket,
+    Key: r2Key,
+    Body: buffer,
+    ContentType: mimeType,
+    CacheControl: "public, max-age=31536000, immutable",
+  });
+  await s3Client.send(cmd);
+  const publicUrl = `${r2PublicBase}/${r2Key}`;
+  console.log(`  -> uploaded ${r2Key}`);
+
+  const existing = await findOne("media", { alt: { equals: alt } } as Where);
+  let mediaId: number | string;
+  if (existing) {
+    const updated = await payload.update({
+      collection: "media",
+      id: existing.id,
+      data: { alt, filename, mimeType, filesize: buffer.length, status: "ready", r2Key, publicUrl } as never,
+      overrideAccess: true,
+      disableTransaction: true,
+    });
+    mediaId = updated.id;
+    console.log(`~ media:${alt}`);
+  } else {
+    const created = await payload.create({
+      collection: "media",
+      data: { alt, filename, mimeType, filesize: buffer.length, status: "ready", r2Key, publicUrl } as never,
+      file: { data: buffer, mimetype: mimeType, name: filename, size: buffer.length },
+      overrideAccess: true,
+      disableTransaction: true,
+    });
+    mediaId = created.id;
+    console.log(`+ media:${alt}`);
+  }
+
+  return { id: mediaId } as SeedDoc;
+}
+
 async function main() {
   payload = await getPayload({ config });
 
@@ -112,49 +186,30 @@ async function main() {
   });
 
   const destinations: Record<string, SeedDoc> = {};
-  for (const destination of [
-    {
-      title: "Hội An",
-      slug: "hoi-an",
-      region: "central",
-      summary: "Lantern-lit ancient town, quiet craft villages, riverside food alleys, and countryside cycling routes.",
-      bestTimeToVisit: "February to August for dry weather, golden afternoon light, and easy walking conditions.",
-      hubIntro: richText("Hội An is the best base for first-time travellers who want a compact old town, gentle countryside, hands-on food experiences, and relaxed private guiding."),
-      description: richText("Hội An pairs UNESCO heritage streets with river markets, craft villages, cooking classes, and nearby beaches. It works well for couples, families, food travellers, and guests who prefer easy-paced walking tours."),
-      sortWeight: 10,
-    },
-    {
-      title: "Huế",
-      slug: "hue",
-      region: "central",
-      summary: "Imperial citadel, royal tombs, garden houses, Perfume River sunsets, and refined local cuisine.",
-      bestTimeToVisit: "January to April for mild weather and September to November for quieter cultural touring.",
-      hubIntro: richText("Huế is the cultural heart of Central Vietnam, best for travellers who care about history, architecture, royal food, and slower river-based itineraries."),
-      description: richText("The former imperial capital gives visitors a layered view of Vietnam through citadels, pagodas, royal tombs, markets, and family-run kitchens."),
-      sortWeight: 20,
-    },
-    {
-      title: "Đà Nẵng",
-      slug: "da-nang",
-      region: "central",
-      summary: "Beach city gateway with Sơn Trà nature, Marble Mountains, Bà Nà Hills, airport transfers, and day trips.",
-      bestTimeToVisit: "March to August for beach weather, clear Sơn Trà views, and the best road-trip conditions.",
-      hubIntro: richText("Đà Nẵng is the practical gateway for Central Vietnam with easy airport access, reliable private transfers, family-friendly beaches, and fast links to Hội An and Huế."),
-      description: richText("Đà Nẵng works as a beach base, airport hub, and day-trip launch point for families, couples, and groups who want flexible transport and short activity days."),
-      sortWeight: 30,
-    },
-    {
-      title: "Quảng Trị",
-      slug: "quang-tri",
-      region: "central",
-      summary: "DMZ heritage, Vĩnh Mốc tunnels, Hien Luong Bridge, memorial sites, and quiet coastal villages.",
-      bestTimeToVisit: "January to August for drier roads and easier full-day heritage touring.",
-      hubIntro: richText("Quảng Trị is for travellers who want a serious, respectful look at the former DMZ, wartime tunnel life, and modern memorial landscapes."),
-      description: richText("Quảng Trị day trips connect Vĩnh Mốc Tunnels, Hien Luong Bridge, the ancient citadel, and rural coastal communities with careful historical context."),
-      sortWeight: 40,
-    },
-  ]) {
-    destinations[destination.slug] = await upsertBySlug("destinations", destination);
+  for (const dest of destinationSeeds) {
+    const { imageFile: _imageFile, imageAlt: _alt, ...destData } = dest;
+    destinations[dest.slug] = await upsertBySlug("destinations", {
+      ...destData,
+      hubIntro: richText(destData.hubIntro),
+      description: richText(destData.description),
+    });
+  }
+
+  const imagesDir = path.resolve("public/images/destinations");
+  for (const [slug, img] of Object.entries(destinationImageMap)) {
+    const dest = destinations[slug];
+    if (!dest) continue;
+    const media = await seedDestinationImage(slug, path.join(imagesDir, img.file), img.alt);
+    if (media) {
+      await payload.update({
+        collection: "destinations",
+        id: dest.id,
+        data: { heroImage: media.id, featuredImage: media.id } as never,
+        overrideAccess: true,
+        disableTransaction: true,
+      });
+      console.log(`  -> linked ${slug} heroImage + featuredImage`);
+    }
   }
 
   const categories: Record<string, SeedDoc> = {};
@@ -623,6 +678,108 @@ async function main() {
     },
   });
 
+  await upsertByField("navigation", "name", "Header Navigation", {
+    name: "Header Navigation",
+    location: "header",
+    status: "published",
+    items: [
+      {
+        label: "Tours",
+        href: "/tours",
+        target: "_self",
+        children: [
+          { label: "All Tours", href: "/tours", target: "_self" },
+          { label: "Private Tours", href: "/tours/paid-private", target: "_self" },
+          { label: "Small Group", href: "/tours/paid-group", target: "_self" },
+          { label: "Cruises", href: "/cruises", target: "_self" },
+          { label: "Free Tours", href: "/free-tours", target: "_self" },
+        ],
+      },
+      {
+        label: "Destinations",
+        href: "/destinations",
+        target: "_self",
+        children: [
+          { label: "All Destinations", href: "/destinations", target: "_self" },
+          { label: "Hội An", href: "/destinations/hoi-an", target: "_self" },
+          { label: "Huế", href: "/destinations/hue", target: "_self" },
+          { label: "Đà Nẵng", href: "/destinations/da-nang", target: "_self" },
+          { label: "Quảng Trị", href: "/destinations/quang-tri", target: "_self" },
+          { label: "Hà Nội", href: "/destinations/ha-noi", target: "_self" },
+          { label: "Ninh Bình", href: "/destinations/ninh-binh", target: "_self" },
+          { label: "Sa Pa", href: "/destinations/sa-pa", target: "_self" },
+          { label: "Hà Giang", href: "/destinations/ha-giang", target: "_self" },
+          { label: "Hồ Chí Minh City", href: "/destinations/ho-chi-minh-city", target: "_self" },
+        ],
+      },
+      {
+        label: "Car Rental",
+        href: "/car-rentals",
+        target: "_self",
+        children: [
+          { label: "All Vehicles", href: "/car-rentals", target: "_self" },
+          { label: "Đà Nẵng", href: "/destinations/da-nang", target: "_self" },
+          { label: "Hội An", href: "/destinations/hoi-an", target: "_self" },
+          { label: "Huế", href: "/destinations/hue", target: "_self" },
+          { label: "Quảng Trị", href: "/destinations/quang-tri", target: "_self" },
+        ],
+      },
+      {
+        label: "Travel Guides",
+        href: "/blog",
+        target: "_self",
+        children: [
+          { label: "All Guides", href: "/blog", target: "_self" },
+          { label: "Hội An", href: "/blog", target: "_self" },
+          { label: "Huế", href: "/blog", target: "_self" },
+          { label: "Đà Nẵng", href: "/blog", target: "_self" },
+          { label: "Quảng Trị", href: "/blog", target: "_self" },
+        ],
+      },
+      { label: "About", href: "/about-us", target: "_self" },
+      { label: "Customize Tour", href: "/customize-tour", target: "_self" },
+    ],
+  });
+
+  await upsertByField("navigation", "name", "Footer Navigation", {
+    name: "Footer Navigation",
+    location: "footer",
+    status: "published",
+    items: [
+      {
+        label: "Explore",
+        children: [
+          { label: "All tours", href: "/tours", target: "_self" },
+          { label: "Free tours", href: "/free-tours", target: "_self" },
+          { label: "Destinations", href: "/destinations", target: "_self" },
+          { label: "Car rentals", href: "/car-rentals", target: "_self" },
+          { label: "Travel blog", href: "/blog", target: "_self" },
+        ],
+      },
+      {
+        label: "Plan your trip",
+        children: [
+          { label: "Hội An", href: "/destinations/hoi-an", target: "_self" },
+          { label: "Huế", href: "/destinations/hue", target: "_self" },
+          { label: "Đà Nẵng", href: "/destinations/da-nang", target: "_self" },
+          { label: "Quảng Trị", href: "/destinations/quang-tri", target: "_self" },
+          { label: "Hà Nội", href: "/destinations/ha-noi", target: "_self" },
+          { label: "Sa Pa", href: "/destinations/sa-pa", target: "_self" },
+          { label: "Hồ Chí Minh City", href: "/destinations/ho-chi-minh-city", target: "_self" },
+          { label: "Car rentals", href: "/car-rentals", target: "_self" },
+        ],
+      },
+      {
+        label: "Company",
+        children: [
+          { label: "About us", href: "/about-us", target: "_self" },
+          { label: "Contact", href: "/contact", target: "_self" },
+          { label: "Customize tour", href: "/customize-tour", target: "_self" },
+        ],
+      },
+    ],
+  });
+
   const now = new Date().toISOString();
   for (const booking of [
     ["seed-booking-pending-001", "hoi-an-foodie-adventure", customers[0].id, "Pending", "2026-06-15", 2],
@@ -667,7 +824,7 @@ async function main() {
       budgetPerPerson: 180,
       selectedDestinations: destinationSlugs.map((slug) => destinations[slug].id),
       message: "Please suggest a realistic private itinerary with guides, transfers, and one flexible rest day.",
-      source: "free-proposal",
+      source: "customize-tour",
       status: accompanimentType === "couple" ? "quoted" : "new",
       idempotencyKey,
     });

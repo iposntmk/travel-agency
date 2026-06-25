@@ -35,7 +35,7 @@ export const CustomInquiries: CollectionConfig = {
     { name: "maxBudget", type: "number", min: 0 },
     { name: "selectedDestinations", type: "relationship", relationTo: "destinations", hasMany: true, required: true },
     { name: "message", type: "textarea" },
-    { name: "source", type: "text", defaultValue: "free-proposal" },
+    { name: "source", type: "text", defaultValue: "customize-tour" },
     {
       name: "status",
       type: "select",

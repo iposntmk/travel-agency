@@ -28,7 +28,7 @@ const validInput = {
   accommodationLevels: ["Comfort"],
   themes: ["Food"],
   whatsappOptIn: true,
-  source: "free-proposal",
+  source: "customize-tour",
   idempotencyKey: "custom-inquiry-key-123"
 };
 

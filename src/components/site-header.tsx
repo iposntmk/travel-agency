@@ -1,10 +1,15 @@
 import { SiteHeaderClient } from "@/components/site-header-client";
+import { SiteTopbar } from "@/components/site-topbar";
 import { getHeaderNavigation } from "@/lib/cms-navigation";
 import type { HeaderNavItem, NavItem } from "@/types/navigation";
 
 export async function SiteHeader() {
   const items = toHeaderItems(await getHeaderNavigation());
-  return <SiteHeaderClient items={items} />;
+  return (
+    <SiteHeaderClient items={items}>
+      <SiteTopbar />
+    </SiteHeaderClient>
+  );
 }
 
 function toHeaderItems(items: NavItem[]): HeaderNavItem[] {

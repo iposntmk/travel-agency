@@ -37,12 +37,12 @@ export function SiteNavMobile({ open, items, primaryItem, isActive, firstLinkRef
       >
         <ul className="flex flex-col">
           {items.map((item, idx) => (
-            <li key={item.href}>
+            <li key={`${item.href}-${item.label}`}>
               <MobileLink item={item} active={isActive(item.href)} refValue={idx === 0 ? firstLinkRef : undefined} />
               {item.children?.length ? (
                 <ul className="ml-3 border-l border-navy-100 pl-2">
                   {item.children.map((child) => (
-                    <li key={child.href}>
+                    <li key={`${child.href}-${child.label}`}>
                       <MobileLink item={child} active={isActive(child.href)} child />
                     </li>
                   ))}

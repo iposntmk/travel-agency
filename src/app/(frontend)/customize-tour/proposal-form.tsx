@@ -49,7 +49,7 @@ export function FreeProposalForm({ destinations, themes, stages }: Props) {
       phone: "",
       nationality: "",
       whatsappOptIn: true,
-      source: "free-proposal",
+      source: "customize-tour",
       idempotencyKey
     }
   });

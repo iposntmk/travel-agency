@@ -26,7 +26,7 @@ export const customInquirySchema = customerSchema.extend({
   message: z.string().trim().max(3000).optional().or(z.literal("")),
   nationality: optionalText,
   whatsappOptIn: z.coerce.boolean().default(false),
-  source: text.default("free-proposal"),
+  source: text.default("customize-tour"),
   idempotencyKey: z.string().trim().min(12).max(120)
 }).superRefine((input, ctx) => {
   if (input.exactDatesKnown && (!input.departureDate || !input.returnDate)) {

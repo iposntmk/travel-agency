@@ -1,5 +1,10 @@
 import type { CollectionConfig } from "payload";
 import { adminOnly, publicReadPublished, staffOnly } from "./access";
+import {
+  normalizeNavigationHrefHook,
+  validateNavigationHref,
+  validateOptionalNavigationHref
+} from "./fields/navigation-href";
 import { revalidateNavigationAfterChange, revalidateNavigationAfterDelete } from "./hooks/revalidate-content";
 
 const targetOptions = [
@@ -9,7 +14,13 @@ const targetOptions = [
 
 const childLinkFields: CollectionConfig["fields"] = [
   { name: "label", type: "text", required: true },
-  { name: "href", type: "text", required: true },
+  {
+    name: "href",
+    type: "text",
+    required: true,
+    validate: validateNavigationHref,
+    hooks: { beforeValidate: [normalizeNavigationHrefHook] }
+  },
   { name: "target", type: "select", defaultValue: "_self", options: targetOptions }
 ];
 
@@ -56,7 +67,12 @@ export const Navigation: CollectionConfig = {
       minRows: 1,
       fields: [
         { name: "label", type: "text", required: true },
-        { name: "href", type: "text" },
+        {
+          name: "href",
+          type: "text",
+          validate: validateOptionalNavigationHref,
+          hooks: { beforeValidate: [normalizeNavigationHrefHook] }
+        },
         { name: "target", type: "select", defaultValue: "_self", options: targetOptions },
         {
           name: "children",

@@ -15,7 +15,7 @@ const STATIC_ROUTES = [
   "/blog",
   "/about-us",
   "/contact",
-  "/free-proposal"
+  "/customize-tour"
 ] as const;
 export const revalidate = 86400;
 

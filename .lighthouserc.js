@@ -4,7 +4,7 @@ export default {
       url: [
         "https://tc-travel-vietnam.vercel.app/",
         "https://tc-travel-vietnam.vercel.app/tours",
-        "https://tc-travel-vietnam.vercel.app/free-proposal"
+        "https://tc-travel-vietnam.vercel.app/customize-tour"
       ],
       numberOfRuns: 2,
       settings: {

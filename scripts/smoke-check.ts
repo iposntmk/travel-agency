@@ -88,7 +88,7 @@ async function main() {
   await checkHealth();
 
   // Public conversion surfaces (deploy 79ad0cf scope).
-  for (const path of ["/", "/tours", "/destinations", "/blog", "/free-tours", "/free-proposal", "/car-rentals"]) {
+  for (const path of ["/", "/tours", "/destinations", "/blog", "/free-tours", "/customize-tour", "/car-rentals"]) {
     await checkPage(path);
   }
 

@@ -174,7 +174,7 @@ export default async function CruiseDetailPage({ params }: PageProps) {
               ) : null}
 
               <Link
-                href="/free-proposal"
+                href="/customize-tour"
                 className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-brand-green px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-green-dark"
               >
                 Plan this cruise

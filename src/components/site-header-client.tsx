@@ -2,16 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, Globe, Menu, Search, User, X } from "lucide-react";
+import { ChevronDown, Globe, Menu, User, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import type { HeaderNavItem } from "@/types/navigation";
 
 interface Props {
   items: HeaderNavItem[];
+  children?: React.ReactNode;
 }
 
-export function SiteHeaderClient({ items }: Props) {
+export function SiteHeaderClient({ items, children }: Props) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -48,19 +49,7 @@ export function SiteHeaderClient({ items }: Props) {
     <header
       className={cn("fixed left-0 right-0 top-0 z-50 w-full bg-white transition-shadow duration-300", scrolled && "shadow-md")}
     >
-      <div className="hidden bg-[#0f2421] text-white lg:block">
-        <div className="container-center flex h-[38px] items-center justify-between text-xs">
-          <div className="flex items-center gap-5">
-            <span>TC Travel Vietnam</span>
-            <span>Local guides · Custom proposals · Book now, pay later</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <Link href="/contact" className="hover:text-[var(--izitour-orange)]">Contact</Link>
-            <Search className="size-4" />
-            <button type="button" onClick={() => setLang(lang === "EN" ? "VI" : "EN")} className="font-bold">{lang}</button>
-          </div>
-        </div>
-      </div>
+      {children}
       <div className="border-b border-[var(--izitour-border)]">
         <div className="container-center flex h-[60px] items-center justify-between lg:h-[72px]">
           <button
@@ -76,7 +65,7 @@ export function SiteHeaderClient({ items }: Props) {
           <Logo />
           <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
             {items.map((item) => (
-              <DesktopDropdown key={item.href} item={item} isActive={isActive} />
+              <DesktopDropdown key={`${item.href}-${item.label}`} item={item} isActive={isActive} />
             ))}
             <span className="ml-3 flex size-11 items-center justify-center rounded-full border border-[var(--izitour-border)] text-[var(--izitour-text-light)]">
               <User className="size-4" />
@@ -120,7 +109,7 @@ function DesktopDropdown({ item, isActive }: { item: HeaderNavItem; isActive: (h
       {children.length > 0 ? (
         <div className="invisible absolute left-0 top-full z-50 w-64 rounded-lg border border-[var(--izitour-border)] bg-white p-2 opacity-0 shadow-lg transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
           {children.map((child) => (
-            <Link key={child.href} href={child.href} className="block rounded-md px-3 py-2 text-sm font-medium text-[var(--izitour-text)] hover:bg-gray-50 hover:text-[var(--izitour-primary)]">
+            <Link key={`${child.href}-${child.label}`} href={child.href} className="block rounded-md px-3 py-2 text-sm font-medium text-[var(--izitour-text)] hover:bg-gray-50 hover:text-[var(--izitour-primary)]">
               {child.label}
             </Link>
           ))}
@@ -148,7 +137,7 @@ function MobileDrawer({ open, items, closeRef, onClose }: { open: boolean; items
           {items.map((item) => {
             const hasChildren = Boolean(item.children?.length);
             return (
-              <div key={item.href} className="border-b border-[var(--izitour-border)] py-1">
+              <div key={`${item.href}-${item.label}`} className="border-b border-[var(--izitour-border)] py-1">
                 <div className="flex items-center justify-between">
                   <Link href={item.href} onClick={onClose} className="py-3 text-sm font-bold uppercase text-[var(--izitour-dark)]">{item.label}</Link>
                   {hasChildren ? (
@@ -160,7 +149,7 @@ function MobileDrawer({ open, items, closeRef, onClose }: { open: boolean; items
                 {hasChildren && expanded === item.href ? (
                   <div className="pb-3 pl-4">
                     {item.children?.map((child) => (
-                      <Link key={child.href} href={child.href} onClick={onClose} className="block py-2 text-sm text-[var(--izitour-body)]">{child.label}</Link>
+                      <Link key={`${child.href}-${child.label}`} href={child.href} onClick={onClose} className="block py-2 text-sm text-[var(--izitour-body)]">{child.label}</Link>
                     ))}
                   </div>
                 ) : null}

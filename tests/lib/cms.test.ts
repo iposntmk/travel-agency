@@ -125,13 +125,11 @@ describe("CMS getters", () => {
     );
   });
 
-  it("falls back to the default header menu when navigation is empty", async () => {
+  it("returns empty array when navigation is empty in database", async () => {
     const find = vi.fn().mockResolvedValue({ docs: [] });
     mockedGetPayloadClient.mockResolvedValue({ find } as unknown as Awaited<ReturnType<typeof getPayloadClient>>);
 
-    await expect(getHeaderNavigation()).resolves.toEqual(
-      expect.arrayContaining([expect.objectContaining({ href: "/tours", label: "Tours" })])
-    );
+    await expect(getHeaderNavigation()).resolves.toEqual([]);
     expect(find).toHaveBeenCalledWith(
       expect.objectContaining({
         collection: "navigation",
@@ -140,16 +138,14 @@ describe("CMS getters", () => {
     );
   });
 
-  it("falls back to the default header menu before navigation migration is applied", async () => {
+  it("returns empty array before navigation migration is applied", async () => {
     const missingTableError = Object.assign(new Error('relation "navigation" does not exist'), {
       cause: { code: "42P01" }
     });
     const find = vi.fn().mockRejectedValue(missingTableError);
     mockedGetPayloadClient.mockResolvedValue({ find } as unknown as Awaited<ReturnType<typeof getPayloadClient>>);
 
-    await expect(getHeaderNavigation()).resolves.toEqual(
-      expect.arrayContaining([expect.objectContaining({ href: "/tours", label: "Tours" })])
-    );
+    await expect(getHeaderNavigation()).resolves.toEqual([]);
   });
 
   it("does not hide generic navigation database failures", async () => {

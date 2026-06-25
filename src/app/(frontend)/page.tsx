@@ -46,7 +46,7 @@ export default async function HomePage() {
     getCruisesForList({ featuredOnly: true, limit: 4 }).then((items) =>
       items.length > 0 ? items : getCruisesForList({ limit: 4 })
     ),
-    getDestinations(6),
+    getDestinations(9),
     getFeaturedReviews(3),
     getPublishedPosts(6),
     getSiteSettings()

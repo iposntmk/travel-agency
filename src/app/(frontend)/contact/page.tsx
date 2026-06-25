@@ -66,7 +66,7 @@ export default async function ContactPage() {
           eyebrow="Common requests"
           title="What to send"
           subtitle="A short message is enough. Include dates, hotel area, group size, and whether you prefer private, small group, or free-tour options."
-          actionHref="/free-proposal"
+          actionHref="/customize-tour"
           actionLabel="Start free proposal"
         />
         <div className="grid gap-4 md:grid-cols-3">

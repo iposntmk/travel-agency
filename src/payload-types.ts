@@ -972,11 +972,11 @@ export interface SiteSetting {
     };
   };
   /**
-   * Control the /free-proposal page: enable it, and edit the planning stages and theme chips.
+   * Control the /customize-tour page: enable it, and edit the planning stages and theme chips.
    */
   freeProposal?: {
     /**
-     * Keep the /free-proposal page reachable (off returns 404).
+     * Keep the /customize-tour page reachable (off returns 404).
      */
     enabled?: boolean | null;
     stages?:

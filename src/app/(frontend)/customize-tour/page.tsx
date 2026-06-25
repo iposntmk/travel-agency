@@ -11,7 +11,7 @@ function text(value: unknown, fallback: string): string {
 export const metadata: Metadata = {
   title: "Free Proposal",
   description: "Start a private tailor-made Vietnam travel project. No payment required now.",
-  alternates: { canonical: "/free-proposal" }
+  alternates: { canonical: "/customize-tour" }
 };
 
 export default async function FreeProposalPage() {

@@ -22,45 +22,9 @@ type PublicFindPayload = {
   find(args: Record<string, unknown>): Promise<{ docs: unknown[] }>;
 };
 
-const DEFAULT_HEADER_NAV: NavItem[] = [
-  { href: "/tours", label: "Tours" },
-  { href: "/destinations", label: "Destinations" },
-  { href: "/car-rentals", label: "Car Rental" },
-  { href: "/blog", label: "Travel Guides" },
-  { href: "/about-us", label: "About" },
-  { href: "/free-proposal", label: "Free Proposal" }
-];
+const DEFAULT_HEADER_NAV: NavItem[] = [];
 
-const DEFAULT_FOOTER_NAV: NavItem[] = [
-  {
-    label: "Explore",
-    children: [
-      { href: "/tours", label: "All tours" },
-      { href: "/free-tours", label: "Free tours" },
-      { href: "/destinations", label: "Destinations" },
-      { href: "/car-rentals", label: "Car rentals" },
-      { href: "/blog", label: "Travel blog" }
-    ]
-  },
-  {
-    label: "Plan your trip",
-    children: [
-      { href: "/tours?type=private", label: "Private tours" },
-      { href: "/tours?type=small-group", label: "Small group" },
-      { href: "/destinations/hoi-an", label: "Hội An" },
-      { href: "/destinations/hue", label: "Huế" },
-      { href: "/destinations/da-nang", label: "Đà Nẵng" }
-    ]
-  },
-  {
-    label: "Company",
-    children: [
-      { href: "/about-us", label: "About us" },
-      { href: "/contact", label: "Contact" },
-      { href: "/free-proposal", label: "Free proposal" }
-    ]
-  }
-];
+const DEFAULT_FOOTER_NAV: NavItem[] = [];
 
 async function fetchNavigation(location: NavigationLocation): Promise<NavItem[]> {
   const payload = (await getPayloadClient()) as unknown as PublicFindPayload;
@@ -70,8 +34,7 @@ async function fetchNavigation(location: NavigationLocation): Promise<NavItem[]>
       where: { and: [{ location: { equals: location } }, { status: { equals: "published" } }] },
       limit: 1,
       depth: 0,
-      sort: "-updatedAt",
-      select: { items: true }
+      sort: "-updatedAt"
     });
     const doc = result.docs[0] as RawNavigationDoc | undefined;
     return normalizeItems(doc?.items);

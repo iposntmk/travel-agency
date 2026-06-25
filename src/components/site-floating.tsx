@@ -16,7 +16,7 @@ export async function SiteFloating() {
     <FloatingActions
       whatsappHref={href}
       messengerHref={messengerHref(settings?.messenger)}
-      proposalHref="/free-proposal"
+      proposalHref="/customize-tour"
     />
   );
 }

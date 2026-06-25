@@ -31,7 +31,7 @@ export function QuickProposal({ destinations }: Props) {
             </p>
           </div>
           <Link
-            href="/free-proposal"
+            href="/customize-tour"
             className="inline-flex min-h-11 items-center rounded-full bg-brand-green px-5 text-sm font-semibold text-white transition hover:bg-brand-green-dark"
           >
             Free proposal
@@ -68,7 +68,7 @@ export function QuickProposal({ destinations }: Props) {
               </div>
             </div>
             <Link
-              href="/free-proposal"
+              href="/customize-tour"
               className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-brand-green px-5 text-sm font-semibold text-white"
             >
               Start a free proposal

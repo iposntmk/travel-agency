@@ -16,7 +16,7 @@ export function DesktopNavItem({
       {childItems.length > 0 ? (
         <div className="invisible absolute left-0 top-full z-50 mt-2 w-56 rounded-md border border-navy-100 bg-white p-2 opacity-0 shadow-elevated transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
           {childItems.map((child) => (
-            <HeaderLink key={child.href} item={child} active={isActive(child.href)} compact />
+            <HeaderLink key={`${child.href}-${child.label}`} item={child} active={isActive(child.href)} compact />
           ))}
         </div>
       ) : null}

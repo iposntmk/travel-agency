@@ -92,7 +92,7 @@ export function IzitourHeroSlider({ slides, title, subtitle }: Props) {
             <p className="mx-auto max-w-2xl text-base leading-7 text-white/90 drop-shadow-md md:text-lg">{subtitle}</p>
             <div className="flex flex-col items-center pt-2">
               <Link
-                href="/free-proposal"
+                href="/customize-tour"
                 className="inline-flex min-h-12 items-center rounded-lg bg-[var(--izitour-orange)] px-7 text-sm font-bold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[var(--izitour-orange-dark)]"
               >
                 Start designing my trip

@@ -45,7 +45,7 @@ export function HomeHero({ destinations }: HomeHeroProps) {
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
             <Link
-              href="/free-proposal"
+              href="/customize-tour"
               className="inline-flex min-h-11 items-center gap-2 rounded-full bg-brand-green px-6 text-sm font-semibold text-white shadow-elevated transition hover:bg-brand-green-dark"
             >
               Start your travel project

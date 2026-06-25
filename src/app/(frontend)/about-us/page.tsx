@@ -95,7 +95,7 @@ export default async function AboutUsPage() {
         </div>
         <div className="mt-8">
           <Link
-            href="/free-proposal"
+            href="/customize-tour"
             className="inline-flex rounded-full bg-brand-green px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-green-dark"
           >
             Request a free proposal

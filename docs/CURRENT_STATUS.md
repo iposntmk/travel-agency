@@ -40,7 +40,7 @@ Travel Platform Expansion status (committed, pending production verification):
 - **Schema expansion implemented** — new Payload collections: `car-rentals`, `attractions`, `product-categories`, `custom-inquiries`, `team-members`, `site-settings`; expanded `destinations`, `tours`, and `posts` for city hubs, richer tour cards, ratings, guide categories, featured relationships, and sorting.
 - **Migration/types generated** — `src/migrations/20260529_124032_travel_platform_expansion.ts` and `.json` created; `src/payload-types.ts` regenerated.
 - **Custom inquiry flow implemented** — `submitCustomInquiry` Server Action with Zod validation, IP/email rate limiting, plain-text sanitization, idempotency, customer reuse, Payload persistence, and non-blocking Resend customer/sales emails.
-- **Frontend routes implemented** — `/free-proposal` multi-step proposal form, `/car-rentals`, `/car-rentals/[slug]`, destination hub sections for tours/car rentals/guides/attractions.
+- **Frontend routes implemented** — `/customize-tour` multi-step proposal form, `/car-rentals`, `/car-rentals/[slug]`, destination hub sections for tours/car rentals/guides/attractions.
 - **Frontend UX refresh implemented** — lighter Authentik-inspired hero, emerald proposal CTA, mobile horizontal cards, expanded tour filters, itinerary accordion, mobile sticky tabs, and sticky tour bottom CTA.
 - **Tests added** — custom inquiry schema/action coverage for validation, destination requirement, duplicate idempotency, email suppression on duplicates, and rate limiting.
 - **Migration reviewed before push** — `up` is additive for new collections/fields/indexes/relationships; destructive SQL is limited to `down`.
@@ -225,5 +225,6 @@ Homepage redesign work-in-progress verification (2026-06-25):
 - Section styling was tightened against the local Izitour template: centered WhoWeAre copy + orange CTA, gray `#f8f9fa` alternating bands, border-bottom separators, WhyChooseUs compact cards, tour overlay cards with orange CTA strip, testimonial source-card proportions, BestCruises two-row narrative layout, destination 4+2 grid, blog white cards, and dark footer.
 - Tours/blog now use client carousels with responsive visible count, arrows, dots, and swipe handling. Destinations mobile now uses a single-card swipe carousel with arrows/dots instead of a simple scroll rail.
 - Removed `upgrade-insecure-requests` from report-only CSP because browsers ignore it there and log a warning.
+- Navigation CMS href fields now normalize internal slugs and validate menu URL rules: internal root-relative URLs only, external `https://` only, no empty/`#`/`javascript:`/query-string menu links.
 - Verified: `pnpm typecheck` passed, `pnpm test` passed (29 files, 157 tests), `pnpm lint` passed with 0 errors and 21 pre-existing warnings, local `/` returned 200 after `.next` reset and after the style tightening pass.
 - `pnpm build` still needs a clean run after stopping `pnpm dev`; do not run build concurrently with the dev server because both mutate `.next`.

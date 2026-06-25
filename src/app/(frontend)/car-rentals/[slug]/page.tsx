@@ -54,7 +54,7 @@ export default async function CarRentalDetailPage({ params }: PageProps) {
               {rental.priceFrom ? `From ${rental.currency ?? "USD"} ${rental.priceFrom}` : "Quote on request"}
             </p>
             <p className="mt-2 text-sm leading-6 text-slate-600">{rental.durationText ?? "Timing confirmed before departure."}</p>
-            <Link href="/free-proposal" className="mt-6 inline-flex w-full justify-center rounded-full bg-brand-green px-5 py-3 text-sm font-semibold text-white">
+            <Link href="/customize-tour" className="mt-6 inline-flex w-full justify-center rounded-full bg-brand-green px-5 py-3 text-sm font-semibold text-white">
               Request this route
             </Link>
           </aside>

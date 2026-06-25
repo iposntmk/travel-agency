@@ -57,7 +57,7 @@ Chi tiết chiến lược: `FREE_TOUR_STRATEGY.md`.
 Chi tiết: `BOOKING_FLOW.md`, `BOOK_NOW_PAY_LATER.md`.
 
 ### 1.4b Free Proposal / Customized Tour
-- Route `/free-proposal` cho tailor-made/private trip request.
+- Route `/customize-tour` cho tailor-made/private trip request.
 - Multi-step form 4 bước: Planning, Participants & dates, Travel project, Contact.
 - Submit qua `submitCustomInquiry` Server Action.
 - Custom inquiry dùng collection riêng `custom-inquiries`, không trộn vào `bookings`.
