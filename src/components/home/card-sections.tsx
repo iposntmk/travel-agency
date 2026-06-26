@@ -13,7 +13,7 @@ export function TourCards({ items }: { items: HomeTourCardItem[] }) {
 
 export function BlogSection({ items }: { items: HomeBlogItem[] }) {
   return (
-    <section className="border-b border-[var(--izitour-border)] bg-[#f8f9fa] py-20 md:py-24">
+    <section className="border-b border-[var(--izitour-border)] bg-[#f8f9fa] py-12 md:py-16">
       <div className="container-center">
         <div className="mb-10 text-center md:mb-14">
           <h2 className="mb-3 text-2xl font-bold text-[var(--izitour-text)] md:text-3xl lg:text-4xl max-sm:text-[28px]">Travel Guide</h2>
@@ -30,7 +30,7 @@ export function BlogSection({ items }: { items: HomeBlogItem[] }) {
 
 function CardRail({ eyebrow, title, items, href, kind }: { eyebrow: string; title: string; items: HomeTourCardItem[]; href: string; kind: "tour" }) {
   return (
-    <section className="border-b border-[var(--izitour-border)] bg-white py-20 md:py-24">
+    <section className="border-b border-[var(--izitour-border)] bg-white py-12 md:py-16">
       <div className="container-center">
         <div className="mb-8 text-center md:mb-12">
           <h2 className="mb-4 text-2xl font-bold text-[var(--izitour-text)] md:text-3xl lg:text-4xl max-sm:text-[28px]">{title}</h2>
@@ -81,11 +81,9 @@ function Carousel<T extends { id: string }>({ items, render, cardClassName }: { 
           </div>
         </div>
       </div>
-      <div className="mt-5 flex justify-center gap-2.5">
+      <div className="mt-5 flex justify-center gap-2">
         {Array.from({ length: dots }).map((_, dot) => (
-          <button key={dot} type="button" onClick={() => go(dot)} className="flex min-h-[44px] min-w-[44px] items-center justify-center" aria-label={`Go to slide ${dot + 1}`}>
-            <span className={cn("h-2 rounded-full transition-all", dot === index ? "w-5 bg-[var(--izitour-primary)]" : "w-2 bg-gray-300 hover:bg-gray-400")} />
-          </button>
+          <button key={dot} type="button" onClick={() => go(dot)} className={cn("size-2 rounded-full transition-all duration-300 cursor-pointer border border-white/30", dot === index ? "bg-[var(--izitour-primary)]" : "bg-white hover:bg-white/80")} aria-label={`Go to slide ${dot + 1}`} />
         ))}
       </div>
     </>

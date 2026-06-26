@@ -101,15 +101,15 @@ function DesktopDropdown({ item, isActive }: { item: HeaderNavItem; isActive: (h
       <Link
         href={item.href}
         target={item.target}
-        className={cn("flex min-h-11 items-center gap-1 rounded-md px-3 text-sm font-bold uppercase text-[var(--izitour-text)] hover:text-[var(--izitour-primary)]", isActive(item.href) && "text-[var(--izitour-primary)]")}
+        className={cn("flex min-h-11 items-center gap-1 px-3 py-2 text-sm font-semibold transition-colors", isActive(item.href) ? "text-[var(--izitour-primary)]" : "text-[var(--izitour-text)] hover:text-[var(--izitour-primary)]")}
       >
         {item.label}
-        {children.length > 0 ? <ChevronDown className="size-3.5" /> : null}
+        {children.length > 0 ? <ChevronDown className="size-3" /> : null}
       </Link>
       {children.length > 0 ? (
-        <div className="invisible absolute left-0 top-full z-50 w-64 rounded-lg border border-[var(--izitour-border)] bg-white p-2 opacity-0 shadow-lg transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
+        <div className="invisible absolute left-0 top-full z-50 min-w-[220px] rounded-b-md border border-[var(--izitour-border)] bg-white shadow-lg p-2 opacity-0 transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
           {children.map((child) => (
-            <Link key={`${child.href}-${child.label}`} href={child.href} className="block rounded-md px-3 py-2 text-sm font-medium text-[var(--izitour-text)] hover:bg-gray-50 hover:text-[var(--izitour-primary)]">
+            <Link key={`${child.href}-${child.label}`} href={child.href} className="block px-3 py-2 text-sm text-[var(--izitour-text)] transition-colors hover:bg-[var(--izitour-primary)] hover:text-white rounded">
               {child.label}
             </Link>
           ))}

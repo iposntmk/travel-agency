@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { Mail, Phone, MapPin } from "lucide-react";
 import { getSiteSettings } from "@/lib/cms";
 import { getFooterNavigation } from "@/lib/cms-navigation";
 import { SOCIAL_ICONS, type SocialPlatform } from "@/components/icons";
+import { FooterNewsletter } from "@/components/footer-newsletter";
 import type { NavItem } from "@/types/navigation";
 
 export async function SiteFooter() {
@@ -14,27 +16,63 @@ export async function SiteFooter() {
   const social = (settings?.social ?? []).filter((item) => item?.platform && item?.url);
 
   return (
-    <footer className="border-t border-white/10 bg-[#0f0f0f] text-white">
-      <div className="container-center py-12 md:py-16">
-        <div className="grid gap-10 md:grid-cols-5">
+    <footer className="border-t border-[#1a3834] bg-[#0c1f1c] text-white">
+      <div className="container-center py-12">
+        <div className="grid gap-8 md:grid-cols-4">
           <div>
-            <Link href="/" className="inline-flex items-center gap-2" aria-label="TC Travel Vietnam home">
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--izitour-primary)] text-white">
-                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" aria-hidden="true">
-                  <path d="M3 12L11 4l3 3-5 5h11v2H9l5 5-3 3z" fill="currentColor" />
-                </svg>
-              </span>
-              <span className="flex flex-col leading-none">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/55">TC Travel</span>
-                <span className="text-base font-semibold tracking-tight text-white">Vietnam</span>
-              </span>
+            <Link href="/" className="block" aria-label="TC Travel Vietnam home">
+              <span className="text-2xl font-black tracking-tight text-[var(--izitour-primary)]">TC</span>
+              <span className="ml-1 text-sm font-bold uppercase tracking-[0.16em] text-white">Travel Vietnam</span>
             </Link>
-            <p className="mt-4 max-w-xs text-sm leading-6 text-white/65">
-              Private, small group, and free walking tours across Hội An, Huế, Đà Nẵng, and Quảng Trị. Book now,
-              pay when you meet your guide.
+            <p className="mt-4 text-xs font-bold text-white/95 leading-normal">
+              Your Local Expert for Vietnam Tours.
             </p>
+            <div className="mt-4 space-y-3 text-xs text-white font-medium">
+              <a href={`mailto:${email}`} className="flex items-center gap-2.5 hover:text-[var(--izitour-primary)] transition-colors">
+                <Mail className="size-4 text-[var(--izitour-primary)] shrink-0" />
+                <span>{email}</span>
+              </a>
+              <a href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 hover:text-[var(--izitour-primary)] transition-colors">
+                <Phone className="size-4 text-[var(--izitour-primary)] shrink-0" />
+                <span>{whatsapp} (Whatsapp)</span>
+              </a>
+              <div className="flex items-start gap-2.5 leading-relaxed">
+                <MapPin className="size-4 text-[var(--izitour-primary)] shrink-0 mt-0.5" />
+                <span>{address}</span>
+              </div>
+            </div>
+          </div>
+
+          {columns.slice(0, 2).map((col) => (
+            <nav key={col.heading} aria-label={col.heading}>
+              <h4 className="mb-4 text-xs font-bold uppercase tracking-wider text-white">
+                {col.heading}
+              </h4>
+              <ul className="space-y-2.5 text-xs text-white font-medium">
+                {col.links.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      target={link.target}
+                      rel={link.target === "_blank" ? "noopener noreferrer" : undefined}
+                      className="hover:text-[var(--izitour-primary)] transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
+
+          <div className="space-y-4 text-left">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-white">
+              If You Have Any Questions, Let Us Help You!
+            </h4>
+            <FooterNewsletter />
+
             {social.length > 0 ? (
-              <div className="mt-5 flex items-center gap-3">
+              <div className="flex gap-4 pt-2 justify-start">
                 {social.map((item, index) => {
                   const Icon = SOCIAL_ICONS[item.platform as SocialPlatform] ?? null;
                   if (!Icon) return null;
@@ -45,55 +83,26 @@ export async function SiteFooter() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={item.label ?? item.platform}
-                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/75 transition hover:border-[var(--izitour-primary)] hover:text-white"
+                      className="flex size-9 items-center justify-center rounded-full bg-white/10 text-white/95 transition-all hover:bg-[var(--izitour-primary)] hover:scale-105"
                     >
-                      <Icon className="h-4 w-4" />
+                      <Icon className="h-5 w-5" />
                     </a>
                   );
                 })}
               </div>
             ) : null}
           </div>
-
-          {columns.map((col) => (
-            <nav key={col.heading} aria-label={col.heading}>
-              <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-white">
-                {col.heading}
-              </h2>
-              <ul className="mt-4 space-y-2 text-sm">
-                {col.links.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      target={link.target}
-                      rel={link.target === "_blank" ? "noopener noreferrer" : undefined}
-                      className="text-white/60 transition-colors hover:text-[var(--izitour-orange)]"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ))}
-
-          <div>
-            <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-white">Contact</h2>
-            <ul className="mt-4 space-y-2 text-sm text-white/60">
-              <li>WhatsApp · {whatsapp}</li>
-              <li>
-                <a className="break-all hover:text-[var(--izitour-orange)]" href={`mailto:${email}`}>
-                  {email}
-                </a>
-              </li>
-              <li>{address}</li>
-            </ul>
-          </div>
         </div>
 
-        <div className="mt-10 flex flex-col-reverse gap-3 border-t border-white/10 pt-6 text-xs text-white/45 md:flex-row md:items-center md:justify-between">
-          <p>© {new Date().getFullYear()} {company}. Book Now — Pay Later.</p>
-          <p>Local guides · Curated itineraries · Trusted by inbound travellers</p>
+        <div className="border-t border-white/10 mt-8 pt-6">
+          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+            <p className="text-xs text-white">
+              © {new Date().getFullYear()} {company}. Book Now — Pay Later.
+            </p>
+            <p className="text-xs text-white">
+              Local guides · Curated itineraries · Trusted by inbound travellers
+            </p>
+          </div>
         </div>
       </div>
     </footer>

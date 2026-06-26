@@ -115,7 +115,12 @@ function Dots({ list, current, goToSlide, mobile = false }: { list: HeroSlide[];
           key={slide.id}
           type="button"
           onClick={() => goToSlide(index)}
-          className={cn("size-3 rounded-full transition-all", index === current ? "bg-[var(--izitour-primary)] md:w-8" : "bg-white/60 hover:bg-white/90")}
+          className={cn(
+            "size-2 rounded-full transition-all duration-300 border border-white/30",
+            index === current
+              ? "bg-[var(--izitour-primary)]"
+              : "bg-white hover:bg-white/80"
+          )}
           aria-label={`Go to slide ${index + 1}`}
           aria-current={index === current}
         />

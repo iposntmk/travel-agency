@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Sparkles } from "lucide-react";
+import Image from "next/image";
 import { ArrowUpIcon, MessengerIcon, WhatsAppIcon } from "@/components/icons";
 
 interface Props {
@@ -22,15 +22,15 @@ export function FloatingActions({ whatsappHref, messengerHref, proposalHref }: P
   }, []);
 
   return (
-    <div className="sticky-box flex flex-col items-end gap-3">
+    <div className="sticky-box flex flex-col items-end">
       <a
         href={whatsappHref}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat with us on WhatsApp"
-        className="row-needhelp inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--izitour-primary)] text-white shadow-elevated transition hover:bg-[var(--izitour-primary-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green/40"
+        className="row-needhelp flex size-[50px] items-center justify-center rounded-full bg-[#00947d] text-white shadow-lg transition-all hover:bg-[#007a67] hover:scale-110 active:scale-95 cursor-pointer max-sm:size-[56px]"
       >
-        <WhatsAppIcon className="h-6 w-6" />
+        <WhatsAppIcon className="size-6 max-sm:size-7" />
       </a>
 
       {messengerHref ? (
@@ -39,25 +39,31 @@ export function FloatingActions({ whatsappHref, messengerHref, proposalHref }: P
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Chat with us on Messenger"
-          className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--izitour-primary)] text-white shadow-elevated transition hover:bg-[var(--izitour-primary-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green/40"
+          className="row-needhelp mt-3 flex size-[50px] items-center justify-center rounded-full bg-[#00947d] text-white shadow-lg transition-all hover:bg-[#007a67] hover:scale-110 active:scale-95 cursor-pointer max-sm:size-[56px]"
         >
-          <MessengerIcon className="h-6 w-6" />
+          <MessengerIcon className="size-6 max-sm:size-7" />
         </a>
       ) : null}
 
       <Link
         href={proposalHref}
         aria-label="Plan a custom trip"
-        className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--izitour-orange)] text-white shadow-elevated transition hover:bg-[var(--izitour-orange-dark)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green/40"
+        className="row-needhelp mt-3 flex size-[50px] items-center justify-center rounded-full bg-[#00947d] text-white shadow-lg transition-all hover:bg-[#007a67] hover:scale-110 active:scale-95 max-sm:size-[56px]"
       >
-        <Sparkles className="h-5 w-5" strokeWidth={1.8} aria-hidden="true" />
+        <Image
+          src="/images/icons/customize_2.svg"
+          alt=""
+          width={22}
+          height={22}
+          className="size-5 max-sm:size-6"
+        />
       </Link>
 
       <button
         type="button"
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         aria-label="Back to top"
-        className={`inline-flex h-11 w-11 items-center justify-center rounded-full bg-navy-900 text-white shadow-elevated transition hover:bg-navy-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy-500 ${
+        className={`mt-3 inline-flex h-11 w-11 items-center justify-center rounded-full bg-navy-900 text-white shadow-lg transition-all hover:bg-navy-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy-500 ${
           showTop ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       >

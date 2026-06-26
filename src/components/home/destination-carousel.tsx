@@ -40,7 +40,7 @@ export function DestinationMobileCarousel({ items }: { items: HomeDestinationIte
       </div>
       <div className="mt-4 flex justify-center gap-2">
         {items.map((item, dot) => (
-          <button key={item.id} type="button" onClick={() => go(dot)} className={cn("h-2 rounded-full transition-all", dot === index ? "w-5 bg-[var(--izitour-text)]" : "w-2 bg-gray-300")} aria-label={`Go to slide ${dot + 1}`} />
+          <button key={item.id} type="button" onClick={() => go(dot)} className={cn("size-2 rounded-full transition-all duration-300 border border-white/30", dot === index ? "bg-[var(--izitour-primary)]" : "bg-white hover:bg-white/80")} aria-label={`Go to slide ${dot + 1}`} />
         ))}
       </div>
     </div>

@@ -1,12 +1,20 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Star } from "lucide-react";
 import { DestinationMobileCarousel } from "./destination-carousel";
 import { ImageCard } from "./image-card";
 import type { CruiseFeatureItem, HomeDestinationItem, HomeReviewItem, WhyChooseItem } from "./types";
 
+const WHY_ICONS: Record<string, string> = {
+  compass: "/images/icons/icon-1.svg",
+  shield: "/images/icons/icon-2.svg",
+  wallet: "/images/icons/icon-3.svg",
+  heart: "/images/icons/icon-4.svg"
+};
+
 export function WhoWeAre({ title, body }: { title: string; body: string }) {
   return (
-    <section className="border-b border-[var(--izitour-border)] bg-white py-20 md:py-24">
+    <section className="border-b border-[var(--izitour-border)] bg-white py-12 md:py-16">
       <div className="container-center">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="mb-6 text-[40px] font-bold leading-[48px] text-[var(--izitour-text)] max-sm:text-[28px] max-sm:leading-[36px]">
@@ -29,23 +37,26 @@ export function WhoWeAre({ title, body }: { title: string; body: string }) {
 
 export function WhyChooseUs({ items }: { items: WhyChooseItem[] }) {
   return (
-    <section className="border-b border-[var(--izitour-border)] bg-[#f8f9fa] py-20 md:py-24">
+    <section className="border-b border-[var(--izitour-border)] bg-[#f8f9fa] py-12 md:py-16">
       <div className="container-center">
         <h2 className="mb-10 text-center text-2xl font-bold text-[var(--izitour-text)] md:text-3xl max-sm:text-[28px]">
           Why Travel With Us?
         </h2>
         <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2 lg:grid-cols-4 max-sm:gap-5">
-          {items.map((item) => (
-            <article key={item.title} className="flex flex-row items-center gap-4 rounded-2xl border border-[var(--izitour-border)] bg-white p-4 text-left shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg md:flex-col md:p-6 md:text-center">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--izitour-primary)]/10 text-2xl font-bold text-[var(--izitour-primary)] md:mb-2 md:h-16 md:w-16">
-                {iconFor(item.icon)}
-              </div>
-              <div>
-                <h3 className="text-sm font-bold leading-snug text-[var(--izitour-text)] md:text-base max-sm:text-[15px]">{item.title}</h3>
-                <p className="mt-1 text-xs leading-5 text-[var(--izitour-text-light)] md:hidden">{item.body}</p>
-              </div>
-            </article>
-          ))}
+          {items.map((item) => {
+            const iconSrc = WHY_ICONS[item.icon ?? ""] ?? "/images/icons/icon-1.svg";
+            return (
+              <article key={item.title} className="flex flex-row items-center gap-4 rounded-2xl border border-[var(--izitour-border)] bg-white p-4 text-left shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg md:flex-col md:p-6 md:text-center">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center md:mb-2 md:h-16 md:w-16">
+                  <Image src={iconSrc} alt={item.title} width={60} height={60} className="h-11 md:h-14 w-auto object-contain" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold leading-snug text-[var(--izitour-text)] md:text-base max-sm:text-[15px]">{item.title}</h3>
+                  <p className="mt-1 text-xs leading-5 text-[var(--izitour-text-light)] md:hidden">{item.body}</p>
+                </div>
+              </article>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -54,7 +65,7 @@ export function WhyChooseUs({ items }: { items: WhyChooseItem[] }) {
 
 export function Testimonials({ reviews, summary }: { reviews: HomeReviewItem[]; summary: string }) {
   return (
-    <section className="border-b border-[var(--izitour-border)] bg-white py-10 sm:py-14 md:py-20">
+    <section className="border-b border-[var(--izitour-border)] bg-white py-10 sm:py-12 md:py-14">
       <div className="container-center">
         <div className="mb-4 text-center sm:mb-6">
           <h2 className="mb-1 text-[18px] font-bold text-[var(--izitour-text)] sm:text-[20px] md:text-[24px]">What Clients Say About Us</h2>
@@ -79,7 +90,7 @@ export function Testimonials({ reviews, summary }: { reviews: HomeReviewItem[]; 
 
 export function BestCruises({ items }: { items: CruiseFeatureItem[] }) {
   return (
-    <section className="border-b border-[var(--izitour-border)] bg-[#f8f9fa] py-20 md:py-24">
+    <section className="border-b border-[var(--izitour-border)] bg-[#f8f9fa] py-12 md:py-16">
       <div className="container-center">
         <div className="mb-12 text-center">
           <h2 className="mb-4 text-[40px] font-bold leading-[48px] text-[var(--izitour-text)] max-sm:text-[28px] max-sm:leading-[36px]">Best Cruises</h2>
@@ -109,8 +120,11 @@ export function BestCruises({ items }: { items: CruiseFeatureItem[] }) {
 }
 
 export function Destinations({ items }: { items: HomeDestinationItem[] }) {
+  const top4 = items.slice(0, 4);
+  const rest = items.slice(4);
+
   return (
-    <section className="border-b border-[var(--izitour-border)] bg-[#f8f9fa] py-20 md:py-24">
+    <section className="border-b border-[var(--izitour-border)] bg-[#f8f9fa] py-12 md:py-16">
       <div className="container-center">
         <div className="mb-10 text-center md:mb-14">
           <h2 className="mb-4 text-2xl font-bold text-[var(--izitour-text)] md:text-3xl lg:text-4xl max-sm:text-[28px]">Top Destinations</h2>
@@ -118,16 +132,11 @@ export function Destinations({ items }: { items: HomeDestinationItem[] }) {
             Discover popular destinations in Vietnam with local tours, food, culture, beaches, and daily-life experiences.
           </p>
         </div>
-        <div className="hidden space-y-6 md:block">
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">{items.slice(0, 4).map((item) => <ImageCard key={item.id} item={item} tall />)}</div>
-          <div className="grid grid-cols-2 gap-4 lg:gap-6">{items.slice(4, 6).map((item) => <ImageCard key={item.id} item={item} wide />)}</div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
+          {items.map((item) => <ImageCard key={item.id} item={item} tall />)}
         </div>
-        <DestinationMobileCarousel items={items} />
       </div>
     </section>
   );
-}
-
-function iconFor(icon?: string) {
-  return ({ shield: "✓", wallet: "$", heart: "♥" } satisfies Record<string, string>)[icon ?? ""] ?? "✦";
 }

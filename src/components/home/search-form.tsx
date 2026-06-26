@@ -53,48 +53,40 @@ export function IzitourSearchForm({ starts }: Props) {
   }
 
   return (
-    <section className="relative z-30 mx-auto w-full max-w-[1400px] px-3 sm:px-4 lg:px-6">
-      <div className="hidden -mt-16 w-full lg:block">
+    <section className="relative z-40 mx-auto w-full max-w-[1400px] px-3 sm:px-4 lg:px-6">
+      <div className="-mt-16 w-full">
         <Tabs activeTab={activeTab} reset={reset} />
-        <div className="rounded-b-xl rounded-tr-xl border border-[var(--izitour-border)]/50 bg-white p-6 shadow-lg">
-          <form onSubmit={submit} className="grid grid-cols-[1.2fr_1.2fr_1.2fr_1.2fr_0.8fr] items-center gap-4">
+        <div className="rounded-b-xl rounded-tr-xl border border-[var(--izitour-border)]/50 bg-white p-4 shadow-lg sm:p-6">
+          <form onSubmit={submit} className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-[1fr_1fr_1fr_1fr_auto]">
             <SearchField icon={<MapPin />} value={start} setValue={setStart} placeholder="Start From" options={starts} />
             <SearchField icon={<Users />} value={type} setValue={setType} placeholder={activeTab === "tours" ? "Tour type" : "Cruise type"} options={typeOptions} />
             <SearchField icon={<Calendar />} value={duration} setValue={setDuration} placeholder="Duration" options={durationOptions(activeTab)} />
             <SearchField icon={<Compass />} value={style} setValue={setStyle} placeholder="Travel style" options={styleOptions()} />
-            <SubmitButton />
+            <SubmitButton full />
           </form>
         </div>
       </div>
-      <form onSubmit={submit} className="block -mt-10 w-full lg:hidden">
-        <Tabs activeTab={activeTab} reset={reset} mobile />
-        <div className="space-y-3.5 rounded-b-xl border border-[var(--izitour-border)]/50 bg-white p-4 shadow-xl">
-          <SearchField icon={<MapPin />} value={start} setValue={setStart} placeholder="Start From" options={starts} />
-          <SearchField icon={<Users />} value={type} setValue={setType} placeholder="Tour type" options={typeOptions} />
-          <SearchField icon={<Calendar />} value={duration} setValue={setDuration} placeholder="Duration" options={durationOptions(activeTab)} />
-          <SubmitButton full />
-        </div>
-      </form>
     </section>
   );
 }
 
-function Tabs({ activeTab, reset, mobile = false }: { activeTab: Tab; reset: (tab: Tab) => void; mobile?: boolean }) {
-  const tabs: Array<{ key: Tab; label: string; mobileLabel: string }> = [
-    { key: "tours", label: "Tours", mobileLabel: "Tours" },
-    { key: "halong", label: "Halong Bay Cruises", mobileLabel: "Halong Bay" },
-    { key: "mekong", label: "Mekong River Cruises", mobileLabel: "Mekong River" }
+function Tabs({ activeTab, reset }: { activeTab: Tab; reset: (tab: Tab) => void }) {
+  const tabs: Array<{ key: Tab; label: string }> = [
+    { key: "tours", label: "Tours" },
+    { key: "halong", label: "Halong Bay Cruises" },
+    { key: "mekong", label: "Mekong River Cruises" }
   ];
   return (
-    <div className={cn("flex overflow-hidden rounded-t-xl bg-[#0f2421] text-xs font-bold uppercase tracking-wider text-white", !mobile && "max-w-2xl")}>
+    <div className="flex overflow-hidden rounded-t-xl text-xs font-bold uppercase tracking-wider text-white" style={{ backgroundColor: "#000000" }}>
       {tabs.map((tab) => (
         <button
           key={tab.key}
           type="button"
           onClick={() => reset(tab.key)}
-          className={cn("border-r border-[#1a3834] px-3 py-3.5 text-center transition last:border-r-0", mobile ? "flex-1 text-[11px]" : "px-8", activeTab === tab.key ? "bg-white text-[var(--izitour-primary)]" : "text-white/80 hover:bg-white/5")}
+          className={cn("flex-1 px-3 py-3.5 text-center transition last:border-r-0 sm:flex-none sm:px-8", activeTab === tab.key ? "bg-white text-[var(--izitour-primary)]" : "text-white hover:bg-white/10")}
+          style={{ borderRight: "1px solid #333333" }}
         >
-          {mobile ? tab.mobileLabel : tab.label}
+          {tab.label}
         </button>
       ))}
     </div>

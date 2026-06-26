@@ -6,10 +6,10 @@ import {
   Testimonials,
   WhoWeAre,
   WhyChooseUs
-} from "@/components/home/izitour/content-sections";
-import { BlogSection, TourCards } from "@/components/home/izitour/card-sections";
-import { IzitourHeroSlider } from "@/components/home/izitour/hero-slider";
-import { IzitourSearchForm } from "@/components/home/izitour/search-form";
+} from "@/components/home/content-sections";
+import { BlogSection, TourCards } from "@/components/home/card-sections";
+import { IzitourHeroSlider } from "@/components/home/hero-slider";
+import { IzitourSearchForm } from "@/components/home/search-form";
 import {
   heroCopy,
   toBlogItems,
@@ -20,7 +20,7 @@ import {
   toSearchStarts,
   toTourCards,
   toWhyItems
-} from "@/components/home/izitour/adapters";
+} from "@/components/home/adapters";
 import { getSiteUrl } from "@/config/env";
 import { getDestinations, getFeaturedReviews, getPublishedPosts, getSiteSettings } from "@/lib/cms";
 import { getCruisesForList } from "@/lib/cms-cruises";
