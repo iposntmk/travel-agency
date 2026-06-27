@@ -79,7 +79,7 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
         </div>
       </PageHero>
 
-      <section className="bg-mist py-12 md:py-16">
+      <section className="bg-white py-10 md:py-14">
         <div className="mx-auto max-w-page px-4">
           <TourFilterPanel destinations={destinations} query={query} />
           <Suspense key={resultsKey(query)} fallback={<TourResultsSkeleton />}>

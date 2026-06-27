@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { JsonLd } from "@/components/json-ld";
-import { TourCard } from "@/components/tour-card";
+import { TourListingCard } from "@/components/tour-listing-card";
 import { getSiteUrl } from "@/config/env";
 import { getToursForList } from "@/lib/cms-list";
 import { absoluteUrl, breadcrumbJsonLd, itemListJsonLd } from "@/lib/structured-data";
@@ -45,12 +45,14 @@ export async function TourResults({ query }: { query: ToursPageQuery }) {
         </div>
       ) : (
         <>
-          <p className="mb-4 text-xs font-medium uppercase tracking-wide text-navy-500">
-            {tours.length} tour{tours.length === 1 ? "" : "s"}
-          </p>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mb-6 flex items-center justify-between">
+            <p className="text-base font-bold text-brand-red">
+              {tours.length} tour{tours.length === 1 ? "" : "s"} found
+            </p>
+          </div>
+          <div className="flex flex-col gap-5">
             {tours.map((tour) => (
-              <TourCard key={tour.id} tour={tour} />
+              <TourListingCard key={tour.id} tour={tour} />
             ))}
           </div>
         </>

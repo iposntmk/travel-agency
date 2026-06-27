@@ -23,7 +23,22 @@ function Chip({ href, label, active }: { href: string; label: string; active: bo
   );
 }
 
-function FilterGroup({ label, children }: { label: string; children: React.ReactNode }) {
+function FilterGroup({ label, children, collapsible = false }: {
+  label: string;
+  children: React.ReactNode;
+  collapsible?: boolean;
+}) {
+  if (collapsible) {
+    return (
+      <details className="group">
+        <summary className="cursor-pointer text-[11px] font-semibold uppercase tracking-[0.14em] text-navy-500 select-none hover:text-navy-700">
+          {label}
+        </summary>
+        <div className="mt-3 flex flex-wrap gap-2">{children}</div>
+      </details>
+    );
+  }
+
   return (
     <div>
       <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-navy-500">{label}</p>
@@ -42,7 +57,7 @@ export function TourFilterPanel({ destinations, query }: TourFilterPanelProps) {
   return (
     <section
       aria-label="Filter tours"
-      className="space-y-5 rounded-2xl border border-navy-100 bg-white p-5 shadow-card md:p-6"
+      className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-card md:p-6"
     >
       <form action="/tours" method="get" className="flex flex-wrap items-center gap-2">
         {query.destination ? <input type="hidden" name="destination" value={query.destination} /> : null}
@@ -113,7 +128,7 @@ export function TourFilterPanel({ destinations, query }: TourFilterPanelProps) {
         ))}
       </FilterGroup>
 
-      <FilterGroup label="Duration">
+      <FilterGroup label="Duration" collapsible>
         <Chip href={`/tours${queryString(query, { duration: undefined })}`} label="Any" active={!query.duration} />
         {DURATIONS.map((d) => (
           <Chip
@@ -125,7 +140,7 @@ export function TourFilterPanel({ destinations, query }: TourFilterPanelProps) {
         ))}
       </FilterGroup>
 
-      <FilterGroup label="Group size">
+      <FilterGroup label="Group size" collapsible>
         <Chip href={`/tours${queryString(query, { groupSize: undefined })}`} label="Any" active={!query.groupSize} />
         {GROUP_SIZES.map((g) => (
           <Chip
@@ -150,7 +165,7 @@ export function TourFilterPanel({ destinations, query }: TourFilterPanelProps) {
       </FilterGroup>
 
       {hasFilters ? (
-        <div className="flex items-center justify-between border-t border-navy-100 pt-4">
+        <div className="flex items-center justify-between border-t border-slate-100 pt-4">
           <p className="text-xs text-slate-500">Showing filtered results.</p>
           <Link
             href="/tours"

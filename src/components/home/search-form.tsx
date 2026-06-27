@@ -55,15 +55,17 @@ export function IzitourSearchForm({ starts }: Props) {
   return (
     <section className="relative z-40 mx-auto w-full max-w-[1400px] px-3 sm:px-4 lg:px-6">
       <div className="-mt-16 w-full">
-        <Tabs activeTab={activeTab} reset={reset} />
-        <div className="rounded-b-xl rounded-tr-xl border border-[var(--izitour-border)]/50 bg-white p-4 shadow-lg sm:p-6">
-          <form onSubmit={submit} className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-[1fr_1fr_1fr_1fr_auto]">
-            <SearchField icon={<MapPin />} value={start} setValue={setStart} placeholder="Start From" options={starts} />
-            <SearchField icon={<Users />} value={type} setValue={setType} placeholder={activeTab === "tours" ? "Tour type" : "Cruise type"} options={typeOptions} />
-            <SearchField icon={<Calendar />} value={duration} setValue={setDuration} placeholder="Duration" options={durationOptions(activeTab)} />
-            <SearchField icon={<Compass />} value={style} setValue={setStyle} placeholder="Travel style" options={styleOptions()} />
-            <SubmitButton full />
-          </form>
+        <div className="overflow-hidden rounded-2xl shadow-xl">
+          <Tabs activeTab={activeTab} reset={reset} />
+          <div className="bg-white p-4 sm:p-6">
+            <form onSubmit={submit} className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-[1fr_1fr_1fr_1fr_auto]">
+              <SearchField icon={<MapPin />} value={start} setValue={setStart} placeholder="Start From" options={starts} />
+              <SearchField icon={<Users />} value={type} setValue={setType} placeholder={activeTab === "tours" ? "Tour type" : "Cruise type"} options={typeOptions} />
+              <SearchField icon={<Calendar />} value={duration} setValue={setDuration} placeholder="Duration" options={durationOptions(activeTab)} />
+              <SearchField icon={<Compass />} value={style} setValue={setStyle} placeholder="Travel style" options={styleOptions()} />
+              <SubmitButton full />
+            </form>
+          </div>
         </div>
       </div>
     </section>
@@ -77,14 +79,18 @@ function Tabs({ activeTab, reset }: { activeTab: Tab; reset: (tab: Tab) => void 
     { key: "mekong", label: "Mekong River Cruises" }
   ];
   return (
-    <div className="flex overflow-hidden rounded-t-xl text-xs font-bold uppercase tracking-wider text-white" style={{ backgroundColor: "#000000" }}>
+    <div className="flex bg-gradient-to-r from-black/80 via-black/60 to-black/80 text-xs font-bold uppercase tracking-wider">
       {tabs.map((tab) => (
         <button
           key={tab.key}
           type="button"
           onClick={() => reset(tab.key)}
-          className={cn("flex-1 px-3 py-3.5 text-center transition last:border-r-0 sm:flex-none sm:px-8", activeTab === tab.key ? "bg-white text-[var(--izitour-primary)]" : "text-white hover:bg-white/10")}
-          style={{ borderRight: "1px solid #333333" }}
+          className={cn(
+            "flex-1 px-3 py-3.5 text-center transition sm:flex-none sm:px-8",
+            activeTab === tab.key
+              ? "bg-white text-[var(--izitour-primary)]"
+              : "bg-transparent text-white hover:bg-white/20"
+          )}
         >
           {tab.label}
         </button>
@@ -110,7 +116,7 @@ function SearchField({ icon, value, setValue, placeholder, options }: { icon: Re
 
 function SubmitButton({ full = false }: { full?: boolean }) {
   return (
-    <button type="submit" className={cn("flex h-12 items-center justify-center gap-2 rounded-lg bg-[var(--izitour-orange)] px-6 text-sm font-bold text-white shadow transition hover:bg-[var(--izitour-orange-dark)]", full && "w-full max-sm:h-[52px]")}>
+    <button type="submit" className={cn("flex h-12 items-center justify-center gap-2 rounded-lg border-0 bg-[var(--izitour-orange)] px-6 text-sm font-bold text-white shadow transition hover:bg-[var(--izitour-orange-dark)]", full && "w-full max-sm:h-[52px]")}>
       <Search className="size-4" /> Search
     </button>
   );
