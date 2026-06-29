@@ -3,6 +3,7 @@ import "server-only";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import { getPayloadClient } from "@/lib/payload";
+import type { Where } from "payload";
 import type { Comment, Destination, Post, Review, SiteSetting, TeamMember, Tour } from "@/payload-types";
 
 const DEFAULT_LIMIT = 24;
@@ -84,6 +85,7 @@ const POST_LIST_SELECT = {
   slug: true,
   featuredImage: true,
   destination: true,
+  guideCategory: true,
   readingTime: true,
   status: true,
   createdAt: true,
@@ -111,6 +113,127 @@ const getPublishedPostsCached = cache((limit: number) =>
 
 export function getPublishedPosts(limit = DEFAULT_LIMIT): Promise<Post[]> {
   return getPublishedPostsCached(limit);
+}
+
+async function fetchSearchedPosts(query: string, category: string, limit: number): Promise<Post[]> {
+  const payload = await getPayloadClient();
+  const conditions: Where[] = [{ status: { equals: "published" } }];
+
+  const q = query.trim();
+  if (q) {
+    conditions.push({
+      or: [{ title: { like: q } }, { "tags.tag": { like: q } }]
+    });
+  }
+
+  const cat = category.trim();
+  if (cat) {
+    conditions.push({ guideCategory: { equals: cat } });
+  }
+
+  const result = await payload.find({
+    collection: "posts",
+    where: { and: conditions },
+    limit,
+    depth: 1,
+    sort: "-createdAt",
+    select: POST_LIST_SELECT
+  });
+  return result.docs as Post[];
+}
+
+const getSearchedPostsCached = cache((query: string, category: string, limit: number) =>
+  unstable_cache(
+    () => fetchSearchedPosts(query, category, limit),
+    ["cms", "posts", "search", query, category, String(limit)],
+    { tags: ["posts"] }
+  )()
+);
+
+export function searchPublishedPosts(query: string, category: string, limit = DEFAULT_LIMIT): Promise<Post[]> {
+  return getSearchedPostsCached(query, category, limit);
+}
+
+const POSTS_PER_PAGE = 9;
+
+export interface BlogPostListResult {
+  posts: Post[];
+  total: number;
+  page: number;
+  totalPages: number;
+  destination: Destination | null;
+}
+
+async function fetchBlogPostList(
+  query: string,
+  category: string,
+  destinationSlug: string,
+  page: number,
+  limit: number
+): Promise<BlogPostListResult> {
+  const empty: BlogPostListResult = { posts: [], total: 0, page: 1, totalPages: 0, destination: null };
+
+  let destination: Destination | null = null;
+  if (destinationSlug) {
+    destination = await getDestinationBySlug(destinationSlug);
+    if (!destination) return empty;
+  }
+
+  const payload = await getPayloadClient();
+  const conditions: Where[] = [{ status: { equals: "published" } }];
+
+  const q = query.trim();
+  if (q) {
+    conditions.push({ or: [{ title: { like: q } }, { "tags.tag": { like: q } }] });
+  }
+
+  const cat = category.trim();
+  if (cat) {
+    conditions.push({ guideCategory: { equals: cat } });
+  }
+
+  if (destination) {
+    conditions.push({ destination: { equals: destination.id } });
+  }
+
+  const result = await payload.find({
+    collection: "posts",
+    where: { and: conditions },
+    limit,
+    page,
+    depth: 1,
+    sort: "-createdAt",
+    select: POST_LIST_SELECT
+  });
+
+  return {
+    posts: result.docs as Post[],
+    total: result.totalDocs,
+    page: result.page ?? page,
+    totalPages: result.totalPages ?? 1,
+    destination
+  };
+}
+
+const getBlogPostListCached = cache(
+  (query: string, category: string, destinationSlug: string, page: number, limit: number) =>
+    unstable_cache(
+      () => fetchBlogPostList(query, category, destinationSlug, page, limit),
+      ["cms", "posts", "list", query, category, destinationSlug, String(page), String(limit)],
+      { tags: ["posts"] }
+    )()
+);
+
+export function getBlogPostList(
+  args: { query?: string; category?: string; destinationSlug?: string; page?: number; limit?: number } = {}
+): Promise<BlogPostListResult> {
+  return getBlogPostListCached(
+    args.query ?? "",
+    args.category ?? "",
+    args.destinationSlug ?? "",
+    Math.max(1, args.page ?? 1),
+    args.limit ?? POSTS_PER_PAGE
+  );
 }
 
 async function fetchPostBySlug(slug: string): Promise<Post | null> {
@@ -148,6 +271,30 @@ const getSiteSettingsCached = cache(() =>
 
 export function getSiteSettings(): Promise<SiteSetting | null> {
   return getSiteSettingsCached();
+}
+
+async function fetchBlogMedia(): Promise<NonNullable<SiteSetting["blogMedia"]> | null> {
+  try {
+    const payload = await getPayloadClient();
+    const result = await payload.find({ collection: "site-settings", limit: 1, depth: 1 });
+    const doc = result.docs[0] as SiteSetting | undefined;
+    return doc?.blogMedia ?? null;
+  } catch (error) {
+    // Schema may lag the running DB (migration not yet applied). Degrade
+    // gracefully so the blog page renders without the video/gallery sections.
+    console.error("getBlogMedia failed; hiding blog media sections", error);
+    return null;
+  }
+}
+
+const getBlogMediaCached = cache(() =>
+  unstable_cache(() => fetchBlogMedia(), ["cms", "blog-media"], {
+    tags: ["site-settings"]
+  })()
+);
+
+export function getBlogMedia(): Promise<NonNullable<SiteSetting["blogMedia"]> | null> {
+  return getBlogMediaCached();
 }
 
 async function fetchFeaturedReviews(limit: number): Promise<Review[]> {
@@ -230,6 +377,33 @@ export function getApprovedCommentsForTarget(
   limit = 10
 ): Promise<Comment[]> {
   return getApprovedCommentsForTargetCached(relationTo, targetId, limit);
+}
+
+async function fetchRecentPostComments(limit: number): Promise<Comment[]> {
+  const payload = await getPayloadClient();
+  const result = await payload.find({
+    collection: "comments",
+    where: {
+      and: [
+        { "target.relationTo": { equals: "posts" } },
+        { status: { equals: "approved" } }
+      ]
+    },
+    limit,
+    depth: 1,
+    sort: "-createdAt"
+  });
+  return result.docs as Comment[];
+}
+
+const getRecentPostCommentsCached = cache((limit: number) =>
+  unstable_cache(() => fetchRecentPostComments(limit), ["cms", "recent-post-comments", String(limit)], {
+    tags: ["comments"]
+  })()
+);
+
+export function getRecentPostComments(limit = 6): Promise<Comment[]> {
+  return getRecentPostCommentsCached(limit);
 }
 
 async function fetchTeamMembers(limit: number): Promise<TeamMember[]> {

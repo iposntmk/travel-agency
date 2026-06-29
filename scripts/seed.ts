@@ -4,6 +4,8 @@ import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import config from "../payload.config";
 import { getPayload, type CollectionSlug, type Where } from "payload";
 import { destinationSeeds, destinationImageMap } from "./seed-data/destinations";
+import { blogSeeds } from "./seed-data/blog-posts";
+import { provincePostSeeds } from "./seed-data/province-posts";
 
 type SeedDoc = Record<string, unknown> & { id: number | string };
 
@@ -112,8 +114,9 @@ async function getR2Client(): Promise<{ client: S3Client; bucket: string; public
   return { client, bucket, publicUrl };
 }
 
-async function seedDestinationImage(
-  destinationSlug: string,
+async function seedImage(
+  group: string,
+  slug: string,
   localImagePath: string,
   alt: string
 ): Promise<SeedDoc | null> {
@@ -127,7 +130,7 @@ async function seedDestinationImage(
   const mimeType = ext === "webp" ? "image/webp" : `image/${ext}`;
   const filename = path.basename(absPath);
   const now = new Date();
-  const r2Key = `originals/${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, "0")}/destinations/${destinationSlug}/original.${ext}`;
+  const r2Key = `originals/${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, "0")}/${group}/${slug}/${filename}`;
 
   const { client: s3Client, bucket, publicUrl: r2PublicBase } = await getR2Client();
   const cmd = new PutObjectCommand({
@@ -144,10 +147,13 @@ async function seedDestinationImage(
   const existing = await findOne("media", { alt: { equals: alt } } as Where);
   let mediaId: number | string;
   if (existing) {
+    // filename/mimeType/filesize are Payload upload-managed fields and cannot be
+    // set via update without a `file` (ValidationError: field is invalid: filename).
+    // The R2 object is (re)uploaded above; only refresh the safe + custom fields.
     const updated = await payload.update({
       collection: "media",
       id: existing.id,
-      data: { alt, filename, mimeType, filesize: buffer.length, status: "ready", r2Key, publicUrl } as never,
+      data: { alt, status: "ready", r2Key, publicUrl } as never,
       overrideAccess: true,
       disableTransaction: true,
     });
@@ -196,10 +202,11 @@ async function main() {
   }
 
   const imagesDir = path.resolve("public/images/destinations");
+  const galleryMedia: { id: number | string; caption: string }[] = [];
   for (const [slug, img] of Object.entries(destinationImageMap)) {
     const dest = destinations[slug];
     if (!dest) continue;
-    const media = await seedDestinationImage(slug, path.join(imagesDir, img.file), img.alt);
+    const media = await seedImage("destinations", slug, path.join(imagesDir, img.file), img.alt);
     if (media) {
       await payload.update({
         collection: "destinations",
@@ -209,6 +216,7 @@ async function main() {
         disableTransaction: true,
       });
       console.log(`  -> linked ${slug} heroImage + featuredImage`);
+      if (galleryMedia.length < 6) galleryMedia.push({ id: media.id, caption: img.alt });
     }
   }
 
@@ -311,6 +319,77 @@ async function main() {
     ["quang-tri-battlefield-memorials", "Quảng Trị Battlefield Memorials", "cultural", "quang-tri", 65, ["history", "culture"], ["quang-tri-ancient-citadel", "hien-luong-bridge"], "Full day", "Memorial-led itinerary for travellers who want deeper historical interpretation and quiet reflection."],
   ] as const;
 
+  // Per-tour rich content overrides (izitour-style tour detail). Keyed by slug.
+  const tourEnrichments: Record<string, Record<string, unknown>> = {
+    "hue-perfume-river-sunset": {
+      durationText: "2 hours",
+      routeSummary: "Toa Kham Pier → Thien Mu Pagoda → Perfume River → city centre",
+      startEnd: "Huế city centre / Huế city centre",
+      travelStyle: "Relaxed · Family-friendly · Cultural",
+      guideLanguages: "English, French",
+      highlightIntro:
+        "Drift along the legendary Perfume River as the sun sets behind the imperial city. A gentle dragon-boat ride pairs golden-hour views with royal stories, a riverside pagoda stop, and an unhurried pace that suits families and couples alike.",
+      highlights: [
+        { title: "Sunset on the Perfume River", description: "Golden-hour cruise past the Citadel walls and riverside life" },
+        { title: "Thien Mu Pagoda", description: "Step ashore at Huế's iconic seven-storey pagoda" },
+        { title: "Royal storytelling", description: "Local guide shares Nguyễn-dynasty history along the way" },
+        { title: "Traditional dragon boat", description: "Privately chartered hand-painted Huế dragon boat" },
+        { title: "Optional dinner transfer", description: "Seamless drop-off to a riverside restaurant of your choice" },
+      ],
+      inclusions: [
+        { item: "Private hand-painted dragon boat charter (2 hours)" },
+        { item: "Licensed English/French-speaking guide" },
+        { item: "Thien Mu Pagoda entrance and guided stop" },
+        { item: "Bottled water and cool towels on board" },
+        { item: "Hotel pickup and drop-off within Huế city" },
+      ],
+      exclusions: [
+        { item: "Dinner and personal expenses" },
+        { item: "Gratuities (optional)" },
+        { item: "Travel insurance" },
+      ],
+      itinerary: [
+        {
+          time: "16:00",
+          location: "Hotel pickup · Huế city centre",
+          title: "Meet your guide",
+          activity: richText("Your guide meets you at your hotel lobby, confirms pace and any mobility notes, then transfers you the short distance to Toa Kham Pier."),
+          included: [{ item: "Hotel pickup" }, { item: "Private transfer" }],
+        },
+        {
+          time: "16:20",
+          location: "Toa Kham Pier · board the dragon boat",
+          distance: "5 min from city centre",
+          title: "Set sail on the Perfume River",
+          activity: richText("Board your privately chartered dragon boat and begin gliding upstream. Settle in with a cool towel and water as the guide introduces the river's royal history."),
+          included: [{ item: "Dragon boat charter" }, { item: "Water & cool towel" }],
+        },
+        {
+          time: "16:50",
+          location: "Thien Mu Pagoda",
+          distance: "≈ 4 km upstream",
+          title: "Riverside pagoda stop",
+          activity: richText("Step ashore to explore Thien Mu Pagoda, Huế's seven-storey icon, with time for photos and the stories behind its famous bell and gardens."),
+          note: "Modest dress recommended (shoulders and knees covered).",
+          included: [{ item: "Entrance & guided visit" }],
+        },
+        {
+          time: "17:40",
+          location: "Sunset cruise back to the city",
+          title: "Golden hour on the water",
+          activity: richText("Reboard and drift back downstream as the sun sets behind the Citadel. Watch riverside life and floating temples glow in the evening light."),
+        },
+        {
+          time: "18:15",
+          location: "Disembark · optional dinner transfer",
+          title: "End of cruise",
+          activity: richText("Return to the pier and transfer back to your hotel, or ask to be dropped at a riverside restaurant for dinner."),
+          included: [{ item: "Drop-off in Huế city" }],
+        },
+      ],
+    },
+  };
+
   const tours: Record<string, SeedDoc> = {};
   for (let index = 0; index < tourSeeds.length; index += 1) {
     const [slug, title, tourType, destinationSlug, priceFrom, categorySlugs, attractionSlugs, durationText, routeSummary] = tourSeeds[index];
@@ -359,7 +438,49 @@ async function main() {
         metaTitle: `${title} | TC Travel Vietnam`,
         metaDescription: `${title} with local guides, realistic pacing, and pay-later booking.`,
       },
+      ...(tourEnrichments[slug] ?? {}),
     });
+  }
+
+  // Link real images (featuredImage + gallery + route map) to enriched tours.
+  const toursImagesDir = path.resolve("public/images/tours");
+  const tourImageMap: Record<string, { gallery: { file: string; alt: string }[]; map?: { file: string; alt: string } }> = {
+    "hue-perfume-river-sunset": {
+      gallery: [
+        { file: "hue-thanh-tien-village-2.webp", alt: "Sunset dragon boat on the Perfume River in Huế" },
+        { file: "hue-dai-noi-2.webp", alt: "Huế Imperial Citadel seen from the Perfume River" },
+        { file: "hue-thanh-tien-village-1.webp", alt: "Traditional craft village along the Perfume River, Huế" },
+        { file: "hue-thuy-bieu-village-2.webp", alt: "Riverside village life near Huế at dusk" },
+        { file: "hue-khai-dinh-mausoleum-1.webp", alt: "Royal Nguyễn-dynasty architecture in Huế" },
+      ],
+      map: { file: "hue-dai-noi-2.webp", alt: "Perfume River sunset cruise route map" },
+    },
+  };
+
+  for (const [slug, imgs] of Object.entries(tourImageMap)) {
+    const tour = tours[slug];
+    if (!tour) continue;
+    const galleryIds: (number | string)[] = [];
+    for (const g of imgs.gallery) {
+      const media = await seedImage("tours", slug, path.join(toursImagesDir, g.file), g.alt);
+      if (media) galleryIds.push(media.id);
+    }
+    const mapMedia = imgs.map
+      ? await seedImage("tours", slug, path.join(toursImagesDir, imgs.map.file), imgs.map.alt)
+      : null;
+    if (galleryIds.length > 0 || mapMedia) {
+      await payload.update({
+        collection: "tours",
+        id: tour.id,
+        data: {
+          ...(galleryIds.length > 0 ? { featuredImage: galleryIds[0], gallery: galleryIds } : {}),
+          ...(mapMedia ? { mapImage: mapMedia.id } : {}),
+        } as never,
+        overrideAccess: true,
+        disableTransaction: true,
+      });
+      console.log(`  -> linked ${slug} featuredImage + gallery(${galleryIds.length})${mapMedia ? " + map" : ""}`);
+    }
   }
 
   const cruiseSeeds = [
@@ -438,15 +559,15 @@ async function main() {
 
   const posts: Record<string, SeedDoc> = {};
   const postSeeds = [
-    ["guide-to-hoi-an-old-town", "The Ultimate Guide to Hội An's Old Town", "hoi-an", "hoi-an-private-heritage-walk", "do", 8],
-    ["hoi-an-food-guide", "What to Eat in Hội An Before Your First Food Tour", "hoi-an", "hoi-an-foodie-adventure", "eat", 7],
-    ["exploring-hue-imperial-city", "Exploring Huế Imperial City Without Rushing", "hue", "hue-imperial-small-group", "do", 9],
-    ["da-nang-family-beach-guide", "A Practical Đà Nẵng Plan for Families", "da-nang", "da-nang-ba-na-hills-golden-bridge", "general", 6],
-    ["quang-tri-dmz-travel-guide", "How to Visit the Quảng Trị DMZ Respectfully", "quang-tri", "quang-tri-dmz-heritage-day-trip", "before-trip", 8],
-    ["book-now-pay-later-guide", "How Book Now - Pay Later Works With TC Travel", "hoi-an", "free-hoi-an-lantern-walk", "service", 4],
+    ["guide-to-hoi-an-old-town", "The Ultimate Guide to Hội An's Old Town", "hoi-an", "hoi-an-private-heritage-walk", "do", 8, "Ngoc Tu Dinh", 1243, 2],
+    ["hoi-an-food-guide", "What to Eat in Hội An Before Your First Food Tour", "hoi-an", "hoi-an-foodie-adventure", "eat", 7, "Kayla Le", 836, 0],
+    ["exploring-hue-imperial-city", "Exploring Huế Imperial City Without Rushing", "hue", "hue-imperial-small-group", "do", 9, "Ngoc Tu Dinh", 2105, 1],
+    ["da-nang-family-beach-guide", "A Practical Đà Nẵng Plan for Families", "da-nang", "da-nang-ba-na-hills-golden-bridge", "general", 6, "Tracy Tran", 567, 0],
+    ["quang-tri-dmz-travel-guide", "How to Visit the Quảng Trị DMZ Respectfully", "quang-tri", "quang-tri-dmz-heritage-day-trip", "before-trip", 8, "Ngoc Tu Dinh", 934, 3],
+    ["book-now-pay-later-guide", "How Book Now - Pay Later Works With TC Travel", "hoi-an", "free-hoi-an-lantern-walk", "service", 4, "Jazmine Tran", 412, 0],
   ] as const;
 
-  for (const [slug, title, destinationSlug, relatedTourSlug, guideCategory, readingTime] of postSeeds) {
+  for (const [slug, title, destinationSlug, relatedTourSlug, guideCategory, readingTime, author, viewCount, updateCount] of postSeeds) {
     posts[slug] = await upsertBySlug("posts", {
       title,
       slug,
@@ -455,6 +576,9 @@ async function main() {
       relatedTour: tours[relatedTourSlug].id,
       guideCategory,
       readingTime,
+      author,
+      viewCount,
+      updateCount,
       featured: readingTime >= 7,
       sortWeight: readingTime * 10,
       tags: [{ tag: destinationSlug }, { tag: guideCategory }, { tag: "planning" }],
@@ -479,16 +603,166 @@ async function main() {
     });
   }
 
-  for (const post of postList) {
-    for (const comment of [
-      "This helped me choose the right base city before booking.",
-      "Useful timing notes. I would add that WhatsApp confirmation is easiest for travellers already in Vietnam.",
-      "Clear guide, especially the section on what to do before the tour day.",
-    ]) {
-      await upsertByField("comments", "content", `${comment} Article: ${post.title}`, {
+  // Link real featuredImage to each blog post (previously unseeded → fallback gradient).
+  // Reuse existing local assets; r2Key is namespaced by post slug, so identical
+  // source files still upload to distinct keys / media docs per post.
+  const destImagesDir = path.resolve("public/images/destinations");
+  const postImagesDir = { destinations: destImagesDir, tours: toursImagesDir } as const;
+  const postImageMap: Record<string, { dir: keyof typeof postImagesDir; file: string; alt: string }> = {
+    "guide-to-hoi-an-old-town": { dir: "destinations", file: "hoian2.webp", alt: "Hội An ancient town lantern streets at dusk" },
+    "hoi-an-food-guide": { dir: "tours", file: "hue-thuy-bieu-village-2.webp", alt: "Riverside food and village life in Central Vietnam" },
+    "exploring-hue-imperial-city": { dir: "tours", file: "hue-dai-noi-2.webp", alt: "Huế Imperial Citadel and Perfume River" },
+    "da-nang-family-beach-guide": { dir: "destinations", file: "dest-6.webp", alt: "Central Vietnam coastal town scenery near Đà Nẵng" },
+    "quang-tri-dmz-travel-guide": { dir: "tours", file: "hue-khai-dinh-mausoleum-1.webp", alt: "Historic memorial architecture in Central Vietnam" },
+    "book-now-pay-later-guide": { dir: "destinations", file: "hoian2.webp", alt: "Planning a Central Vietnam trip in Hội An" },
+  };
+
+  for (const [slug, img] of Object.entries(postImageMap)) {
+    const post = posts[slug];
+    if (!post) continue;
+    const media = await seedImage("posts", slug, path.join(postImagesDir[img.dir], img.file), img.alt);
+    if (media) {
+      await payload.update({
+        collection: "posts",
+        id: post.id,
+        data: { featuredImage: media.id } as never,
+        overrideAccess: true,
+        disableTransaction: true,
+      });
+      console.log(`  -> linked ${slug} featuredImage`);
+    }
+  }
+
+  // ── VM Travel scraped blog posts (from https://vmtravel.com.vn/blog/) ──
+  // These are seeded as published posts with auto-generated content from scraped data.
+  const destinationSlugToId: Record<string, number | string> = {};
+  for (const [slug, doc] of Object.entries(destinations)) {
+    destinationSlugToId[slug] = doc.id;
+  }
+
+  // Skip blogSeeds that have enriched versions in provincePostSeeds
+  const enrichedSlugs = new Set(provincePostSeeds.map((p) => p.slug));
+  const filteredBlogSeeds = blogSeeds.filter((s) => !enrichedSlugs.has(s.slug));
+
+  for (const seed of filteredBlogSeeds) {
+    const destId = seed.destinationHint && seed.destinationHint in destinationSlugToId
+      ? destinationSlugToId[seed.destinationHint]
+      : undefined;
+    await upsertBySlug("posts", {
+      title: seed.title,
+      slug: seed.slug,
+      status: "published",
+      destination: destId,
+      guideCategory: seed.guideCategory,
+      readingTime: seed.readingTime,
+      author: seed.author,
+      viewCount: seed.viewCount,
+      updateCount: seed.updateCount,
+      featured: seed.readingTime >= 8,
+      sortWeight: seed.readingTime * 10,
+      tags: [
+        { tag: seed.destinationHint || "vietnam" },
+        { tag: seed.guideCategory },
+        { tag: "travel-guide" },
+      ],
+      content: richText(`${seed.title}\n\n${seed.excerpt}\n\nThis article is adapted from VM Travel (vmtravel.com.vn) for reference and expanded content.`),
+      seo: {
+        metaTitle: `${seed.title} | TC Travel Vietnam`,
+        metaDescription: seed.excerpt.substring(0, 160),
+        keywords: `${seed.destinationHint || "vietnam"}, ${seed.guideCategory}, travel guide`,
+      },
+    });
+  }
+
+  // ── Enriched province posts (full rich content + featuredImage) ──
+  const enrichedPostDocIds: (number | string)[] = [];
+  const genPostsDir = path.resolve("public/images/destinations");
+  const genToursDir = path.resolve("public/images/tours");
+  const genPostImageDir: Record<string, string> = {
+    destinations: genPostsDir,
+    tours: genToursDir,
+  };
+
+  for (const seed of provincePostSeeds) {
+    const destId = seed.destinationHint in destinationSlugToId
+      ? destinationSlugToId[seed.destinationHint]
+      : undefined;
+    const doc = await upsertBySlug("posts", {
+      title: seed.title,
+      slug: seed.slug,
+      status: "published",
+      destination: destId,
+      guideCategory: seed.guideCategory,
+      readingTime: seed.readingTime,
+      author: seed.author,
+      viewCount: seed.viewCount,
+      updateCount: seed.updateCount,
+      featured: true,
+      sortWeight: 100,
+      tags: seed.tags.map((tag) => ({ tag })),
+      content: seed.content,
+      seo: {
+        metaTitle: `${seed.title} | TC Travel Vietnam`,
+        metaDescription: seed.title,
+        keywords: `${seed.destinationHint}, ${seed.guideCategory}, travel guide`,
+      },
+    });
+    enrichedPostDocIds.push(doc.id);
+
+    // Upload featuredImage
+    const media = await seedImage(
+      "posts",
+      seed.slug,
+      path.join(genPostImageDir[seed.image.dir], seed.image.file),
+      seed.image.alt
+    );
+    if (media) {
+      await payload.update({
+        collection: "posts",
+        id: doc.id,
+        data: { featuredImage: media.id } as never,
+        overrideAccess: true,
+        disableTransaction: true,
+      });
+      console.log(`  -> linked ${seed.slug} featuredImage`);
+    }
+  }
+
+  // Link relatedPosts for enriched posts (cross-reference with postList + each other)
+  const allPostDocs = [...postList.map((p) => ({ id: p.id, slug: "" })), ...enrichedPostDocIds.map((id, i) => ({ id, slug: provincePostSeeds[i].slug }))];
+  for (let index = 0; index < allPostDocs.length; index += 1) {
+    const related = [
+      allPostDocs[(index + 1) % allPostDocs.length].id,
+      allPostDocs[(index + 2) % allPostDocs.length].id,
+    ];
+    await payload.update({
+      collection: "posts",
+      id: allPostDocs[index].id,
+      data: { relatedPosts: related } as never,
+      overrideAccess: true,
+      disableTransaction: true,
+    });
+  }
+
+  const allPostTitles = [...postList.map((p) => p.title), ...provincePostSeeds.map((p) => p.title)];
+  const allPostIds = [...postList.map((p) => p.id), ...enrichedPostDocIds];
+
+  const commentTemplates = [
+    ["Emma Thompson", "This helped me choose the right base city before booking. Exactly the practical detail I was missing."],
+    ["Marco Rossi", "Useful timing notes. I would add that WhatsApp confirmation is easiest for travellers already in Vietnam."],
+    ["Priya Nair", "Clear guide, especially the section on what to do before the tour day. Bookmarked for our March trip."],
+    ["Lucas Meyer", "Great read. We followed this almost step by step and it saved us a lot of guesswork on the ground."],
+    ["Sofia Garcia", "Honest and well written. The food recommendations alone made this worth reading twice."],
+  ] as const;
+
+  for (const [postIndex, postTitle] of allPostTitles.entries()) {
+    for (let i = 0; i < 3; i += 1) {
+      const [authorName, comment] = commentTemplates[(postIndex + i) % commentTemplates.length];
+      await upsertByField("comments", "content", `${comment} Article: ${postTitle}`, {
         author: adminUser.id,
-        target: { relationTo: "posts", value: post.id },
-        content: `${comment} Article: ${post.title}`,
+        authorName,
+        target: { relationTo: "posts", value: allPostIds[postIndex] },
+        content: `${comment} Article: ${postTitle}`,
         status: "approved",
       });
     }
@@ -529,6 +803,14 @@ async function main() {
   }
 
   await upsertSiteSettings({
+    blogMedia: {
+      videoEyebrow: "Video highlight",
+      videoSubtitle: "Explore the real captures of Central Vietnam through filming.",
+      videoUrl: "",
+      galleryEyebrow: "Travel photos gallery",
+      gallerySubtitle: "A collection of amazing photos from Central Vietnam.",
+      gallery: galleryMedia.map((m) => ({ image: m.id, caption: m.caption })),
+    },
     name: "TC Travel Vietnam",
     hotline: "+84-236-555-0100",
     whatsapp: "+84-903-111-222",
@@ -729,11 +1011,11 @@ async function main() {
         href: "/blog",
         target: "_self",
         children: [
-          { label: "All Guides", href: "/blog", target: "_self" },
-          { label: "Hội An", href: "/blog", target: "_self" },
-          { label: "Huế", href: "/blog", target: "_self" },
-          { label: "Đà Nẵng", href: "/blog", target: "_self" },
-          { label: "Quảng Trị", href: "/blog", target: "_self" },
+          { label: "All Guides", href: "/blog/all", target: "_self" },
+          { label: "Hội An", href: "/blog/destination/hoi-an", target: "_self" },
+          { label: "Huế", href: "/blog/destination/hue", target: "_self" },
+          { label: "Đà Nẵng", href: "/blog/destination/da-nang", target: "_self" },
+          { label: "Quảng Trị", href: "/blog/destination/quang-tri", target: "_self" },
         ],
       },
       { label: "About", href: "/about-us", target: "_self" },
@@ -759,13 +1041,13 @@ async function main() {
       {
         label: "Plan your trip",
         children: [
-          { label: "Hội An", href: "/destinations/hoi-an", target: "_self" },
-          { label: "Huế", href: "/destinations/hue", target: "_self" },
-          { label: "Đà Nẵng", href: "/destinations/da-nang", target: "_self" },
-          { label: "Quảng Trị", href: "/destinations/quang-tri", target: "_self" },
-          { label: "Hà Nội", href: "/destinations/ha-noi", target: "_self" },
-          { label: "Sa Pa", href: "/destinations/sa-pa", target: "_self" },
-          { label: "Hồ Chí Minh City", href: "/destinations/ho-chi-minh-city", target: "_self" },
+          { label: "Hội An", href: "/blog/destination/hoi-an", target: "_self" },
+          { label: "Huế", href: "/blog/destination/hue", target: "_self" },
+          { label: "Đà Nẵng", href: "/blog/destination/da-nang", target: "_self" },
+          { label: "Quảng Trị", href: "/blog/destination/quang-tri", target: "_self" },
+          { label: "Hà Nội", href: "/blog/destination/ha-noi", target: "_self" },
+          { label: "Sa Pa", href: "/blog/destination/sa-pa", target: "_self" },
+          { label: "Hồ Chí Minh City", href: "/blog/destination/ho-chi-minh-city", target: "_self" },
           { label: "Car rentals", href: "/car-rentals", target: "_self" },
         ],
       },
@@ -881,7 +1163,7 @@ async function main() {
   }
 
   console.log("\nSeed/backfill complete.");
-  console.log(`Tours: ${Object.keys(tours).length}; reviews: ${Object.keys(tours).length * 5}; posts: ${postList.length}; blog comments: ${postList.length * 3}`);
+  console.log(`Tours: ${Object.keys(tours).length}; reviews: ${Object.keys(tours).length * 5}; posts: ${postList.length + filteredBlogSeeds.length + provincePostSeeds.length}; blog comments: ${allPostTitles.length * 3}`);
 }
 
 main()
