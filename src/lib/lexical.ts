@@ -1,3 +1,6 @@
+import type { Media } from "@/payload-types";
+import { resolveImage } from "./media";
+
 interface LexicalNode {
   type?: string;
   version?: number;
@@ -6,7 +9,16 @@ interface LexicalNode {
   tag?: string;
   url?: string;
   listType?: "bullet" | "number" | "check";
+  value?: number | Media | null;
+  relationTo?: string;
   children?: LexicalNode[];
+}
+
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 interface LexicalRoot {
@@ -53,7 +65,20 @@ function renderNode(node: LexicalNode): string {
       return `<p>${renderChildren(node.children)}</p>`;
     case "heading": {
       const tag = node.tag && /^h[1-6]$/.test(node.tag) ? node.tag : "h2";
-      return `<${tag}>${renderChildren(node.children)}</${tag}>`;
+      const id = slugify(extractPlainChildren(node.children));
+      const idAttr = id ? ` id="${id}"` : "";
+      return `<${tag}${idAttr}>${renderChildren(node.children)}</${tag}>`;
+    }
+    case "upload": {
+      const media = node.value && typeof node.value === "object" ? node.value : null;
+      if (!media) return "";
+      const resolved = resolveImage(media, media.alt ?? "", { variant: "card" });
+      if (resolved.isFallback) return "";
+      const dims =
+        resolved.width && resolved.height ? ` width="${resolved.width}" height="${resolved.height}"` : "";
+      const img = `<img src="${escapeHtml(resolved.url)}" alt="${escapeHtml(resolved.alt)}"${dims} loading="lazy" decoding="async" />`;
+      const caption = media.alt ? `<figcaption>${escapeHtml(media.alt)}</figcaption>` : "";
+      return `<figure>${img}${caption}</figure>`;
     }
     case "quote":
       return `<blockquote>${renderChildren(node.children)}</blockquote>`;
@@ -75,6 +100,40 @@ function renderNode(node: LexicalNode): string {
 export function lexicalToHtml(value: LexicalRoot | null | undefined): string {
   if (!value || !value.root || !value.root.children) return "";
   return value.root.children.map(renderNode).join("");
+}
+
+export interface TocHeading {
+  id: string;
+  text: string;
+  level: number;
+}
+
+export function lexicalToHeadings(value: LexicalRoot | null | undefined): TocHeading[] {
+  if (!value?.root?.children) return [];
+  const headings: TocHeading[] = [];
+  const walk = (nodes: LexicalNode[]): void => {
+    for (const node of nodes) {
+      if (node.type === "heading" && node.tag && /^h[2-4]$/.test(node.tag)) {
+        const text = extractPlainChildren(node.children);
+        if (text) {
+          headings.push({ id: slugify(text), text, level: parseInt(node.tag[1], 10) });
+        }
+      }
+      if (node.children) walk(node.children);
+    }
+  };
+  walk(value.root.children);
+  return headings;
+}
+
+function extractPlainChildren(children: LexicalNode[] | undefined): string {
+  if (!children) return "";
+  const parts: string[] = [];
+  for (const node of children) {
+    if (node.type === "text" && node.text) parts.push(node.text);
+    if (node.children) parts.push(extractPlainChildren(node.children));
+  }
+  return parts.join("").trim();
 }
 
 export function lexicalToPlainText(value: LexicalRoot | null | undefined, maxLength = 200): string {

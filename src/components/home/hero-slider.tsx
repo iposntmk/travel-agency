@@ -14,7 +14,7 @@ interface Props {
   subtitle: string;
 }
 
-export function IzitourHeroSlider({ slides, title, subtitle }: Props) {
+export function TcTravelHeroSlider({ slides, title, subtitle }: Props) {
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
   const transitionRef = useRef(false);
@@ -93,7 +93,7 @@ export function IzitourHeroSlider({ slides, title, subtitle }: Props) {
             <div className="flex flex-col items-center pt-2">
               <Link
                 href="/customize-tour"
-                className="inline-flex min-h-12 items-center rounded-lg bg-[var(--izitour-orange)] px-7 text-sm font-bold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[var(--izitour-orange-dark)]"
+                className="inline-flex min-h-12 items-center rounded-lg bg-[var(--tctravel-orange)] px-7 text-sm font-bold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[var(--tctravel-orange-dark)]"
               >
                 Start designing my trip
               </Link>
@@ -118,7 +118,7 @@ function Dots({ list, current, goToSlide, mobile = false }: { list: HeroSlide[];
           className={cn(
             "size-2 rounded-full transition-all duration-300 border border-white/30",
             index === current
-              ? "bg-[var(--izitour-primary)]"
+              ? "bg-[var(--tctravel-primary)]"
               : "bg-white hover:bg-white/80"
           )}
           aria-label={`Go to slide ${index + 1}`}

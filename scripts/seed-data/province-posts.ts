@@ -1,0 +1,391 @@
+// Enriched blog posts for 4 provinces (3 each): Quảng Trị, Huế, Đà Nẵng, Hội An
+// Full rich-text content + featured image mappings
+
+export interface ProvincePostSeed {
+  slug: string;
+  title: string;
+  guideCategory: string;
+  readingTime: number;
+  author: string;
+  viewCount: number;
+  updateCount: number;
+  destinationHint: string;
+  tags: string[];
+  /** Full rich-text content as Lexical JSON */
+  content: ReturnType<typeof richTextBuilder>;
+  /** Image mapping: dir (destinations|tours) + file name + alt text */
+  image: { dir: "destinations" | "tours"; file: string; alt: string };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const richTextBuilder = (...blocks: any[]): any => ({
+  root: {
+    type: "root",
+    format: "",
+    indent: 0,
+    version: 1,
+    direction: "ltr",
+    children: blocks,
+  },
+});
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const heading = (level: number, text: string): any => ({
+  type: "heading",
+  version: 1,
+  tag: `h${level}`,
+  direction: "ltr",
+  format: "",
+  indent: 0,
+  children: [{ type: "text", version: 1, text }],
+});
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const paragraph = (text: string): any => ({
+  type: "paragraph",
+  version: 1,
+  direction: "ltr",
+  format: "",
+  indent: 0,
+  children: [{ type: "text", version: 1, text }],
+});
+
+export const provincePostSeeds: ProvincePostSeed[] = [
+  // ── HỘI AN (3 posts) ──
+  {
+    slug: "traditional-villages-in-hoi-an-into-the-heart-of-local-life",
+    title: "Traditional Villages in Hội An – Experience Life as a Local",
+    guideCategory: "do",
+    readingTime: 9,
+    author: "VM Travel",
+    viewCount: 2500,
+    updateCount: 1,
+    destinationHint: "hoi-an",
+    tags: ["hoi-an", "village", "culture", "local-life"],
+    image: { dir: "destinations", file: "hoian2.webp", alt: "Hội An ancient town lantern streets at dusk" },
+    content: richTextBuilder(
+      heading(2, "Beyond the Old Town: Hội An's Traditional Villages"),
+      paragraph("Hội An is famous for its lantern-lit streets, but its true soul lies beyond the Old Town. In every traditional village, life continues as it has for generations – farmers tend lush vegetable gardens, craftspeople shape pottery and wood, and fishermen cast nets along the Thu Bồn River."),
+      paragraph("Exploring these villages gives you a genuine glimpse into Vietnamese rural life that you simply cannot experience walking through the tourist streets. The pace slows down, the air smells of herbs and earth, and locals greet you with genuine curiosity rather than practiced sales pitches."),
+      paragraph("This guide covers the best traditional villages around Hội An – where they are, what to see, how to visit respectfully, and how to combine them into a half-day or full-day cycling route."),
+      heading(2, "Trà Quế Vegetable Village"),
+      paragraph("Just 3 km northeast of Hội An Old Town lies Trà Quế, a small farming village that has supplied fresh herbs and vegetables to the region for over 300 years. The village sits on a fertile strip of land between the Thu Bồn River and the East Sea, giving its soil a unique mineral composition that makes the herbs especially fragrant."),
+      paragraph("Visitors can walk through the garden beds, learn how farmers use seaweed from the river as natural fertiliser, and even try their hand at planting or watering. Many local cooking classes start with a visit here to pick fresh ingredients – basil, mint, Vietnamese coriander, and the distinctive 'rau thơm' that defines Hội An cuisine."),
+      heading(2, "Thanh Hà Pottery Village"),
+      paragraph("About 3 km west of town, Thanh Hà has produced ceramic ware since the 16th century. Unlike modern factory production, the village still uses traditional wheels and kilns fired by local wood. You can watch potters shape clay into bowls, vases, and miniature lanterns, and try the wheel yourself under their guidance."),
+      paragraph("The village also has a small museum showcasing the history of pottery in the region, with pieces dating back to the Chăm civilization. The entry fee is modest and directly supports the community."),
+      heading(2, "Kim Bồng Carpentry Village"),
+      paragraph("Across the Thu Bồn River, Kim Bồng is where Hội An's master carpenters have lived and worked for over 500 years. These craftspeople built and restored many of the Old Town's iconic structures, including the Japanese Covered Bridge and ancient merchant houses."),
+      paragraph("Today, the village produces everything from intricate wooden sculptures to furniture and decorative panels. Watching a craftsman carve a wooden panel by hand with no power tools is a humbling experience. You can purchase small pieces directly from the workshops – fair prices, no middleman."),
+      heading(2, "How to Visit"),
+      paragraph("The best way to explore these villages is by bicycle. Hội An is flat, traffic is light on the village roads, and you can cover all three in a single half-day loop. Many local tour operators offer guided cycling tours that include village stops, but you can also rent a bike (about 50,000 VND) and follow the signed paths yourself. Morning visits (7:00–10:00) are ideal before the heat sets in and when farmers are most active in the fields.")
+    ),
+  },
+  {
+    slug: "hoi-an-memories-show-and-impression-theme-park",
+    title: "Hội An Memories Show and Impression Theme Park",
+    guideCategory: "do",
+    readingTime: 8,
+    author: "VM Travel",
+    viewCount: 2500,
+    updateCount: 1,
+    destinationHint: "hoi-an",
+    tags: ["hoi-an", "show", "nightlife", "culture"],
+    image: { dir: "destinations", file: "hoian2.webp", alt: "Hội An Memories show outdoor performance" },
+    content: richTextBuilder(
+      heading(2, "Vietnam's Largest Outdoor Performance"),
+      paragraph("Hội An Memories Show is a spectacular outdoor performance held at the Hội An Impression Theme Park, a cultural entertainment complex on the outskirts of the ancient town. With a cast of over 500 performers, the show tells the 400-year story of Hội An – from its birth as a trading port to its golden age and present-day heritage."),
+      paragraph("The show is staged on a massive floating stage set against the Thu Bồn River, using state-of-the-art lighting, sound, and special effects. It has been recognised as one of Vietnam's top cultural performances and attracts thousands of visitors nightly."),
+      heading(2, "What to Expect"),
+      paragraph("The performance is divided into five acts, each representing a chapter in Hội An's history: the early settlers, the arrival of foreign traders (Chinese, Japanese, Dutch, and Portuguese), the blending of cultures, the war years, and the modern revival as a UNESCO World Heritage site."),
+      paragraph("Traditional music, dance, acrobatics, and stunning costume design bring each era to life. The show runs approximately 60 minutes and is performed entirely in Vietnamese, but the visual storytelling is so powerful that language is no barrier to enjoyment."),
+      heading(2, "The Theme Park"),
+      paragraph("Before the show, visitors can explore the Impression Theme Park, which recreates Hội An's architectural styles from different periods. The park features traditional houses, craft workshops, food stalls, and performance spaces where actors in period costume interact with guests."),
+      paragraph("Arrive at least 90 minutes before showtime to walk the park, sample local snacks, watch mini-performances, and take photos in the beautifully lit gardens as dusk settles."),
+      heading(2, "Practical Information"),
+      paragraph("The show runs nightly at 19:30 (check seasonal schedule). Tickets range from 300,000–600,000 VND depending on seating zone. The park is about 4 km from Hội An Old Town – take a taxi or book a transfer. Combine with dinner at a riverside restaurant before or after for a complete evening experience.")
+    ),
+  },
+  {
+    slug: "cham-islands-an-attractive-tourist-destination-in-hoi-an",
+    title: "Cham Islands – An Attractive Tourist Destination in Hội An",
+    guideCategory: "do",
+    readingTime: 10,
+    author: "VM Travel",
+    viewCount: 3000,
+    updateCount: 3,
+    destinationHint: "hoi-an",
+    tags: ["hoi-an", "island", "beach", "snorkeling", "nature"],
+    image: { dir: "destinations", file: "hoian2.webp", alt: "Cham Islands white sand beach and clear water near Hội An" },
+    content: richTextBuilder(
+      heading(2, "Escape to Cù Lao Chàm"),
+      paragraph("The Cham Islands (Cù Lao Chàm) are a cluster of eight small islands about 18 km off the coast of Hội An. Designated a UNESCO Biosphere Reserve in 2009, the islands offer pristine beaches, coral reefs, traditional fishing villages, and a pace of life that feels worlds away from the mainland."),
+      paragraph("A day trip to the Cham Islands is one of the most popular excursions from Hội An, and for good reason. The snorkelling is excellent, the seafood is fresh and cheap, and the island atmosphere encourages genuine relaxation."),
+      heading(2, "Getting There"),
+      paragraph("Speedboats depart from Cửa Đại Beach in Hội An and take about 30–45 minutes to reach the main island, Hòn Lao. Return tickets cost around 300,000–500,000 VND per person. Wooden boats are also available for a slower, more traditional crossing (about 90 minutes)."),
+      paragraph("Most tour operators in Hội An offer day trips that include boat transfer, snorkelling gear, lunch, and a guided walk through the island village. Private charters can also be arranged for groups."),
+      heading(2, "Things to Do"),
+      paragraph("Snorkelling is the main attraction, with healthy coral reefs teeming with tropical fish around Hòn Mồ and Hòn Tai. The best months are March through August when seas are calm and visibility is high."),
+      paragraph("Bãi Xếp and Bãi Ông are the two main beaches on Hòn Lao – both have soft white sand, clear water, and simple seafood restaurants where you can enjoy grilled fish, squid, and crab caught that morning."),
+      paragraph("A walk through the village on Hòn Lao reveals a small temple, a local market, and the island's iconic well (Giếng Chăm) whose fresh water has supported island life for centuries."),
+      heading(2, "Environmental Note"),
+      paragraph("The Cham Islands are a strict no-plastic zone. Visitors are asked to bring reusable water bottles and avoid single-use plastics. The island community takes environmental protection seriously, and tourists should respect the rules that keep this biosphere reserve beautiful.")
+    ),
+  },
+
+  // ── HUẾ (3 posts) ──
+  {
+    slug: "what-to-eat-in-hue-11-must-try-hue-food-dishes-local-spots",
+    title: "What to Eat in Huế: 11 Must-Try Huế Food Dishes & Local Spots",
+    guideCategory: "eat",
+    readingTime: 12,
+    author: "VM Travel",
+    viewCount: 3100,
+    updateCount: 3,
+    destinationHint: "hue",
+    tags: ["hue", "food", "cuisine", "eating"],
+    image: { dir: "destinations", file: "hue2.webp", alt: "Huế Imperial Citadel and royal cuisine" },
+    content: richTextBuilder(
+      heading(2, "Huế – Vietnam's Royal Kitchen"),
+      paragraph("Huế is more than just a former imperial capital – it's one of Vietnam's most fascinating culinary destinations. The city's food culture was shaped by the Nguyễn Dynasty's royal court, which demanded exquisite, beautifully presented dishes with complex flavours. Today, that tradition lives on in family kitchens, street stalls, and garden restaurants across the city."),
+      paragraph("This guide covers 11 dishes you absolutely must try when visiting Huế, plus where to find the best versions and what makes each one special."),
+      heading(2, "1. Bún Bò Huế"),
+      paragraph("The most famous dish to come out of this city. Unlike the lighter phở of the north, Bún Bò Huế is a bold, aromatic beef noodle soup with a deep reddish broth made from beef bones, lemongrass, and annatto oil. It is served with thick round rice noodles, tender slices of beef shank, and often pork hock or congealed pig blood cubes."),
+      paragraph("The best bowls come from small street-side stalls in the morning. Try Bún Bò Huế on Nguyễn Du Street or the stalls around Đông Ba Market."),
+      heading(2, "2. Bánh Bèo"),
+      paragraph("These tiny steamed rice cakes are a Huế specialty. They are served in small ceramic bowls topped with minced shrimp, crispy fried shallots, and scallion oil. You eat them by spooning a small amount of fish sauce over each cake and sliding the entire thing into your mouth in one go."),
+      heading(2, "3. Bánh Khoái"),
+      paragraph("Huế's answer to the bánh xèo (sizzling pancake). The batter is richer and the pancake is smaller, thicker, and deep-fried for extra crunch. It is filled with shrimp, pork, bean sprouts, and served with fresh herbs and a sesame-peanut dipping sauce that sets it apart from other regional versions."),
+      heading(2, "4. Bánh Nậm"),
+      paragraph("A flat, translucent rice cake steamed in banana leaves, filled with seasoned minced shrimp and pork, then topped with fried shallots. The banana leaf gives it a subtle fragrance, and the texture is silky and delicate."),
+      heading(2, "5. Cơm Hến"),
+      paragraph("A humble but incredibly flavourful rice dish topped with baby clams, crispy pork skin, roasted peanuts, fresh herbs, and a savoury clam broth poured over the top. It is the ultimate Huế breakfast for locals and costs less than 15,000 VND at market stalls."),
+      heading(2, "Where to Eat in Huế"),
+      paragraph("For the best introduction to Huế food, head to Đông Ba Market in the morning and work your way through the stalls. For a sit-down experience, restaurants like Ý Như and Huyền Anh serve excellent versions of local classics. For a truly unique experience, book a cooking class that starts with a market visit.")
+    ),
+  },
+  {
+    slug: "attractions-in-hue-7-top-things-to-do-in-hue-city",
+    title: "Attractions in Huế – 7 Top Things To Do in Huế City",
+    guideCategory: "do",
+    readingTime: 9,
+    author: "VM Travel",
+    viewCount: 2400,
+    updateCount: 1,
+    destinationHint: "hue",
+    tags: ["hue", "attractions", "citadel", "culture"],
+    image: { dir: "tours", file: "hue-dai-noi-2.webp", alt: "Huế Imperial Citadel and Perfume River" },
+    content: richTextBuilder(
+      heading(2, "Discovering the Ancient Capital"),
+      paragraph("Huế, the former imperial capital of Vietnam, is a city that wears its history with quiet dignity. The Perfume River (Sông Hương) flows through the heart of the city, flanked by ancient citadels, pagodas, royal tombs, and lush gardens. A visit to Huế is a journey through Vietnam's royal past, best experienced at a relaxed pace."),
+      paragraph("Here are the top 7 attractions in Huế that no visitor should miss."),
+      heading(2, "1. The Imperial Citadel (Đại Nội)"),
+      paragraph("The centrepiece of Huế, the Imperial Citadel is a vast walled complex that once housed the Nguyễn Dynasty's royal court. Construction began in 1804 under Emperor Gia Long and took 30 years to complete. Inside, you will find the Purple Forbidden City (reserved for the emperor), beautiful palaces, ornate gates, and tranquil gardens."),
+      paragraph("Allow at least 2–3 hours to explore the grounds. The ticket includes access to the main buildings and the Hue Royal Antiquities Museum."),
+      heading(2, "2. Thiên Mụ Pagoda"),
+      paragraph("Huế's most iconic religious site, the seven-storey Thiên Mụ Pagoda sits on the banks of the Perfume River about 4 km from the citadel. Built in 1601, it is the oldest pagoda in Huế and is considered the unofficial symbol of the city."),
+      heading(2, "3. Royal Tombs"),
+      paragraph("The Nguyễn emperors built elaborate tombs that blend Vietnamese, Chinese, and European architectural styles. The most impressive are the Tomb of Khải Định (with stunning mosaic work), the Tomb of Minh Mạng (set in a serene forest), and the Tomb of Tự Đức (the most poetic and romantic)."),
+      heading(2, "4. Perfume River Cruise"),
+      paragraph("A dragon boat cruise on the Perfume River is a quintessential Huế experience. Sunset cruises are especially popular, offering golden-hour views of the riverbanks, a stop at Thiên Mụ Pagoda, and often traditional music performances on board."),
+      heading(2, "5. Đông Ba Market"),
+      paragraph("The largest market in Huế, Đông Ba is a sensory explosion of colours, sounds, and smells. Browse hundreds of stalls selling fresh produce, flowers, textiles, ceramics, and street food. It is the best place to try local dishes like bún bò Huế, bánh bèo, and cơm hến."),
+      heading(2, "6. Khải Định Tomb"),
+      paragraph("The most unique of Huế's royal tombs, Khải Định's final resting place is a fusion of Vietnamese and European architecture. The interior is a dazzling display of mosaic murals made from broken glass and ceramic pieces."),
+      heading(2, "7. Minh Mang Tomb"),
+      paragraph("Set in a tranquil forest 12 km from the city, Minh Mang's tomb is the most harmonious and classically Vietnamese of the royal tombs. The architecture blends perfectly with the natural landscape – lakes, gardens, and pine trees create a serene atmosphere ideal for quiet reflection.")
+    ),
+  },
+  {
+    slug: "hue-tombs-tour-all-information-of-famous-royal-tomb-in-hue",
+    title: "Huế Tombs Tour – Complete Guide to the Royal Tombs",
+    guideCategory: "do",
+    readingTime: 9,
+    author: "VM Travel",
+    viewCount: 2100,
+    updateCount: 0,
+    destinationHint: "hue",
+    tags: ["hue", "tombs", "royal", "history", "architecture"],
+    image: { dir: "tours", file: "hue-khai-dinh-mausoleum-1.webp", alt: "Khai Dinh Tomb mosaic interior in Huế" },
+    content: richTextBuilder(
+      heading(2, "Exploring the Nguyễn Dynasty's Royal Tombs"),
+      paragraph("The Nguyễn Dynasty (1802–1945) built seven royal tombs scattered across the hills and forests surrounding Huế. Each emperor designed his own tomb during his lifetime, resulting in a fascinating collection of architectural styles that reflect their individual personalities, tastes, and philosophies."),
+      paragraph("A tombs tour is one of the most rewarding day trips from Huế city centre. This guide covers the most significant tombs, how to visit them efficiently, and the stories behind each emperor."),
+      heading(2, "Minh Mạng Tomb (1841–1843)"),
+      paragraph("Emperor Minh Mạng was a strict Confucian who expanded Vietnam's territory and modernised its administration. His tomb reflects his orderly, principled character. Built symmetrically along a central axis, the complex includes lakes, gardens, courtyards, and a pavilion where offerings are still made."),
+      paragraph("The tomb is located 12 km from Huế on the west bank of the Perfume River. A boat trip combined with a short walk is the most atmospheric way to arrive."),
+      heading(2, "Tự Đức Tomb (1864–1867)"),
+      paragraph("Tự Đức was the most romantic and scholarly of the Nguyễn emperors. His tomb is the most poetic, featuring a serene lake, an island pavilion where he wrote poetry, and a hunting ground. The emperor used the complex as a second palace during his lifetime, escaping the court's formality."),
+      heading(2, "Khải Định Tomb (1920–1931)"),
+      paragraph("The most visually striking of all the tombs. Emperor Khải Định was influenced by French culture, and his tomb is a unique blend of Vietnamese and European Baroque architecture. The interior is covered in intricate mosaic murals made from broken porcelain, glass, and ceramic pieces."),
+      paragraph("Khải Định's tomb took 11 years to build and was fiercely criticised at the time for its high cost and foreign influences. Today it is the most photographed tomb in Huế."),
+      heading(2, "Practical Tips"),
+      paragraph("Most visitors can see 2–3 tombs in a half-day tour. Hiring a private car with driver is the most flexible option (about 800,000 VND for a half day). Start early – tombs open at 7:00 and the best light for photos is before 10:00. Wear comfortable walking shoes and bring water, as the grounds are extensive.")
+    ),
+  },
+
+  // ── ĐÀ NẴNG (3 posts) ──
+  {
+    slug: "top-10-best-things-to-do-in-da-nang-2026-travel-guide",
+    title: "Top 10 Best Things to Do in Đà Nẵng – 2026 Travel Guide",
+    guideCategory: "do",
+    readingTime: 9,
+    author: "VM Travel",
+    viewCount: 3400,
+    updateCount: 2,
+    destinationHint: "da-nang",
+    tags: ["da-nang", "attractions", "beach", "culture"],
+    image: { dir: "destinations", file: "dest-6.webp", alt: "Đà Nẵng coastal city and beach" },
+    content: richTextBuilder(
+      heading(2, "Đà Nẵng – Vietnam's Most Livable City"),
+      paragraph("Đà Nẵng is Central Vietnam's dynamic coastal hub, offering the perfect blend of beach relaxation, cultural exploration, outdoor adventure, and urban energy. With its long sandy beaches, the majestic Marble Mountains, the famous Bà Nà Hills, and some of the best seafood in Vietnam, Đà Nẵng has become a must-visit destination for travellers of all types."),
+      paragraph("This guide covers the top 10 things to do in Đà Nẵng for 2026, whether you have 2 days or a full week."),
+      heading(2, "1. Bà Nà Hills & Golden Bridge"),
+      paragraph("The number one attraction in the region. Bà Nà Hills is a mountain resort complex perched at 1,487 metres above sea level, accessible by a record-breaking cable car system. The highlight is the Golden Bridge, a massive pedestrian bridge held aloft by two giant stone hands."),
+      paragraph("Beyond the bridge, you will find French village architecture, a wax museum, indoor amusement park, gardens, and countless photo opportunities. Allocate a full day and book early to avoid the biggest crowds."),
+      heading(2, "2. Marble Mountains (Ngũ Hành Sơn)"),
+      paragraph("Five limestone and marble hills rise dramatically from the coastal plain just 8 km south of Đà Nẵng. Each hill is named after a natural element: Kim (Metal), Mộc (Wood), Thuỷ (Water), Hoả (Fire), and Thổ (Earth). Thủy Sơn is the largest and most accessible, with caves, pagodas, and panoramic viewpoints."),
+      heading(2, "3. Mỹ Khê Beach"),
+      paragraph("Đà Nẵng's most famous beach, stretching nearly 10 km along the coastline. Forbes magazine named it one of the world's most attractive beaches. The water is clean and swimmable year-round, and the beachfront is lined with seafood restaurants, cafes, and resorts."),
+      heading(2, "4. Sơn Trà Peninsula"),
+      paragraph("A protected nature reserve just 10 km from the city centre, Sơn Trà is home to the rare red-shanked douc langur, diverse birdlife, and the massive Linh Ứng Pagoda with its 67-metre-tall Goddess of Mercy statue."),
+      heading(2, "5. Dragon Bridge"),
+      paragraph("Đà Nẵng's most iconic modern landmark. The 666-metre bridge crosses the Hàn River in the shape of a golden dragon. Every Saturday and Sunday night at 21:00, the dragon breathes fire and water in a spectacular 15-minute show."),
+      heading(2, "6 – 10. More to Explore"),
+      paragraph("Other must-visit attractions include: the Museum of Chăm Sculpture (home to the world's largest collection of Chăm artifacts), the Hàn River waterfront promenade (perfect for evening walks), Bắc Mỹ An Night Market (street food paradise), the ancient village of Phong Nam, and the Bà Nà Hills wine cellar (the oldest in Vietnam).")
+    ),
+  },
+  {
+    slug: "golden-bridge-da-nang-a-vietnamese-masterpiece",
+    title: "Golden Bridge Đà Nẵng – A Vietnamese Masterpiece",
+    guideCategory: "do",
+    readingTime: 7,
+    author: "VM Travel",
+    viewCount: 3500,
+    updateCount: 4,
+    destinationHint: "da-nang",
+    tags: ["da-nang", "golden-bridge", "ba-na-hills", "architecture"],
+    image: { dir: "destinations", file: "dest-1.webp", alt: "Golden Bridge at Bà Nà Hills, Đà Nẵng" },
+    content: richTextBuilder(
+      heading(2, "The Bridge in the Hands of the Gods"),
+      paragraph("The Golden Bridge (Cầu Vàng) at Bà Nà Hills has become Vietnam's most Instagrammed landmark since its opening in June 2018. Designed by TA Landscape Architecture, the 150-metre pedestrian bridge appears to be held aloft by two massive stone hands emerging from the mountainside, creating the illusion of the gods themselves supporting the structure."),
+      paragraph("The bridge sits at 1,414 metres above sea level, offering panoramic views of the surrounding mountains, forest, and distant coastline. On clear days, you can see all the way to Đà Nẵng Beach and the Cham Islands."),
+      heading(2, "Design and Symbolism"),
+      paragraph("The hands are constructed from fibreglass with a weathered, mossy finish designed to look ancient. The bridge itself is painted a warm golden-yellow, lined with purple Lobelia chrysanthemums that bloom year-round and create a striking colour contrast against the green forest."),
+      paragraph("The designers chose the golden colour to represent the emperor's royal yellow, connecting the modern structure to Vietnam's imperial heritage. The hands reference the giant gods from Buddhist mythology, symbolically offering prosperity and safe passage."),
+      heading(2, "When to Visit"),
+      paragraph("The best time to visit is early morning (opening at 7:00) when the crowds are smallest and the light is soft. Midday and afternoon can be very busy with tour groups. Weekdays are significantly quieter than weekends."),
+      paragraph("Weather matters – the bridge is often shrouded in cloud between October and January. The ideal months are March through August when skies are clearest."),
+      heading(2, "Getting There"),
+      paragraph("Bà Nà Hills is located about 40 km southwest of Đà Nẵng city centre, a 45–60 minute drive. The cable car ride from the base station to the bridge takes about 20 minutes and is itself a world-class experience – a Guinness World Record holder for the longest non-stop single-track cable car.")
+    ),
+  },
+  {
+    slug: "experience-the-nightlife-in-da-nang",
+    title: "Experience the Nightlife in Đà Nẵng",
+    guideCategory: "do",
+    readingTime: 8,
+    author: "VM Travel",
+    viewCount: 3100,
+    updateCount: 1,
+    destinationHint: "da-nang",
+    tags: ["da-nang", "nightlife", "food", "entertainment"],
+    image: { dir: "destinations", file: "dest-3.webp", alt: "Đà Nẵng nightlife and Dragon Bridge" },
+    content: richTextBuilder(
+      heading(2, "Đà Nẵng After Dark"),
+      paragraph("When the sun sets, Đà Nẵng transforms into a vibrant nightlife destination. The city's entertainment scene has grown dramatically in recent years, offering something for every taste – from sophisticated rooftop bars and live music venues to bustling night markets and riverside beer streets."),
+      paragraph("Here is your guide to experiencing the best of Đà Nẵng nightlife."),
+      heading(2, "Dragon Bridge Show"),
+      paragraph("The undisputed highlight of Đà Nẵng evenings. Every Saturday and Sunday at 21:00, the Dragon Bridge comes alive with a spectacular fire and water show. The dragon's head breathes bursts of fire, followed by powerful jets of water, creating a mesmerising display that draws crowds along both sides of the Hàn River."),
+      paragraph("Arrive by 20:30 to secure a good viewing spot. The best vantage points are on the bridge itself (closed to traffic during the show), or at the riverside cafes on Trần Hưng Đạo Street."),
+      heading(2, "Bạch Đằng Street – Riverside Nightlife"),
+      paragraph("The Hàn River waterfront on Bạch Đằng Street is the heart of Đà Nẵng's nightlife. The street is pedestrianised in the evening and filled with outdoor cafes, bars, and restaurants. Grab a plastic stool at a bia hơi (draught beer) spot for 5,000 VND a glass and watch the city buzz around you."),
+      heading(2, "Night Markets"),
+      paragraph("The Sơn Trà Night Market near the Dragon Bridge is the most popular, with dozens of food stalls serving local specialties, grilled seafood, and international options."),
+      heading(2, "Sky Bars and Lounges"),
+      paragraph("For panoramic night views, head to the rooftop bars at the city's top hotels. The Sky36 Bar at Novotel (36th floor) offers a 360-degree view of the city and coast."),
+      heading(2, "Seafood Dinner by the Beach"),
+      paragraph("No Đà Nẵng evening is complete without a seafood dinner on Mỹ Khê Beach. Restaurants like Mỹ Hạnh and Bãi Tắm Mỹ Khê serve fresh crab, prawns, squid, fish, and clams, grilled or steamed to order. The ocean breeze, sound of waves, and cold beer create an unforgettable dining experience.")
+    ),
+  },
+
+  // ── QUẢNG TRỊ (3 posts) ──
+  {
+    slug: "unforgetable-memory-with-dmz-tour-from-hue",
+    title: "Unforgettable Memory with DMZ Tour from Huế",
+    guideCategory: "do",
+    readingTime: 9,
+    author: "VM Travel",
+    viewCount: 2400,
+    updateCount: 2,
+    destinationHint: "quang-tri",
+    tags: ["quang-tri", "dmz", "history", "war-memorials"],
+    image: { dir: "destinations", file: "quang-tri2.webp", alt: "Quảng Trị DMZ historical site" },
+    content: richTextBuilder(
+      heading(2, "A Journey Through History"),
+      paragraph("The DMZ (Demilitarized Zone) tour from Huế to Quảng Trị is one of Vietnam's most powerful travel experiences. Unlike the beach resorts and lantern-lit streets elsewhere in Central Vietnam, this journey takes you through the landscape where some of the most significant events of the Việt Nam War took place."),
+      paragraph("This is not a 'fun' day out – it is a respectful, educational journey that gives visitors a deeper understanding of Vietnam's modern history and the resilience of its people. For travellers who care about context and meaning, the DMZ tour is an essential addition to any Central Vietnam itinerary."),
+      heading(2, "Vĩnh Mốc Tunnels"),
+      paragraph("The centrepiece of any DMZ tour. Unlike the famous Củ Chi Tunnels near Ho Chi Minh City, Vĩnh Mốc was not a military base – it was an underground village where families lived for years to escape continuous bombing. The tunnel system runs three levels deep (23 metres underground) and extends for nearly 2 km along the coast."),
+      paragraph("Walking through the narrow, dimly lit tunnels gives you a visceral sense of what life was like during the war. The site includes a museum with photographs and artifacts, and a small beach area where American ships once landed supplies."),
+      heading(2, "Hiền Lương Bridge and Bến Hải River"),
+      paragraph("This bridge across the Bến Hải River marked the dividing line between North and South Vietnam from 1954 to 1975. The river was the 17th Parallel – the temporary boundary established by the Geneva Accords."),
+      paragraph("Visitors can walk across the bridge today and visit the memorial sites on both sides. The Hiền Lương Tower on the northern bank served as a symbol of reunification."),
+      heading(2, "Quảng Trị Ancient Citadel"),
+      paragraph("The Quảng Trị Citadel was the site of a brutal 81-day siege in 1972 when North Vietnamese forces attempted to capture the provincial capital. Today, the citadel walls are pockmarked with shell holes, and the surrounding area is dotted with war memorials and cemeteries."),
+      heading(2, "Practical Information"),
+      paragraph("DMZ tours depart from Huế or Đông Hà (Quảng Trị city) and typically run 8–10 hours. A private car with driver and English-speaking guide costs around 1,500,000–2,000,000 VND. Bring water, sunscreen, comfortable walking shoes, and a respectful attitude.")
+    ),
+  },
+  {
+    slug: "vinh-moc-tunnels-complete-visitor-guide",
+    title: "Vĩnh Mốc Tunnels – Complete Visitor Guide",
+    guideCategory: "do",
+    readingTime: 8,
+    author: "TC Travel Vietnam",
+    viewCount: 1800,
+    updateCount: 0,
+    destinationHint: "quang-tri",
+    tags: ["quang-tri", "vinh-moc", "tunnels", "history", "dmz"],
+    image: { dir: "destinations", file: "quang-tri2.webp", alt: "Vĩnh Mốc Tunnels entrance in Quảng Trị" },
+    content: richTextBuilder(
+      heading(2, "The Underground Village"),
+      paragraph("Vĩnh Mốc Tunnels are one of Vietnam's most remarkable wartime sites – not a military fortification, but an underground village where 1,600 people lived, worked, raised children, and even celebrated weddings while bombs rained above them."),
+      paragraph("Located in the Vĩnh Linh district of Quảng Trị Province, the tunnel complex was dug entirely by hand over two years (1965–1967). It served as a safe haven for local communities living in one of the most heavily bombed areas of the Việt Nam War."),
+      heading(2, "History and Context"),
+      paragraph("Vĩnh Linh was located just north of the 17th Parallel (the DMZ dividing line) and was subjected to relentless aerial bombardment during the war. The people of Vĩnh Mốc village decided to dig themselves underground rather than evacuate. Using only basic tools, they tunnelled through the coastal clay to create a complete subterranean community."),
+      paragraph("The tunnel system runs three levels deep: the first level is 12 metres underground, the second at 15 metres, and the third at 23 metres. This depth provided complete protection against all but the largest bombs."),
+      heading(2, "What You Will See"),
+      paragraph("Nearly 2 km of tunnels are open to visitors. The layout includes living chambers, a maternity room (17 babies were born underground!), kitchens, wells, storage rooms, a medical station, and meeting halls. The tunnels connect to the coast via hidden exits that allowed access to the sea for fishing."),
+      paragraph("Visitors can walk through a 200-metre section of the original tunnel in the first level, which has been reinforced and fitted with electric lighting."),
+      heading(2, "How to Visit"),
+      paragraph("Vĩnh Mốc is about 35 km north of Đông Hà (Quảng Trị city) and 75 km from Huế. Most visitors combine it with other DMZ sites like Hiền Lương Bridge and the Quảng Trị Citadel in a full-day tour. Entry fee is 40,000 VND. Guided tours are available in Vietnamese and English. Allow 60–90 minutes for the tunnel visit plus 30 minutes for the museum and beach area.")
+    ),
+  },
+  {
+    slug: "quang-tri-war-memorials-historical-journey",
+    title: "Quảng Trị War Memorials – A Historical Journey Through the DMZ",
+    guideCategory: "do",
+    readingTime: 8,
+    author: "TC Travel Vietnam",
+    viewCount: 1500,
+    updateCount: 1,
+    destinationHint: "quang-tri",
+    tags: ["quang-tri", "war-memorials", "history", "dmz", "culture"],
+    image: { dir: "destinations", file: "dest-2.webp", alt: "War memorial and flag tower in Quảng Trị" },
+    content: richTextBuilder(
+      heading(2, "Remembering the Past in Quảng Trị"),
+      paragraph("Quảng Trị Province holds a unique place in Vietnam's modern history. As the region that was geographically divided by the 17th Parallel, it experienced some of the most intense conflict of the Việt Nam War. Today, the province is home to a network of war memorials, cemeteries, and historical sites that tell the story of this turbulent period."),
+      paragraph("This guide covers the key memorials in Quảng Trị that travellers with an interest in history and remembrance should include on their journey."),
+      heading(2, "The Flag Tower (Cột Cờ Quảng Trị)"),
+      paragraph("Standing at 40 metres tall, the Flag Tower of Quảng Trị is a powerful symbol of national reunification. Built on the grounds of the former citadel, it was erected after the war to commemorate the sacrifices made during the 81-day siege. Climbing the tower offers a panoramic view of the surrounding landscape – the citadel, the river, and the vast cemeteries that dot the countryside."),
+      heading(2, "Trường Sơn National Cemetery"),
+      paragraph("This is the largest war cemetery in Vietnam, containing over 10,000 graves of soldiers who died along the Hồ Chí Minh Trail. The cemetery is immaculately maintained, with rows of white headstones stretching across rolling green hills. It is a profoundly moving place, especially in the late afternoon when the low sun casts long shadows between the graves."),
+      heading(2, "Đường 9 (Route 9) Memorials"),
+      paragraph("National Route 9 runs from Đông Hà west to Lao Bảo border crossing, following the historic supply route used during the war. Along this road, you will find several memorials marking key locations: the Khe Sanh Combat Base, the Tà Cơn airstrip, and the Húc Nghì junction."),
+      paragraph("Khe Sanh was the site of a 77-day siege in 1968 that became one of the most famous battles of the war."),
+      heading(2, "Planning Your Visit"),
+      paragraph("Most visitors to Quảng Trị's war memorials spend one full day exploring the province from Đông Hà or as a long day trip from Huế. A private car with driver and guide is recommended, especially for older travellers or families. Start early to beat the heat and pack plenty of water – Quảng Trị can be very hot between April and August.")
+    ),
+  },
+];

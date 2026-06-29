@@ -335,6 +335,30 @@ export interface Tour {
   durationDays?: number | null;
   durationText?: string | null;
   routeSummary?: string | null;
+  startEnd?: string | null;
+  travelStyle?: string | null;
+  guideLanguages?: string | null;
+  mapImage?: (number | null) | Media;
+  highlightIntro?: string | null;
+  highlights?:
+    | {
+        title: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  inclusions?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  exclusions?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
   groupSizeMin?: number | null;
   groupSizeMax?: number | null;
   categories?: (number | ProductCategory)[] | null;
@@ -371,6 +395,9 @@ export interface Tour {
   itinerary?:
     | {
         time?: string | null;
+        location?: string | null;
+        distance?: string | null;
+        title?: string | null;
         activity?: {
           root: {
             type: string;
@@ -386,10 +413,30 @@ export interface Tour {
           };
           [k: string]: unknown;
         } | null;
+        note?: string | null;
+        included?:
+          | {
+              item: string;
+              id?: string | null;
+            }[]
+          | null;
+        hotelName?: string | null;
+        hotelStars?: number | null;
+        hotelRoom?: string | null;
         id?: string | null;
       }[]
     | null;
   addOns?: (number | Partner)[] | null;
+  /**
+   * Short Q&A pairs surfaced to travellers and emitted as FAQPage structured data for AI/search engines.
+   */
+  faqs?:
+    | {
+        question: string;
+        answer: string;
+        id?: string | null;
+      }[]
+    | null;
   seo?: {
     metaTitle?: string | null;
     metaDescription?: string | null;
@@ -487,6 +534,18 @@ export interface Post {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Author display name
+   */
+  author?: string | null;
+  /**
+   * Total page views
+   */
+  viewCount?: number | null;
+  /**
+   * Number of content updates
+   */
+  updateCount?: number | null;
   featured?: boolean | null;
   /**
    * Estimated reading time in minutes
@@ -898,6 +957,79 @@ export interface SiteSetting {
     };
   };
   /**
+   * Tabs and dropdown options for the search box under the hero. Enable/disable the whole box in Homepage sections → search.
+   */
+  searchForm?: {
+    /**
+     * Header buttons. Leave empty for the default Tours / Halong / Mekong tabs.
+     */
+    tabs?:
+      | {
+          /**
+           * e.g. "Halong Bay Cruises"
+           */
+          label: string;
+          /**
+           * Where the Search button sends the visitor.
+           */
+          target: 'tours' | 'cruises';
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Leave empty to use built-in defaults.
+     */
+    tourTypes?:
+      | {
+          label: string;
+          /**
+           * Tours.type slug, e.g. "paid-private"
+           */
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Leave empty to use built-in defaults.
+     */
+    tourDurations?:
+      | {
+          label: string;
+          /**
+           * "min-max" day range, e.g. "6-10" or "16-"
+           */
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Leave empty to use built-in defaults.
+     */
+    cruiseNights?:
+      | {
+          label: string;
+          /**
+           * Integer night count, e.g. "2"
+           */
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Leave empty to use built-in defaults.
+     */
+    styles?:
+      | {
+          label: string;
+          /**
+           * product-category slug, e.g. "culture"
+           */
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
    * Configure external travel-partner (OTA) widgets. Add an affiliate URL template per provider to earn commission without a code change.
    */
   ota?: {
@@ -997,6 +1129,27 @@ export interface SiteSetting {
       subtitle?: string | null;
     };
   };
+  blogMedia?: {
+    videoEyebrow?: string | null;
+    videoTitle?: string | null;
+    videoSubtitle?: string | null;
+    /**
+     * YouTube URL or 11-char video ID. Empty hides the video section.
+     */
+    videoUrl?: string | null;
+    galleryEyebrow?: string | null;
+    gallerySubtitle?: string | null;
+    /**
+     * Photos shown in the gallery carousel. Empty hides the gallery section.
+     */
+    gallery?:
+      | {
+          image: number | Media;
+          caption?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -1032,7 +1185,14 @@ export interface Navigation {
  */
 export interface Comment {
   id: number;
-  author: number | User;
+  /**
+   * Set for authenticated commenters; blank for public guest submissions
+   */
+  author?: (number | null) | User;
+  /**
+   * Public display name shown on the blog (falls back to author email)
+   */
+  authorName?: string | null;
   target:
     | {
         relationTo: 'tours';
@@ -1043,6 +1203,10 @@ export interface Comment {
         value: number | Post;
       };
   content: string;
+  /**
+   * Optional 1-5 star rating left with a blog comment
+   */
+  rating?: number | null;
   status: 'pending' | 'approved' | 'hidden';
   updatedAt: string;
   createdAt: string;
@@ -1425,6 +1589,30 @@ export interface ToursSelect<T extends boolean = true> {
   durationDays?: T;
   durationText?: T;
   routeSummary?: T;
+  startEnd?: T;
+  travelStyle?: T;
+  guideLanguages?: T;
+  mapImage?: T;
+  highlightIntro?: T;
+  highlights?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  inclusions?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  exclusions?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
   groupSizeMin?: T;
   groupSizeMax?: T;
   categories?: T;
@@ -1462,10 +1650,30 @@ export interface ToursSelect<T extends boolean = true> {
     | T
     | {
         time?: T;
+        location?: T;
+        distance?: T;
+        title?: T;
         activity?: T;
+        note?: T;
+        included?:
+          | T
+          | {
+              item?: T;
+              id?: T;
+            };
+        hotelName?: T;
+        hotelStars?: T;
+        hotelRoom?: T;
         id?: T;
       };
   addOns?: T;
+  faqs?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
   seo?:
     | T
     | {
@@ -1665,6 +1873,9 @@ export interface PostsSelect<T extends boolean = true> {
         tag?: T;
         id?: T;
       };
+  author?: T;
+  viewCount?: T;
+  updateCount?: T;
   featured?: T;
   readingTime?: T;
   seo?:
@@ -1854,6 +2065,45 @@ export interface SiteSettingsSelect<T extends boolean = true> {
               subtitle?: T;
             };
       };
+  searchForm?:
+    | T
+    | {
+        tabs?:
+          | T
+          | {
+              label?: T;
+              target?: T;
+              id?: T;
+            };
+        tourTypes?:
+          | T
+          | {
+              label?: T;
+              value?: T;
+              id?: T;
+            };
+        tourDurations?:
+          | T
+          | {
+              label?: T;
+              value?: T;
+              id?: T;
+            };
+        cruiseNights?:
+          | T
+          | {
+              label?: T;
+              value?: T;
+              id?: T;
+            };
+        styles?:
+          | T
+          | {
+              label?: T;
+              value?: T;
+              id?: T;
+            };
+      };
   ota?:
     | T
     | {
@@ -1920,6 +2170,23 @@ export interface SiteSettingsSelect<T extends boolean = true> {
               subtitle?: T;
             };
       };
+  blogMedia?:
+    | T
+    | {
+        videoEyebrow?: T;
+        videoTitle?: T;
+        videoSubtitle?: T;
+        videoUrl?: T;
+        galleryEyebrow?: T;
+        gallerySubtitle?: T;
+        gallery?:
+          | T
+          | {
+              image?: T;
+              caption?: T;
+              id?: T;
+            };
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1956,8 +2223,10 @@ export interface NavigationSelect<T extends boolean = true> {
  */
 export interface CommentsSelect<T extends boolean = true> {
   author?: T;
+  authorName?: T;
   target?: T;
   content?: T;
+  rating?: T;
   status?: T;
   updatedAt?: T;
   createdAt?: T;

@@ -9,14 +9,46 @@ import { absoluteUrl, breadcrumbJsonLd, itemListJsonLd } from "@/lib/structured-
 
 export const revalidate = 300;
 
-export const metadata: Metadata = {
-  title: "Cruises",
-  description: "Overnight bay and river cruises in Vietnam — cabins, meals, and onboard activities with Book Now · Pay Later.",
-  alternates: { canonical: "/cruises" }
-};
+type SearchParamValue = string | string[] | undefined;
 
-export default async function CruisesPage() {
-  const cruises = await getCruisesForList({ limit: 48 });
+function readParam(value: SearchParamValue): string | undefined {
+  if (!value) return undefined;
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function readPositiveNumber(value: SearchParamValue): number | undefined {
+  const raw = readParam(value);
+  if (!raw) return undefined;
+  const num = Number(raw);
+  return Number.isFinite(num) && num > 0 ? num : undefined;
+}
+
+interface CruisesPageProps {
+  searchParams?: Promise<{
+    destination?: SearchParamValue;
+    nights?: SearchParamValue;
+  }>;
+}
+
+export async function generateMetadata({ searchParams }: CruisesPageProps): Promise<Metadata> {
+  const params = (await searchParams) ?? {};
+  const hasFilters = Boolean(readParam(params.destination) || readParam(params.nights));
+
+  return {
+    title: "Cruises",
+    description: "Overnight bay and river cruises in Vietnam — cabins, meals, and onboard activities with Book Now · Pay Later.",
+    alternates: { canonical: "/cruises" },
+    robots: hasFilters ? { index: false, follow: true } : undefined
+  };
+}
+
+export default async function CruisesPage({ searchParams }: CruisesPageProps) {
+  const params = (await searchParams) ?? {};
+  const cruises = await getCruisesForList({
+    destinationSlug: readParam(params.destination),
+    nights: readPositiveNumber(params.nights),
+    limit: 48
+  });
   const siteUrl = getSiteUrl().replace(/\/$/, "");
 
   return (

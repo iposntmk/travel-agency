@@ -36,6 +36,7 @@ function stableToursQuery(input: ToursQuery = {}): ToursQuery {
     categorySlug: input.categorySlug,
     destinationSlug: input.destinationSlug,
     durationDays: input.durationDays,
+    durationMin: input.durationMin,
     featuredOnly: input.featuredOnly,
     freeOnly: input.freeOnly,
     groupSize: input.groupSize,

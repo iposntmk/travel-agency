@@ -40,7 +40,7 @@ export function DestinationMobileCarousel({ items }: { items: HomeDestinationIte
       </div>
       <div className="mt-4 flex justify-center gap-2">
         {items.map((item, dot) => (
-          <button key={item.id} type="button" onClick={() => go(dot)} className={cn("size-2 rounded-full transition-all duration-300 border border-white/30", dot === index ? "bg-[var(--izitour-primary)]" : "bg-white hover:bg-white/80")} aria-label={`Go to slide ${dot + 1}`} />
+          <button key={item.id} type="button" onClick={() => go(dot)} className={cn("size-2 rounded-full transition-all duration-300 border border-white/30", dot === index ? "bg-[var(--tctravel-primary)]" : "bg-white hover:bg-white/80")} aria-label={`Go to slide ${dot + 1}`} />
         ))}
       </div>
     </div>
@@ -51,7 +51,7 @@ function Arrow({ side, onClick }: { side: "left" | "right"; onClick: () => void 
   const Icon = side === "left" ? ChevronLeft : ChevronRight;
   return (
     <button type="button" onClick={onClick} className={cn("absolute top-1/2 z-20 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white shadow-lg", side === "left" ? "left-2" : "right-2")} aria-label={side === "left" ? "Previous" : "Next"}>
-      <Icon className="size-5 text-[var(--izitour-text)]" />
+      <Icon className="size-5 text-[var(--tctravel-text)]" />
     </button>
   );
 }

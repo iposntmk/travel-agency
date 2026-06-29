@@ -319,7 +319,7 @@ async function main() {
     ["quang-tri-battlefield-memorials", "Quảng Trị Battlefield Memorials", "cultural", "quang-tri", 65, ["history", "culture"], ["quang-tri-ancient-citadel", "hien-luong-bridge"], "Full day", "Memorial-led itinerary for travellers who want deeper historical interpretation and quiet reflection."],
   ] as const;
 
-  // Per-tour rich content overrides (izitour-style tour detail). Keyed by slug.
+  // Per-tour rich content overrides (tctravel-style tour detail). Keyed by slug.
   const tourEnrichments: Record<string, Record<string, unknown>> = {
     "hue-perfume-river-sunset": {
       durationText: "2 hours",
@@ -921,6 +921,39 @@ async function main() {
         title: "Seasonal trip ideas, no spam",
         subtitle: "Join our newsletter for the best time to visit and practical Central Vietnam planning notes.",
       },
+    },
+    searchForm: {
+      tabs: [
+        { label: "Tours", target: "tours" },
+        { label: "Halong Bay Cruises", target: "cruises" },
+        { label: "Mekong River Cruises", target: "cruises" },
+      ],
+      tourTypes: [
+        { label: "Private Tour", value: "paid-private" },
+        { label: "Group Tour", value: "paid-group" },
+        { label: "Family Tour", value: "family" },
+        { label: "Adventure Tour", value: "adventure" },
+        { label: "Cultural Tour", value: "cultural" },
+      ],
+      tourDurations: [
+        { label: "1-5 Days", value: "1-5" },
+        { label: "6-10 Days", value: "6-10" },
+        { label: "11-15 Days", value: "11-15" },
+        { label: "16+ Days", value: "16-" },
+      ],
+      cruiseNights: [
+        { label: "1 Night", value: "1" },
+        { label: "2 Nights", value: "2" },
+        { label: "3 Nights", value: "3" },
+      ],
+      styles: [
+        { label: "Culture", value: "culture" },
+        { label: "Food", value: "food" },
+        { label: "Family", value: "family" },
+        { label: "Adventure", value: "adventure" },
+        { label: "Nature", value: "nature" },
+        { label: "History", value: "history" },
+      ],
     },
     ota: {
       enabled: true,

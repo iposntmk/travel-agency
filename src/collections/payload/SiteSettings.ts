@@ -1,8 +1,14 @@
 import type { CollectionConfig } from "payload";
 import { adminOnly, publicRead, staffOnly } from "./access";
+import { blogMediaField } from "./fields/blog-media-fields";
 import { freeProposalField } from "./fields/free-proposal-fields";
 import { homepageField } from "./fields/homepage-fields";
 import { otaField } from "./fields/ota-fields";
+import { searchFormField } from "./fields/search-form-fields";
+import {
+  revalidateSiteSettingsAfterChange,
+  revalidateSiteSettingsAfterDelete
+} from "./hooks/revalidate-content";
 
 export const SiteSettings: CollectionConfig = {
   slug: "site-settings",
@@ -12,6 +18,10 @@ export const SiteSettings: CollectionConfig = {
     create: staffOnly,
     update: staffOnly,
     delete: adminOnly
+  },
+  hooks: {
+    afterChange: [revalidateSiteSettingsAfterChange],
+    afterDelete: [revalidateSiteSettingsAfterDelete]
   },
   fields: [
     { name: "name", type: "text", required: true, defaultValue: "Default" },
@@ -66,7 +76,9 @@ export const SiteSettings: CollectionConfig = {
       ]
     },
     homepageField,
+    searchFormField,
     otaField,
-    freeProposalField
+    freeProposalField,
+    blogMediaField
   ]
 };

@@ -8,6 +8,7 @@ export interface ToursQuery {
   operationType?: string;
   priceMax?: number;
   durationDays?: number;
+  durationMin?: number;
   groupSize?: number;
   ratingMin?: number;
   sort?: string;
@@ -24,6 +25,7 @@ export function buildToursWhere(input: ToursQuery): { and: Record<string, unknow
   if (input.season) and.push({ season: { equals: input.season } });
   if (input.operationType) and.push({ operationType: { equals: input.operationType } });
   if (input.durationDays) and.push({ durationDays: { less_than_equal: input.durationDays } });
+  if (input.durationMin) and.push({ durationDays: { greater_than_equal: input.durationMin } });
   if (input.groupSize) and.push({ groupSizeMax: { greater_than_equal: input.groupSize } });
   if (input.ratingMin) and.push({ ratingAverage: { greater_than_equal: input.ratingMin } });
   if (input.freeOnly) {

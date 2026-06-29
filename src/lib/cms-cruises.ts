@@ -2,7 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
-import type { Where } from "payload";
+import type { Payload, Where } from "payload";
 import { getPayloadClient } from "@/lib/payload";
 import type { Cruise } from "@/payload-types";
 
@@ -26,13 +26,34 @@ const CRUISE_LIST_SELECT = {
 
 interface CruisesQuery {
   featuredOnly?: boolean;
+  destinationSlug?: string;
+  nights?: number;
   limit?: number;
+}
+
+async function destinationIdForSlug(payload: Payload, slug: string): Promise<number | undefined> {
+  const destinations = await payload.find({
+    collection: "destinations",
+    where: { slug: { equals: slug } },
+    limit: 1,
+    depth: 0,
+    select: { slug: true }
+  });
+
+  return destinations.docs[0]?.id;
 }
 
 async function fetchCruisesForList(input: CruisesQuery): Promise<Cruise[]> {
   const payload = await getPayloadClient();
   const and: Where[] = [{ status: { equals: "active" } }];
   if (input.featuredOnly) and.push({ isFeatured: { equals: true } });
+  if (input.nights) and.push({ nights: { equals: input.nights } });
+
+  if (input.destinationSlug) {
+    const destinationId = await destinationIdForSlug(payload, input.destinationSlug);
+    if (!destinationId) return [];
+    and.push({ destination: { equals: destinationId } });
+  }
 
   const result = await payload.find({
     collection: "cruises",
@@ -53,7 +74,14 @@ const getCruisesForListCached = cache((cacheKey: string) =>
 );
 
 export function getCruisesForList(input: CruisesQuery = {}): Promise<Cruise[]> {
-  return getCruisesForListCached(JSON.stringify({ featuredOnly: input.featuredOnly, limit: input.limit }));
+  return getCruisesForListCached(
+    JSON.stringify({
+      featuredOnly: input.featuredOnly,
+      destinationSlug: input.destinationSlug,
+      nights: input.nights,
+      limit: input.limit
+    })
+  );
 }
 
 async function fetchCruiseBySlug(slug: string): Promise<Cruise | null> {

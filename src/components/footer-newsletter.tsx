@@ -18,11 +18,11 @@ export function FooterNewsletter() {
           type="email"
           placeholder="Your email address"
           required
-          className="flex-grow h-11 bg-white rounded-lg px-4 text-sm text-[var(--izitour-text)] placeholder-gray-400 outline-none"
+          className="flex-grow h-11 bg-white rounded-lg px-4 text-sm text-[var(--tctravel-text)] placeholder-gray-400 outline-none"
         />
         <button
           type="submit"
-          className="flex h-11 w-12 items-center justify-center rounded-lg bg-[var(--izitour-primary)] text-white hover:bg-[var(--izitour-primary-dark)] transition-colors shrink-0 cursor-pointer"
+          className="flex h-11 w-12 items-center justify-center rounded-lg bg-[var(--tctravel-primary)] text-white hover:bg-[var(--tctravel-primary-dark)] transition-colors shrink-0 cursor-pointer"
           aria-label="Submit newsletter"
         >
           <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>

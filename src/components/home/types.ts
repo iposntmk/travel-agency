@@ -14,6 +14,19 @@ export interface SearchOption {
   value: string;
 }
 
+export interface SearchTab {
+  label: string;
+  target: "tours" | "cruises";
+}
+
+export interface SearchConfig {
+  tabs: SearchTab[];
+  tourTypes: SearchOption[];
+  tourDurations: SearchOption[];
+  cruiseNights: SearchOption[];
+  styles: SearchOption[];
+}
+
 export interface HomeTourCardItem {
   id: string;
   title: string;

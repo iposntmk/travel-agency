@@ -33,6 +33,8 @@ export const destinationSeeds: DestinationSeed[] = [
     hubIntro: "Huế is the cultural heart of Central Vietnam, best for travellers who care about history, architecture, royal food, and slower river-based itineraries.",
     description: "The former imperial capital gives visitors a layered view of Vietnam through citadels, pagodas, royal tombs, markets, and family-run kitchens.",
     sortWeight: 20,
+    imageFile: "hue2.webp",
+    imageAlt: "Huế Imperial Citadel and royal architecture",
   },
   {
     title: "Đà Nẵng",
@@ -43,6 +45,8 @@ export const destinationSeeds: DestinationSeed[] = [
     hubIntro: "Đà Nẵng is the practical gateway for Central Vietnam with easy airport access, reliable private transfers, family-friendly beaches, and fast links to Hội An and Huế.",
     description: "Đà Nẵng works as a beach base, airport hub, and day-trip launch point for families, couples, and groups who want flexible transport and short activity days.",
     sortWeight: 30,
+    imageFile: "dest-6.webp",
+    imageAlt: "Central Vietnam coastal town scenery near Đà Nẵng",
   },
   {
     title: "Quảng Trị",
@@ -53,6 +57,8 @@ export const destinationSeeds: DestinationSeed[] = [
     hubIntro: "Quảng Trị is for travellers who want a serious, respectful look at the former DMZ, wartime tunnel life, and modern memorial landscapes.",
     description: "Quảng Trị day trips connect Vĩnh Mốc Tunnels, Hien Luong Bridge, the ancient citadel, and rural coastal communities with careful historical context.",
     sortWeight: 40,
+    imageFile: "quang-tri2.webp",
+    imageAlt: "Historic memorial architecture in Central Vietnam",
   },
   {
     title: "Hà Nội",

@@ -7,7 +7,9 @@ import type {
   HomeDestinationItem,
   HomeReviewItem,
   HomeTourCardItem,
+  SearchConfig,
   SearchOption,
+  SearchTab,
   WhyChooseItem
 } from "./types";
 
@@ -22,6 +24,31 @@ export function toHeroSlides(destinations: Destination[], tours: Tour[]): HeroSl
 export function toSearchStarts(destinations: Destination[]): SearchOption[] {
   const list = destinations.length > 0 ? destinations : [];
   return list.map((destination) => ({ label: destination.title, value: destination.slug }));
+}
+
+// Reads SiteSettings → searchForm into the form config. Empty lists are dropped so
+// the component falls back to its built-in defaults (see search-form.tsx).
+export function toSearchConfig(settings: SiteSetting | null): SearchConfig {
+  const form = settings?.searchForm;
+  return {
+    tabs: cleanTabs(form?.tabs),
+    tourTypes: cleanOptions(form?.tourTypes),
+    tourDurations: cleanOptions(form?.tourDurations),
+    cruiseNights: cleanOptions(form?.cruiseNights),
+    styles: cleanOptions(form?.styles)
+  };
+}
+
+function cleanTabs(tabs?: { label?: string | null; target?: ("tours" | "cruises") | null }[] | null): SearchTab[] {
+  return (tabs ?? [])
+    .filter((tab): tab is { label: string; target: "tours" | "cruises" } => Boolean(tab?.label && tab?.target))
+    .map((tab) => ({ label: tab.label, target: tab.target }));
+}
+
+function cleanOptions(options?: { label?: string | null; value?: string | null }[] | null): SearchOption[] {
+  return (options ?? [])
+    .filter((option): option is { label: string; value: string } => Boolean(option?.label && option?.value))
+    .map((option) => ({ label: option.label, value: option.value }));
 }
 
 export function toTourCards(tours: Tour[]): HomeTourCardItem[] {

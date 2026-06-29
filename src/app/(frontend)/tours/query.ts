@@ -26,6 +26,7 @@ export interface ToursPageQuery {
   operation?: string;
   priceMax?: number;
   duration?: number;
+  durationMin?: number;
   groupSize?: number;
   rating?: number;
   sort?: string;
@@ -65,6 +66,7 @@ export function queryString(query: ToursPageQuery, overrides: Record<string, str
     operation: query.operation,
     priceMax: query.priceMax ? String(query.priceMax) : undefined,
     duration: query.duration ? String(query.duration) : undefined,
+    durationMin: query.durationMin ? String(query.durationMin) : undefined,
     groupSize: query.groupSize ? String(query.groupSize) : undefined,
     rating: query.rating ? String(query.rating) : undefined,
     sort: query.sort,

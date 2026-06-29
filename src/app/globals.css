@@ -11,17 +11,27 @@
 :root {
   color: #111827;
   background: #ffffff;
-  --izitour-primary: #11967e;
-  --izitour-primary-dark: #0d7f6b;
-  --izitour-orange: #f58220;
-  --izitour-orange-dark: #d96c12;
-  --izitour-text: #333333;
-  --izitour-text-light: #777777;
-  --izitour-border: #e5e7eb;
-  --izitour-dark: #333333;
-  --izitour-body: #555555;
-  --izitour-tab-bg: #0f2421;
-  --izitour-tab-border: #1a3834;
+  --tctravel-primary: #11967e;
+  --tctravel-primary-dark: #0d7f6b;
+  --tctravel-orange: #f58220;
+  --tctravel-orange-dark: #d96c12;
+  --tctravel-text: #333333;
+  --tctravel-text-light: #777777;
+  --tctravel-border: #e5e7eb;
+  --tctravel-dark: #333333;
+  --tctravel-body: #555555;
+  --tctravel-tab-bg: #0f2421;
+  --tctravel-tab-border: #1a3834;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 body {
@@ -72,6 +82,7 @@ body {
 img,
 video {
   max-width: 100%;
+  height: auto;
   display: block;
 }
 

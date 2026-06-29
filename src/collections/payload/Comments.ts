@@ -15,7 +15,17 @@ export const Comments: CollectionConfig = {
     beforeValidate: [sanitizeTextField("content")]
   },
   fields: [
-    { name: "author", type: "relationship", relationTo: "users", required: true },
+    {
+      name: "author",
+      type: "relationship",
+      relationTo: "users",
+      admin: { description: "Set for authenticated commenters; blank for public guest submissions" }
+    },
+    {
+      name: "authorName",
+      type: "text",
+      admin: { description: "Public display name shown on the blog (falls back to author email)" }
+    },
     {
       name: "target",
       type: "relationship",
@@ -23,6 +33,13 @@ export const Comments: CollectionConfig = {
       required: true
     },
     { name: "content", type: "textarea", required: true },
+    {
+      name: "rating",
+      type: "number",
+      min: 1,
+      max: 5,
+      admin: { description: "Optional 1-5 star rating left with a blog comment" }
+    },
     {
       name: "status",
       type: "select",

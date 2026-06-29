@@ -12,6 +12,13 @@ import * as migration_20260531_010452_site_settings_features from './20260531_01
 import * as migration_20260531_232000_disable_ota_defaults from './20260531_232000_disable_ota_defaults';
 import * as migration_20260619_062646 from './20260619_062646';
 import * as migration_20260624_155344_homepage_cruises_search_messenger from './20260624_155344_homepage_cruises_search_messenger';
+import * as migration_20260627_123741_tour_enrichment_fields from './20260627_123741_tour_enrichment_fields';
+import * as migration_20260628_090000_comment_author_name from './20260628_090000_comment_author_name';
+import * as migration_20260628_180000_post_author_viewcount from './20260628_180000_post_author_viewcount';
+import * as migration_20260628_193000_comment_rating_guest from './20260628_193000_comment_rating_guest';
+import * as migration_20260628_200000_blog_media from './20260628_200000_blog_media';
+import * as migration_20260629_095204_faqs_tour_field from './20260629_095204_faqs_tour_field';
+import * as migration_20260629_161614_search_form_fields from './20260629_161614_search_form_fields';
 
 export const migrations = [
   {
@@ -82,6 +89,41 @@ export const migrations = [
   {
     up: migration_20260624_155344_homepage_cruises_search_messenger.up,
     down: migration_20260624_155344_homepage_cruises_search_messenger.down,
-    name: '20260624_155344_homepage_cruises_search_messenger'
+    name: '20260624_155344_homepage_cruises_search_messenger',
+  },
+  {
+    up: migration_20260627_123741_tour_enrichment_fields.up,
+    down: migration_20260627_123741_tour_enrichment_fields.down,
+    name: '20260627_123741_tour_enrichment_fields',
+  },
+  {
+    up: migration_20260628_090000_comment_author_name.up,
+    down: migration_20260628_090000_comment_author_name.down,
+    name: '20260628_090000_comment_author_name',
+  },
+  {
+    up: migration_20260628_180000_post_author_viewcount.up,
+    down: migration_20260628_180000_post_author_viewcount.down,
+    name: '20260628_180000_post_author_viewcount',
+  },
+  {
+    up: migration_20260628_193000_comment_rating_guest.up,
+    down: migration_20260628_193000_comment_rating_guest.down,
+    name: '20260628_193000_comment_rating_guest',
+  },
+  {
+    up: migration_20260628_200000_blog_media.up,
+    down: migration_20260628_200000_blog_media.down,
+    name: '20260628_200000_blog_media',
+  },
+  {
+    up: migration_20260629_095204_faqs_tour_field.up,
+    down: migration_20260629_095204_faqs_tour_field.down,
+    name: '20260629_095204_faqs_tour_field',
+  },
+  {
+    up: migration_20260629_161614_search_form_fields.up,
+    down: migration_20260629_161614_search_form_fields.down,
+    name: '20260629_161614_search_form_fields'
   },
 ];

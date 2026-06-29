@@ -11,6 +11,13 @@ interface BreadcrumbItem {
   url: string;
 }
 
+interface TourReviewInput {
+  author: string;
+  rating: number;
+  body?: string;
+  datePublished?: string;
+}
+
 interface TourSchemaInput {
   title: string;
   url: string;
@@ -19,6 +26,24 @@ interface TourSchemaInput {
   priceFrom?: number | null;
   currency?: string | null;
   tourType?: string | null;
+  ratingValue?: number | null;
+  ratingCount?: number | null;
+  reviews?: TourReviewInput[];
+}
+
+interface OrganizationInput {
+  logo?: string;
+  sameAs?: string[];
+  telephone?: string | null;
+  email?: string | null;
+  address?: string | null;
+  ratingValue?: number | null;
+  ratingCount?: number | null;
+}
+
+interface FaqItem {
+  question: string;
+  answer: string;
 }
 
 interface DestinationSchemaInput {
@@ -50,22 +75,77 @@ export function jsonLdScriptContent(data: JsonLdData): string {
   return JSON.stringify(data).replace(/</g, "\\u003c");
 }
 
-export function organizationJsonLd(baseUrl: string): JsonLdData {
+export function organizationJsonLd(baseUrl: string, input: OrganizationInput = {}): JsonLdData {
+  const base = baseUrl.replace(/\/$/, "");
   return {
     "@context": "https://schema.org",
     "@type": "TravelAgency",
     name: "TC Travel Vietnam",
     url: baseUrl,
-    areaServed: ["Hoi An", "Hue", "Da Nang", "Central Vietnam"]
+    areaServed: ["Hoi An", "Hue", "Da Nang", "Central Vietnam"],
+    logo: input.logo ?? `${base}/logo.png`,
+    image: input.logo ?? `${base}/logo.png`,
+    ...(input.sameAs && input.sameAs.length > 0 ? { sameAs: input.sameAs } : {}),
+    ...(input.telephone ? { telephone: input.telephone } : {}),
+    ...(input.email ? { email: input.email } : {}),
+    ...(input.address
+      ? { address: { "@type": "PostalAddress", streetAddress: input.address, addressCountry: "VN" } }
+      : {}),
+    ...(input.telephone || input.email
+      ? {
+          contactPoint: {
+            "@type": "ContactPoint",
+            contactType: "customer service",
+            availableLanguage: ["English", "Vietnamese"],
+            ...(input.telephone ? { telephone: input.telephone } : {}),
+            ...(input.email ? { email: input.email } : {})
+          }
+        }
+      : {}),
+    ...(input.ratingValue && input.ratingCount
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: input.ratingValue,
+            reviewCount: input.ratingCount,
+            bestRating: 5,
+            worstRating: 1
+          }
+        }
+      : {})
   };
 }
 
 export function webSiteJsonLd(baseUrl: string): JsonLdData {
+  const base = baseUrl.replace(/\/$/, "");
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "TC Travel Vietnam",
-    url: baseUrl
+    url: baseUrl,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${base}/tours?q={search_term_string}`
+      },
+      "query-input": "required name=search_term_string"
+    }
+  };
+}
+
+export function faqPageJsonLd(items: FaqItem[]): JsonLdData {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer
+      }
+    }))
   };
 }
 
@@ -106,7 +186,29 @@ export function tourProductJsonLd(input: TourSchemaInput): JsonLdData {
             availability: "https://schema.org/InStock",
             url: input.url
           }
-        })
+        }),
+    ...(input.ratingValue && input.ratingCount
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: input.ratingValue,
+            reviewCount: input.ratingCount,
+            bestRating: 5,
+            worstRating: 1
+          }
+        }
+      : {}),
+    ...(input.reviews && input.reviews.length > 0
+      ? {
+          review: input.reviews.map((r) => ({
+            "@type": "Review",
+            author: { "@type": "Person", name: r.author },
+            reviewRating: { "@type": "Rating", ratingValue: r.rating, bestRating: 5, worstRating: 1 },
+            ...(r.body ? { reviewBody: r.body } : {}),
+            ...(r.datePublished ? { datePublished: r.datePublished } : {})
+          }))
+        }
+      : {})
   };
 }
 

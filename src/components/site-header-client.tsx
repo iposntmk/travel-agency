@@ -50,11 +50,11 @@ export function SiteHeaderClient({ items, children }: Props) {
       className={cn("fixed left-0 right-0 top-0 z-50 w-full bg-white transition-shadow duration-300", scrolled && "shadow-md")}
     >
       {children}
-      <div className="border-b border-[var(--izitour-border)]">
+      <div className="border-b border-[var(--tctravel-border)]">
         <div className="container-center flex h-[60px] items-center justify-between lg:h-[72px]">
           <button
             type="button"
-            className="flex size-11 items-center justify-center rounded-md text-[var(--izitour-text)] hover:bg-gray-100 lg:hidden"
+            className="flex size-11 items-center justify-center rounded-md text-[var(--tctravel-text)] hover:bg-gray-100 lg:hidden"
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
             aria-controls="site-mobile-nav"
@@ -67,14 +67,14 @@ export function SiteHeaderClient({ items, children }: Props) {
             {items.map((item) => (
               <DesktopDropdown key={`${item.href}-${item.label}`} item={item} isActive={isActive} />
             ))}
-            <span className="ml-3 flex size-11 items-center justify-center rounded-full border border-[var(--izitour-border)] text-[var(--izitour-text-light)]">
+            <span className="ml-3 flex size-11 items-center justify-center rounded-full border border-[var(--tctravel-border)] text-[var(--tctravel-text-light)]">
               <User className="size-4" />
             </span>
           </nav>
           <button
             type="button"
             onClick={() => setLang(lang === "EN" ? "VI" : "EN")}
-            className="flex items-center gap-1 rounded-full border border-[var(--izitour-border)] px-4 py-2 text-sm font-bold lg:hidden"
+            className="flex items-center gap-1 rounded-full border border-[var(--tctravel-border)] px-4 py-2 text-sm font-bold lg:hidden"
           >
             <Globe className="size-4" /> {lang}
           </button>
@@ -88,8 +88,8 @@ export function SiteHeaderClient({ items, children }: Props) {
 function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2" aria-label="TC Travel Vietnam home">
-      <span className="text-2xl font-black tracking-tight text-[var(--izitour-primary)]">TC</span>
-      <span className="hidden text-sm font-bold uppercase tracking-[0.16em] text-[var(--izitour-dark)] sm:inline">Travel Vietnam</span>
+      <span className="text-2xl font-black tracking-tight text-[var(--tctravel-primary)]">TC</span>
+      <span className="hidden text-sm font-bold uppercase tracking-[0.16em] text-[var(--tctravel-dark)] sm:inline">Travel Vietnam</span>
     </Link>
   );
 }
@@ -101,15 +101,15 @@ function DesktopDropdown({ item, isActive }: { item: HeaderNavItem; isActive: (h
       <Link
         href={item.href}
         target={item.target}
-        className={cn("flex min-h-11 items-center gap-1 px-3 py-2 text-sm font-semibold transition-colors", isActive(item.href) ? "text-[var(--izitour-primary)]" : "text-[var(--izitour-text)] hover:text-[var(--izitour-primary)]")}
+        className={cn("flex min-h-11 items-center gap-1 px-3 py-2 text-sm font-semibold transition-colors", isActive(item.href) ? "text-[var(--tctravel-primary)]" : "text-[var(--tctravel-text)] hover:text-[var(--tctravel-primary)]")}
       >
         {item.label}
         {children.length > 0 ? <ChevronDown className="size-3" /> : null}
       </Link>
       {children.length > 0 ? (
-        <div className="invisible absolute left-0 top-full z-50 min-w-[220px] rounded-b-md border border-[var(--izitour-border)] bg-white shadow-lg p-2 opacity-0 transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
+        <div className="invisible absolute left-0 top-full z-50 min-w-[220px] rounded-b-md border border-[var(--tctravel-border)] bg-white shadow-lg p-2 opacity-0 transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
           {children.map((child) => (
-            <Link key={`${child.href}-${child.label}`} href={child.href} className="block px-3 py-2 text-sm text-[var(--izitour-text)] transition-colors hover:bg-[var(--izitour-primary)] hover:text-white rounded">
+            <Link key={`${child.href}-${child.label}`} href={child.href} className="block px-3 py-2 text-sm text-[var(--tctravel-text)] transition-colors hover:bg-[var(--tctravel-primary)] hover:text-white rounded">
               {child.label}
             </Link>
           ))}
@@ -127,7 +127,7 @@ function MobileDrawer({ open, items, closeRef, onClose }: { open: boolean; items
     <div id="site-mobile-nav" className="fixed inset-0 z-50 lg:hidden">
       <button type="button" aria-label="Close menu overlay" className="absolute inset-0 bg-black/55" onClick={onClose} />
       <aside className="absolute right-0 top-0 h-full w-[86vw] max-w-sm overflow-y-auto bg-white shadow-2xl">
-        <div className="flex h-[60px] items-center justify-between border-b border-[var(--izitour-border)] px-4">
+        <div className="flex h-[60px] items-center justify-between border-b border-[var(--tctravel-border)] px-4">
           <Logo />
           <button ref={closeRef} type="button" onClick={onClose} className="flex size-10 items-center justify-center rounded-md hover:bg-gray-100" aria-label="Close menu">
             <X className="size-6" />
@@ -137,9 +137,9 @@ function MobileDrawer({ open, items, closeRef, onClose }: { open: boolean; items
           {items.map((item) => {
             const hasChildren = Boolean(item.children?.length);
             return (
-              <div key={`${item.href}-${item.label}`} className="border-b border-[var(--izitour-border)] py-1">
+              <div key={`${item.href}-${item.label}`} className="border-b border-[var(--tctravel-border)] py-1">
                 <div className="flex items-center justify-between">
-                  <Link href={item.href} onClick={onClose} className="py-3 text-sm font-bold uppercase text-[var(--izitour-dark)]">{item.label}</Link>
+                  <Link href={item.href} onClick={onClose} className="py-3 text-sm font-bold uppercase text-[var(--tctravel-dark)]">{item.label}</Link>
                   {hasChildren ? (
                     <button type="button" onClick={() => setExpanded(expanded === item.href ? null : item.href)} className="size-10" aria-label={`Toggle ${item.label}`}>
                       <ChevronDown className={cn("mx-auto size-4 transition", expanded === item.href && "rotate-180")} />
@@ -149,7 +149,7 @@ function MobileDrawer({ open, items, closeRef, onClose }: { open: boolean; items
                 {hasChildren && expanded === item.href ? (
                   <div className="pb-3 pl-4">
                     {item.children?.map((child) => (
-                      <Link key={`${child.href}-${child.label}`} href={child.href} onClick={onClose} className="block py-2 text-sm text-[var(--izitour-body)]">{child.label}</Link>
+                      <Link key={`${child.href}-${child.label}`} href={child.href} onClick={onClose} className="block py-2 text-sm text-[var(--tctravel-body)]">{child.label}</Link>
                     ))}
                   </div>
                 ) : null}

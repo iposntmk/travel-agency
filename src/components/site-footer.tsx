@@ -21,23 +21,23 @@ export async function SiteFooter() {
         <div className="grid gap-8 md:grid-cols-4">
           <div>
             <Link href="/" className="block" aria-label="TC Travel Vietnam home">
-              <span className="text-2xl font-black tracking-tight text-[var(--izitour-primary)]">TC</span>
+              <span className="text-2xl font-black tracking-tight text-[var(--tctravel-primary)]">TC</span>
               <span className="ml-1 text-sm font-bold uppercase tracking-[0.16em] text-white">Travel Vietnam</span>
             </Link>
             <p className="mt-4 text-xs font-bold text-white/95 leading-normal">
               Your Local Expert for Vietnam Tours.
             </p>
             <div className="mt-4 space-y-3 text-xs text-white font-medium">
-              <a href={`mailto:${email}`} className="flex items-center gap-2.5 hover:text-[var(--izitour-primary)] transition-colors">
-                <Mail className="size-4 text-[var(--izitour-primary)] shrink-0" />
+              <a href={`mailto:${email}`} className="flex items-center gap-2.5 hover:text-[var(--tctravel-primary)] transition-colors">
+                <Mail className="size-4 text-[var(--tctravel-primary)] shrink-0" />
                 <span>{email}</span>
               </a>
-              <a href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 hover:text-[var(--izitour-primary)] transition-colors">
-                <Phone className="size-4 text-[var(--izitour-primary)] shrink-0" />
+              <a href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 hover:text-[var(--tctravel-primary)] transition-colors">
+                <Phone className="size-4 text-[var(--tctravel-primary)] shrink-0" />
                 <span>{whatsapp} (Whatsapp)</span>
               </a>
               <div className="flex items-start gap-2.5 leading-relaxed">
-                <MapPin className="size-4 text-[var(--izitour-primary)] shrink-0 mt-0.5" />
+                <MapPin className="size-4 text-[var(--tctravel-primary)] shrink-0 mt-0.5" />
                 <span>{address}</span>
               </div>
             </div>
@@ -55,7 +55,7 @@ export async function SiteFooter() {
                       href={link.href}
                       target={link.target}
                       rel={link.target === "_blank" ? "noopener noreferrer" : undefined}
-                      className="hover:text-[var(--izitour-primary)] transition-colors"
+                      className="hover:text-[var(--tctravel-primary)] transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -83,7 +83,7 @@ export async function SiteFooter() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={item.label ?? item.platform}
-                      className="flex size-9 items-center justify-center rounded-full bg-white/10 text-white/95 transition-all hover:bg-[var(--izitour-primary)] hover:scale-105"
+                      className="flex size-9 items-center justify-center rounded-full bg-white/10 text-white/95 transition-all hover:bg-[var(--tctravel-primary)] hover:scale-105"
                     >
                       <Icon className="h-5 w-5" />
                     </a>

@@ -8,8 +8,8 @@ import {
   WhyChooseUs
 } from "@/components/home/content-sections";
 import { BlogSection, TourCards } from "@/components/home/card-sections";
-import { IzitourHeroSlider } from "@/components/home/hero-slider";
-import { IzitourSearchForm } from "@/components/home/search-form";
+import { TcTravelHeroSlider } from "@/components/home/hero-slider";
+import { TcTravelSearchForm } from "@/components/home/search-form";
 import {
   heroCopy,
   toBlogItems,
@@ -17,6 +17,7 @@ import {
   toDestinationItems,
   toHeroSlides,
   toReviewItems,
+  toSearchConfig,
   toSearchStarts,
   toTourCards,
   toWhyItems
@@ -54,6 +55,19 @@ export default async function HomePage() {
 
   const hp = siteSettings?.homepage;
   const copy = heroCopy(siteSettings);
+
+  const sameAs = (siteSettings?.social ?? [])
+    .map((s) => s?.url)
+    .filter((url): url is string => typeof url === "string" && /^https?:\/\//.test(url));
+  const orgJsonLd = organizationJsonLd(siteUrl, {
+    logo: `${siteUrl}/logo.png`,
+    sameAs,
+    telephone: siteSettings?.hotline ?? null,
+    email: siteSettings?.salesEmail ?? null,
+    address: siteSettings?.footer?.address ?? null,
+    ratingValue: siteSettings?.trust?.reviewAverage ?? null,
+    ratingCount: siteSettings?.trust?.reviewCount ?? null
+  });
   const tourCards = toTourCards(featuredTours);
   const destinationItems = toDestinationItems(destinations);
   const blogItems = toBlogItems(posts);
@@ -61,14 +75,14 @@ export default async function HomePage() {
 
   return (
     <main className="bg-white">
-      <JsonLd data={[organizationJsonLd(siteUrl), webSiteJsonLd(siteUrl)]} />
+      <JsonLd data={[orgJsonLd, webSiteJsonLd(siteUrl)]} />
 
       {hp?.hero?.enabled !== false ? (
-        <IzitourHeroSlider slides={toHeroSlides(destinations, featuredTours)} title={copy.title} subtitle={copy.subtitle} />
+        <TcTravelHeroSlider slides={toHeroSlides(destinations, featuredTours)} title={copy.title} subtitle={copy.subtitle} />
       ) : null}
 
       {hp?.search?.enabled !== false ? (
-        <IzitourSearchForm starts={toSearchStarts(destinations)} />
+        <TcTravelSearchForm starts={toSearchStarts(destinations)} config={toSearchConfig(siteSettings)} />
       ) : null}
 
       <WhoWeAre

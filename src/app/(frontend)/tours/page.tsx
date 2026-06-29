@@ -34,11 +34,13 @@ interface ToursPageProps {
   searchParams?: Promise<{
     q?: SearchParamValue;
     destination?: SearchParamValue;
+    category?: SearchParamValue;
     type?: SearchParamValue;
     season?: SearchParamValue;
     operation?: SearchParamValue;
     priceMax?: SearchParamValue;
     duration?: SearchParamValue;
+    durationMin?: SearchParamValue;
     groupSize?: SearchParamValue;
     rating?: SearchParamValue;
     sort?: SearchParamValue;
@@ -50,11 +52,13 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
   const query: ToursPageQuery = {
     q: readParam(params.q),
     destination: readParam(params.destination),
+    category: readParam(params.category),
     type: readParam(params.type),
     season: readParam(params.season),
     operation: readParam(params.operation),
     priceMax: readPriceMax(params.priceMax),
     duration: readPositiveNumber(params.duration),
+    durationMin: readPositiveNumber(params.durationMin),
     groupSize: readPositiveNumber(params.groupSize),
     rating: readPositiveNumber(params.rating),
     sort: readParam(params.sort)

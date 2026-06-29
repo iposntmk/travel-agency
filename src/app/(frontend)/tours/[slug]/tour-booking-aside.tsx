@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { ShareButtons } from "@/components/share-buttons";
 import type { Tour } from "@/payload-types";
 
@@ -10,59 +9,100 @@ interface Props {
 }
 
 export function TourBookingAside({ tour, tourUrl, isFree }: Props) {
+  const duration = tour.durationText || (tour.durationDays ? `${tour.durationDays} day${tour.durationDays > 1 ? "s" : ""}` : null);
+  const tiers = tour.pricingTiers ?? [];
+
   return (
-    <aside className="self-start rounded-2xl border border-navy-100 bg-white p-6 shadow-card md:sticky md:top-24">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-navy-500">From</p>
-      <p className="mt-1 font-display text-3xl font-bold tracking-tight text-navy-950">
-        {isFree ? "Free to join" : `$${tour.priceFrom}`}
-        {!isFree ? (
-          <span className="ml-2 text-sm font-medium text-slate-500">{tour.currency ?? "USD"}</span>
-        ) : null}
-      </p>
-      {!isFree ? (
-        <p className="mt-1 text-xs text-slate-500">Pay when you meet your guide — confirm details first.</p>
-      ) : (
-        <p className="mt-1 text-xs text-slate-500">Tips appreciated, never required.</p>
-      )}
+    <aside className="self-start space-y-4">
+      {/* Price card */}
+      <div className="rounded-xl border border-slate-200 p-5 shadow-sm">
+        <h3 className="mb-3 text-sm font-bold text-navy-950">Select Date and Travelers</h3>
+        <input
+          type="date"
+          className="mb-4 w-full rounded border border-slate-200 px-3 py-2 text-sm text-navy-900"
+        />
 
-      {tour.pricingTiers && tour.pricingTiers.length > 0 ? (
-        <div className="mt-5 border-t border-navy-100 pt-5">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-navy-500">
-            Pricing tiers
-          </p>
-          <ul className="mt-3 space-y-1.5 text-sm text-slate-700">
-            {tour.pricingTiers.map((tier) => (
-              <li key={tier.id ?? tier.label} className="flex justify-between gap-2">
-                <span>{tier.label}</span>
-                <span className="font-semibold text-navy-900">${tier.price}</span>
-              </li>
+        <p className="mb-3 text-sm font-bold text-navy-950">Price per pax in USD</p>
+        {tiers.length > 0 ? (
+          <div className="mb-4 space-y-3">
+            {tiers.slice(0, 2).map((tier) => (
+              <div key={tier.id ?? tier.label} className="flex items-center justify-between">
+                <span className="text-sm text-slate-600">{tier.label}</span>
+                <span className="text-base font-bold text-brand-red">${tier.price}</span>
+              </div>
             ))}
-          </ul>
+          </div>
+        ) : (
+          <div className="mb-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-slate-600">Adult</span>
+              <span className="text-base font-bold text-brand-red">{isFree ? "Free" : `$${tour.priceFrom}`}</span>
+            </div>
+          </div>
+        )}
+
+        <Link
+          href={`/booking/${tour.slug}`}
+          className="flex w-full items-center justify-center gap-2 rounded bg-[#fb6a00] px-4 py-3 text-sm font-bold text-white shadow-card transition hover:bg-[#e05e00]"
+        >
+          View Prices
+        </Link>
+
+        <p className="mt-3 text-center text-xs text-slate-400">Free cancellation up to 48 hours before departure</p>
+      </div>
+
+      {/* Quick info */}
+      <div className="rounded-xl border border-slate-200 p-5">
+        <h3 className="mb-3 text-sm font-bold text-navy-950">Quick Info</h3>
+        <div className="space-y-2 text-sm">
+          {duration && (
+            <div className="flex justify-between">
+              <span className="text-slate-400">Duration</span>
+              <span className="font-semibold text-navy-900">{duration}</span>
+            </div>
+          )}
+          <div className="flex justify-between">
+            <span className="text-slate-400">Tour type</span>
+            <span className="font-semibold text-navy-900">{tour.tourType.replace(/-/g, " ")}</span>
+          </div>
+          {tour.season && tour.season !== "year-round" && (
+            <div className="flex justify-between">
+              <span className="text-slate-400">Season</span>
+              <span className="font-semibold text-navy-900">{tour.season}</span>
+            </div>
+          )}
+          {tour.groupSizeMax && (
+            <div className="flex justify-between">
+              <span className="text-slate-400">Max group</span>
+              <span className="font-semibold text-navy-900">{tour.groupSizeMax} people</span>
+            </div>
+          )}
+          {tour.ratingAverage && tour.ratingAverage > 0 && (
+            <div className="flex justify-between">
+              <span className="text-slate-400">Rating</span>
+              <span className="font-semibold text-navy-900">
+                {"★".repeat(Math.round(tour.ratingAverage))} {tour.ratingAverage.toFixed(1)}
+              </span>
+            </div>
+          )}
         </div>
-      ) : null}
+      </div>
 
-      <Link
-        href={`/booking/${tour.slug}`}
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-navy-900 px-4 py-3 text-sm font-semibold text-white shadow-card transition hover:bg-navy-800"
-      >
-        {isFree ? "Register" : "Request this tour"}
-        <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden="true" />
-      </Link>
+      {/* WhatsApp help */}
+      <div className="rounded-xl border border-slate-200 p-5 text-center">
+        <p className="mb-2 text-sm text-slate-600">Need help planning your trip?</p>
+        <a
+          href="https://web.whatsapp.com/send?phone=+84382536266"
+          target="_blank"
+          rel="nofollow"
+          className="inline-block rounded-full bg-[#25d366] px-5 py-2.5 text-sm font-bold text-white hover:bg-[#1da851] transition-colors"
+        >
+          WhatsApp Us
+        </a>
+      </div>
 
-      {tour.availableDates && tour.availableDates.length > 0 ? (
-        <div className="mt-6 border-t border-navy-100 pt-5">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-navy-500">
-            Upcoming dates
-          </p>
-          <ul className="mt-3 space-y-1.5 text-sm text-slate-700">
-            {tour.availableDates.slice(0, 4).map((d) => (
-              <li key={d.id ?? d.date}>{new Date(d.date).toLocaleDateString()}</li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
-
-      <div className="mt-6 border-t border-navy-100 pt-5">
+      {/* Share */}
+      <div className="rounded-xl border border-slate-200 p-5">
         <ShareButtons url={tourUrl} title={tour.title} medium="tour" campaignId={tour.slug} />
       </div>
     </aside>

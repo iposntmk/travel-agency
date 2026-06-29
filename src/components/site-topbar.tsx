@@ -45,7 +45,7 @@ export async function SiteTopbar() {
         <div className="flex items-center gap-4">
           <Link
             href="/customize-tour"
-            className="rounded-md bg-[var(--izitour-orange)] px-4 py-1.5 text-xs font-bold text-white transition-all hover:bg-[var(--izitour-orange-dark)] flex items-center gap-1.5 shadow"
+            className="rounded-md bg-[var(--tctravel-orange)] px-4 py-1.5 text-xs font-bold text-white transition-all hover:bg-[var(--tctravel-orange-dark)] flex items-center gap-1.5 shadow"
           >
             <Image src="/images/icons/customize_2.svg" alt="" width={14} height={14} className="invert brightness-0" />
             Start designing my trip

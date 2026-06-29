@@ -25,6 +25,29 @@ export const Tours: CollectionConfig = {
     { name: "durationDays", type: "number", min: 1, index: true },
     { name: "durationText", type: "text" },
     { name: "routeSummary", type: "text" },
+    { name: "startEnd", type: "text" },
+    { name: "travelStyle", type: "text" },
+    { name: "guideLanguages", type: "text" },
+    { name: "mapImage", type: "upload", relationTo: "media" },
+    { name: "highlightIntro", type: "textarea" },
+    {
+      name: "highlights",
+      type: "array",
+      fields: [
+        { name: "title", type: "text", required: true },
+        { name: "description", type: "text" }
+      ]
+    },
+    {
+      name: "inclusions",
+      type: "array",
+      fields: [{ name: "item", type: "text", required: true }]
+    },
+    {
+      name: "exclusions",
+      type: "array",
+      fields: [{ name: "item", type: "text", required: true }]
+    },
     { name: "groupSizeMin", type: "number", min: 1 },
     { name: "groupSizeMax", type: "number", min: 1, index: true },
     { name: "categories", type: "relationship", relationTo: "product-categories" as never, hasMany: true },
@@ -109,10 +132,34 @@ export const Tours: CollectionConfig = {
       type: "array",
       fields: [
         { name: "time", type: "text" },
-        { name: "activity", type: "richText" }
+        { name: "location", type: "text" },
+        { name: "distance", type: "text" },
+        { name: "title", type: "text" },
+        { name: "activity", type: "richText" },
+        { name: "note", type: "text" },
+        {
+          name: "included",
+          type: "array",
+          fields: [{ name: "item", type: "text", required: true }]
+        },
+        { name: "hotelName", type: "text" },
+        { name: "hotelStars", type: "number", min: 0, max: 5 },
+        { name: "hotelRoom", type: "text" }
       ]
     },
     { name: "addOns", type: "relationship", relationTo: "partners", hasMany: true },
+    {
+      name: "faqs",
+      type: "array",
+      label: "FAQs (tour-specific)",
+      admin: {
+        description: "Short Q&A pairs surfaced to travellers and emitted as FAQPage structured data for AI/search engines."
+      },
+      fields: [
+        { name: "question", type: "text", required: true },
+        { name: "answer", type: "textarea", required: true }
+      ]
+    },
     {
       name: "seo",
       type: "group",

@@ -57,6 +57,9 @@ export const Posts: CollectionConfig = {
       type: "array",
       fields: [{ name: "tag", type: "text", required: true }]
     },
+    { name: "author", type: "text", admin: { description: "Author display name" } },
+    { name: "viewCount", type: "number", defaultValue: 0, admin: { description: "Total page views" } },
+    { name: "updateCount", type: "number", defaultValue: 0, admin: { description: "Number of content updates" } },
     { name: "featured", type: "checkbox", defaultValue: false },
     {
       name: "readingTime",

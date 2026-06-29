@@ -64,3 +64,5 @@ export const revalidatePostAfterChange = afterChange("posts", "post");
 export const revalidatePostAfterDelete = afterDelete("posts", "post");
 export const revalidateNavigationAfterChange = afterCollectionChange("navigation");
 export const revalidateNavigationAfterDelete = afterCollectionDelete("navigation");
+export const revalidateSiteSettingsAfterChange = afterCollectionChange("site-settings");
+export const revalidateSiteSettingsAfterDelete = afterCollectionDelete("site-settings");

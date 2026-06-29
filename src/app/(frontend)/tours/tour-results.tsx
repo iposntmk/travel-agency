@@ -18,6 +18,7 @@ export async function TourResults({ query }: { query: ToursPageQuery }) {
     operationType: query.operation,
     priceMax: query.priceMax,
     durationDays: query.duration,
+    durationMin: query.durationMin,
     groupSize: query.groupSize,
     ratingMin: query.rating,
     sort: query.sort,
