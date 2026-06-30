@@ -309,7 +309,7 @@ export default async function TourDetailPage({ params }: PageProps) {
       </div>
 
       {/* Mobile bottom CTA */}
-      <TourMobileBottomCta slug={tour.slug} isFree={isFree} currency={tour.currency} priceFrom={tour.priceFrom} />
+      <TourMobileBottomCta slug={tour.slug} isFree={isFree} priceFrom={tour.priceFrom} />
     </main>
   );
 }

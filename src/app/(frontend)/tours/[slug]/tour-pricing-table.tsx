@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Tour } from "@/payload-types";
+import { Price } from "@/components/currency/price";
 
 interface Props {
   tour: Tour;
@@ -29,8 +30,8 @@ export function TourPricingTable({ tour }: Props) {
               className={`grid grid-cols-4 p-3 items-center text-sm ${i < tiers.length - 1 ? "border-b border-dashed border-slate-200" : ""}`}
             >
               <div className="text-navy-900">{tier.label}</div>
-              <div className="text-center font-bold text-brand-red">${tier.price} /pax</div>
-              <div className="text-center font-bold text-brand-red">${tier.price} /pax</div>
+              <div className="text-center font-bold text-brand-red"><Price base={tier.price} /> /pax</div>
+              <div className="text-center font-bold text-brand-red"><Price base={tier.price} /> /pax</div>
               <div className="flex justify-center">
                 <Link
                   href={`/booking/${tour.slug}`}

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ShareButtons } from "@/components/share-buttons";
 import type { Tour } from "@/payload-types";
+import { ActiveCurrencyCode, Price } from "@/components/currency/price";
 
 interface Props {
   tour: Tour;
@@ -22,13 +23,13 @@ export function TourBookingAside({ tour, tourUrl, isFree }: Props) {
           className="mb-4 w-full rounded border border-slate-200 px-3 py-2 text-sm text-navy-900"
         />
 
-        <p className="mb-3 text-sm font-bold text-navy-950">Price per pax in USD</p>
+        <p className="mb-3 text-sm font-bold text-navy-950">Price per pax in <ActiveCurrencyCode fallback="USD" /></p>
         {tiers.length > 0 ? (
           <div className="mb-4 space-y-3">
             {tiers.slice(0, 2).map((tier) => (
               <div key={tier.id ?? tier.label} className="flex items-center justify-between">
                 <span className="text-sm text-slate-600">{tier.label}</span>
-                <span className="text-base font-bold text-brand-red">${tier.price}</span>
+                <span className="text-base font-bold text-brand-red"><Price base={tier.price} /></span>
               </div>
             ))}
           </div>
@@ -36,7 +37,7 @@ export function TourBookingAside({ tour, tourUrl, isFree }: Props) {
           <div className="mb-4 space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-sm text-slate-600">Adult</span>
-              <span className="text-base font-bold text-brand-red">{isFree ? "Free" : `$${tour.priceFrom}`}</span>
+              <span className="text-base font-bold text-brand-red">{isFree ? "Free" : <Price base={tour.priceFrom ?? 0} />}</span>
             </div>
           </div>
         )}

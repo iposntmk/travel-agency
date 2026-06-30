@@ -66,3 +66,5 @@ export const revalidateNavigationAfterChange = afterCollectionChange("navigation
 export const revalidateNavigationAfterDelete = afterCollectionDelete("navigation");
 export const revalidateSiteSettingsAfterChange = afterCollectionChange("site-settings");
 export const revalidateSiteSettingsAfterDelete = afterCollectionDelete("site-settings");
+export const revalidateCurrenciesAfterChange = afterCollectionChange("currencies");
+export const revalidateCurrenciesAfterDelete = afterCollectionDelete("currencies");

@@ -60,7 +60,8 @@ export function toTourCards(tours: Tour[]): HomeTourCardItem[] {
     duration: tour.durationText ?? "Flexible duration",
     rating: `${tour.ratingAverage?.toFixed(1) ?? "4.9"} rating`,
     reviewsCount: `${tour.ratingCount ?? 0} reviews`,
-    price: tour.priceFrom ? `From ${formatCurrency(tour.priceFrom, tour.currency)}` : "Ask for price"
+    priceFrom: tour.priceFrom ?? null,
+    price: tour.priceFrom ? "" : "Ask for price"
   }));
 }
 
@@ -132,10 +133,6 @@ export function heroCopy(settings: SiteSetting | null) {
 function toHomeImage(input: Parameters<typeof resolveImage>[0], fallbackAlt: string, variant: "card" | "hero") {
   const image = resolveImage(input, fallbackAlt, { variant });
   return { url: image.url, alt: image.alt, objectPosition: image.objectPosition };
-}
-
-function formatCurrency(value: number, currency?: string | null): string {
-  return new Intl.NumberFormat("en", { style: "currency", currency: currency ?? "USD", maximumFractionDigits: 0 }).format(value);
 }
 
 function customerName(customer: Review["customer"]): string {

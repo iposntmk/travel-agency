@@ -3,10 +3,12 @@ import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ConsentBanner } from "@/components/consent-banner";
+import { CurrencyProvider } from "@/components/currency/currency-provider";
 import { SiteFloating } from "@/components/site-floating";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { getNextConfigEnv, getSeoEnv, getSiteUrl } from "@/config/env";
+import { getCurrencies } from "@/lib/cms";
 import "../globals.css";
 
 const inter = Inter({
@@ -45,7 +47,8 @@ export const metadata: Metadata = {
   robots: indexingAllowed ? { index: true, follow: true } : { index: false, follow: false }
 };
 
-export default function FrontendLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function FrontendLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const currencies = await getCurrencies();
   return (
     <html lang="en" className={inter.variable}>
       <head>{r2Origin ? <link rel="preconnect" href={r2Origin} crossOrigin="anonymous" /> : null}</head>
@@ -53,10 +56,12 @@ export default function FrontendLayout({ children }: Readonly<{ children: React.
         <a className="skip-link sr-only" href="#main-content">
           Skip to content
         </a>
-        <SiteHeader />
-        <div id="main-content" className="pt-[60px] lg:pt-[110px]">{children}</div>
-        <SiteFooter />
-        <SiteFloating />
+        <CurrencyProvider currencies={currencies}>
+          <SiteHeader />
+          <div id="main-content" className="pt-[60px] lg:pt-[110px]">{children}</div>
+          <SiteFooter />
+          <SiteFloating />
+        </CurrencyProvider>
         <ConsentBanner />
         <Analytics />
         <SpeedInsights />

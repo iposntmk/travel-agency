@@ -88,6 +88,7 @@ export interface Config {
     promotions: Promotion;
     payments: Payment;
     'affiliate-clicks': AffiliateClick;
+    currencies: Currency;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -116,6 +117,7 @@ export interface Config {
     promotions: PromotionsSelect<false> | PromotionsSelect<true>;
     payments: PaymentsSelect<false> | PaymentsSelect<true>;
     'affiliate-clicks': AffiliateClicksSelect<false> | AffiliateClicksSelect<true>;
+    currencies: CurrenciesSelect<false> | CurrenciesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -1297,6 +1299,48 @@ export interface AffiliateClick {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "currencies".
+ */
+export interface Currency {
+  id: number;
+  /**
+   * ISO 4217 code, e.g. USD, GBP, EUR, PHP.
+   */
+  code: string;
+  /**
+   * Full name, e.g. "British Pound".
+   */
+  name: string;
+  /**
+   * Display symbol, e.g. "$", "£", "€", "₫".
+   */
+  symbol: string;
+  /**
+   * Units of THIS currency per 1 unit of the base (default) currency. The base currency must be 1. Example: if base is USD and 1 USD = 0.79 GBP, set GBP to 0.79.
+   */
+  rateToBase: number;
+  /**
+   * Fraction digits shown. Use 0 for JPY/VND.
+   */
+  decimals: number;
+  symbolPosition: 'before' | 'after';
+  /**
+   * Show this currency in the storefront selector.
+   */
+  active?: boolean | null;
+  /**
+   * The base currency that all tour prices are stored in. Exactly one currency should be the default, and its rate must be 1.
+   */
+  isDefault?: boolean | null;
+  /**
+   * Order in the selector dropdown (ascending).
+   */
+  sort?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -1402,6 +1446,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'affiliate-clicks';
         value: number | AffiliateClick;
+      } | null)
+    | ({
+        relationTo: 'currencies';
+        value: number | Currency;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -2291,6 +2339,23 @@ export interface AffiliateClicksSelect<T extends boolean = true> {
   referrer?: T;
   userAgent?: T;
   ipHash?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "currencies_select".
+ */
+export interface CurrenciesSelect<T extends boolean = true> {
+  code?: T;
+  name?: T;
+  symbol?: T;
+  rateToBase?: T;
+  decimals?: T;
+  symbolPosition?: T;
+  active?: T;
+  isDefault?: T;
+  sort?: T;
   updatedAt?: T;
   createdAt?: T;
 }

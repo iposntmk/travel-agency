@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { Price } from "@/components/currency/price";
 import type { HomeBlogItem, HomeTourCardItem } from "./types";
 
 export function TourCards({ items }: { items: HomeTourCardItem[] }) {
@@ -111,7 +112,9 @@ function RailCard({ item }: { item: HomeTourCardItem; kind: "tour" }) {
           <span className="text-[10px] font-medium text-white/90 max-sm:text-[12px]">{item.reviewsCount}</span>
         </div>
         <div className="mt-0.5 flex items-center justify-between border-t border-white/20 pt-2.5">
-          <span className="text-[18px] font-extrabold text-[var(--tctravel-orange)] max-sm:text-[20px]">{item.price}</span>
+          <span className="text-[18px] font-extrabold text-[var(--tctravel-orange)] max-sm:text-[20px]">
+            {item.priceFrom ? <>From <Price base={item.priceFrom} /></> : item.price}
+          </span>
           <span className="rounded bg-[var(--tctravel-orange)] px-4 py-2 text-[12px] font-bold uppercase tracking-wider text-white">View detail</span>
         </div>
       </div>

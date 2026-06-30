@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { Tour, Destination } from "@/payload-types";
 import { resolveImage } from "@/lib/media";
+import { ActiveCurrencyCode, Price } from "@/components/currency/price";
 
 interface TourCardProps {
   tour: Tour;
@@ -51,7 +52,7 @@ export function TourCard({ tour, ctaHref, ctaLabel }: TourCardProps) {
               : "absolute right-3 top-3 inline-flex items-center rounded-full bg-brand-green px-3 py-1 text-[11px] font-semibold text-white shadow-card"
           }
         >
-          {isFree ? "Free" : `From $${tour.priceFrom}`}
+          {isFree ? "Free" : <>From <Price base={tour.priceFrom ?? 0} /></>}
         </span>
       </Link>
       <div className="flex flex-1 flex-col gap-2 p-5">
@@ -75,7 +76,7 @@ export function TourCard({ tour, ctaHref, ctaLabel }: TourCardProps) {
         </div>
         <div className="mt-auto flex items-center justify-between gap-3 pt-3">
           <span className="text-sm font-medium text-slate-600">
-            {isFree ? "Tips appreciated" : `${tour.currency ?? "USD"} · per person`}
+            {isFree ? "Tips appreciated" : <><ActiveCurrencyCode fallback={tour.currency ?? "USD"} /> · per person</>}
           </span>
           <Link
             href={href}

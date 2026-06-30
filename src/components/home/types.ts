@@ -35,6 +35,9 @@ export interface HomeTourCardItem {
   duration: string;
   rating: string;
   reviewsCount: string;
+  /** Base-currency amount for live conversion; null when no price set. */
+  priceFrom: number | null;
+  /** Fallback label shown only when priceFrom is null (e.g. "Ask for price"). */
   price: string;
 }
 

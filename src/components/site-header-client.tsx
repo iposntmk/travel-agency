@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { ChevronDown, Globe, Menu, User, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { CurrencySelector } from "@/components/currency/currency-selector";
 import type { HeaderNavItem } from "@/types/navigation";
 
 interface Props {
@@ -67,17 +68,21 @@ export function SiteHeaderClient({ items, children }: Props) {
             {items.map((item) => (
               <DesktopDropdown key={`${item.href}-${item.label}`} item={item} isActive={isActive} />
             ))}
+            <CurrencySelector className="ml-3" />
             <span className="ml-3 flex size-11 items-center justify-center rounded-full border border-[var(--tctravel-border)] text-[var(--tctravel-text-light)]">
               <User className="size-4" />
             </span>
           </nav>
-          <button
-            type="button"
-            onClick={() => setLang(lang === "EN" ? "VI" : "EN")}
-            className="flex items-center gap-1 rounded-full border border-[var(--tctravel-border)] px-4 py-2 text-sm font-bold lg:hidden"
-          >
-            <Globe className="size-4" /> {lang}
-          </button>
+          <div className="flex items-center gap-2 lg:hidden">
+            <CurrencySelector />
+            <button
+              type="button"
+              onClick={() => setLang(lang === "EN" ? "VI" : "EN")}
+              className="flex items-center gap-1 rounded-full border border-[var(--tctravel-border)] px-4 py-2 text-sm font-bold"
+            >
+              <Globe className="size-4" /> {lang}
+            </button>
+          </div>
         </div>
       </div>
       <MobileDrawer open={open} items={items} closeRef={closeRef} onClose={() => setOpen(false)} />

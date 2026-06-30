@@ -19,6 +19,7 @@ import * as migration_20260628_193000_comment_rating_guest from './20260628_1930
 import * as migration_20260628_200000_blog_media from './20260628_200000_blog_media';
 import * as migration_20260629_095204_faqs_tour_field from './20260629_095204_faqs_tour_field';
 import * as migration_20260629_161614_search_form_fields from './20260629_161614_search_form_fields';
+import * as migration_20260630_120000_currencies_collection from './20260630_120000_currencies_collection';
 
 export const migrations = [
   {
@@ -124,6 +125,11 @@ export const migrations = [
   {
     up: migration_20260629_161614_search_form_fields.up,
     down: migration_20260629_161614_search_form_fields.down,
-    name: '20260629_161614_search_form_fields'
+    name: '20260629_161614_search_form_fields',
+  },
+  {
+    up: migration_20260630_120000_currencies_collection.up,
+    down: migration_20260630_120000_currencies_collection.down,
+    name: '20260630_120000_currencies_collection',
   },
 ];

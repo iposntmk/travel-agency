@@ -4,6 +4,7 @@ import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Tour, Destination } from "@/payload-types";
 import { resolveImage } from "@/lib/media";
+import { Price } from "@/components/currency/price";
 
 interface TourListingCardProps {
   tour: Tour;
@@ -139,7 +140,7 @@ export function TourListingCard({ tour }: TourListingCardProps) {
             {!isFree ? (
               <>
                 <span className="text-lg font-bold leading-6 text-brand-red">
-                  ${tour.priceFrom?.toLocaleString("en-US") ?? "—"}
+                  <Price base={tour.priceFrom ?? 0} />
                 </span>
                 <span className="text-[13px] text-slate-400">/pax</span>
               </>

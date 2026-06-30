@@ -5,6 +5,7 @@ import { unstable_cache } from "next/cache";
 import { getPayloadClient } from "@/lib/payload";
 import type { Where } from "payload";
 import type { Comment, Destination, Post, Review, SiteSetting, TeamMember, Tour } from "@/payload-types";
+import type { CurrencyOption, SymbolPosition } from "@/lib/currency";
 
 const DEFAULT_LIMIT = 24;
 
@@ -426,6 +427,63 @@ const getTeamMembersCached = cache((limit: number) =>
 
 export function getTeamMembers(limit = 8): Promise<TeamMember[]> {
   return getTeamMembersCached(limit);
+}
+
+// Normalize raw currency docs into the lean client-facing shape. Kept tolerant
+// of schema lag (the generated `Currency` type may not exist until types are
+// regenerated) — same defensive pattern as cms-navigation.
+function normalizeCurrency(value: unknown): CurrencyOption | null {
+  const record = asRecord(value);
+  const code = stringValue(record.code);
+  const symbol = stringValue(record.symbol);
+  if (!code || !symbol) return null;
+
+  const position: SymbolPosition = record.symbolPosition === "after" ? "after" : "before";
+  return {
+    code,
+    name: stringValue(record.name) ?? code,
+    symbol,
+    rateToBase: numberValue(record.rateToBase) ?? 1,
+    decimals: numberValue(record.decimals) ?? 2,
+    symbolPosition: position,
+    isDefault: record.isDefault === true
+  };
+}
+
+async function fetchCurrencies(): Promise<CurrencyOption[]> {
+  try {
+    const payload = (await getPayloadClient()) as unknown as PublicFindPayload;
+    const result = await payload.find({
+      collection: "currencies",
+      where: { active: { equals: true } },
+      limit: 50,
+      depth: 0,
+      sort: "sort"
+    });
+    return result.docs.map(normalizeCurrency).filter((c): c is CurrencyOption => c !== null);
+  } catch (error) {
+    // Table may not exist yet (migration not applied). Degrade to no
+    // conversion rather than crashing every page.
+    if (isMissingCurrenciesTableError(error)) return [];
+    throw error;
+  }
+}
+
+const getCurrenciesCached = cache(() =>
+  unstable_cache(() => fetchCurrencies(), ["cms", "currencies"], {
+    tags: ["currencies"]
+  })()
+);
+
+export function getCurrencies(): Promise<CurrencyOption[]> {
+  return getCurrenciesCached();
+}
+
+function isMissingCurrenciesTableError(error: unknown): boolean {
+  const record = asRecord(error);
+  const cause = asRecord(record.cause);
+  if (cause.code === "42P01") return true;
+  return typeof record.message === "string" && record.message.includes('relation "currencies" does not exist');
 }
 
 export type PublicCarRental = {

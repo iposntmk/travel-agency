@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { Price } from "@/components/currency/price";
 
 const TABS = [
   { id: "overview", label: "Overview" },
@@ -70,18 +71,17 @@ export function TourStickyTabs() {
 interface BottomCtaProps {
   slug: string;
   isFree: boolean;
-  currency?: string | null;
   priceFrom?: number | null;
 }
 
-export function TourMobileBottomCta({ slug, isFree, currency, priceFrom }: BottomCtaProps) {
+export function TourMobileBottomCta({ slug, isFree, priceFrom }: BottomCtaProps) {
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white p-3 shadow-elevated lg:hidden">
       <div className="mx-auto flex max-w-page items-center justify-between gap-3">
         <div>
           <span className="text-xs text-brand-red">From </span>
           <span className="text-lg font-bold text-brand-red">
-            {isFree ? "Free" : `${currency ?? "USD"} ${priceFrom ?? ""}`}
+            {isFree ? "Free" : <Price base={priceFrom ?? 0} />}
           </span>
           {!isFree && <span className="text-xs text-slate-400"> /pax</span>}
         </div>
