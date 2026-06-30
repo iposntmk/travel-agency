@@ -26,8 +26,8 @@ describe("lexicalToHtml", () => {
     expect(lexicalToHtml(sample)).toContain("<p>Hello <strong>world</strong></p>");
   });
 
-  it("renders heading with the requested tag", () => {
-    expect(lexicalToHtml(sample)).toContain("<h2>Itinerary</h2>");
+  it("renders heading with the requested tag and an anchor id", () => {
+    expect(lexicalToHtml(sample)).toContain('<h2 id="itinerary">Itinerary</h2>');
   });
 
   it("escapes HTML special characters", () => {

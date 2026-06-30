@@ -60,8 +60,29 @@ export const homepageField: Field = {
       admin: { description: "Tour search form shown under the hero." },
       fields: [enabled, { name: "eyebrow", type: "text" }, { name: "title", type: "text" }, { name: "subtitle", type: "textarea" }]
     },
+    {
+      name: "whoWeAre",
+      type: "group",
+      admin: { description: "Short intro block under the search form." },
+      fields: [
+        enabled,
+        { name: "heading", type: "text", admin: { description: 'Section heading, e.g. "Who we are".' } },
+        { name: "title", type: "textarea", admin: { description: "First paragraph." } },
+        { name: "body", type: "textarea", admin: { description: "Second paragraph." } },
+        { name: "actionLabel", type: "text" },
+        { name: "actionHref", type: "text" }
+      ]
+    },
     { name: "seasonalBanner", type: "group", fields: [enabled] },
-    { name: "featuredTours", type: "group", fields: [enabled, ...headFields()] },
+    {
+      name: "featuredTours",
+      type: "group",
+      fields: [
+        enabled,
+        ...headFields(),
+        { name: "tabLabel", type: "text", admin: { description: 'Filter tab label, e.g. "PRIVATE TOURS".' } }
+      ]
+    },
     { name: "cruises", type: "group", fields: [enabled, ...headFields()] },
     { name: "destinations", type: "group", fields: [enabled, ...headFields()] },
     {
@@ -89,7 +110,11 @@ export const homepageField: Field = {
       admin: { description: "External partner (OTA) section header. Providers are configured in the OTA group." },
       fields: [enabled, { name: "eyebrow", type: "text" }, { name: "title", type: "text" }, { name: "subtitle", type: "textarea" }]
     },
-    { name: "testimonials", type: "group", fields: [enabled] },
+    {
+      name: "testimonials",
+      type: "group",
+      fields: [enabled, { name: "eyebrow", type: "text" }, { name: "title", type: "text" }, { name: "subtitle", type: "textarea" }]
+    },
     { name: "team", type: "group", fields: [enabled, ...headFields()] },
     {
       name: "whyUs",

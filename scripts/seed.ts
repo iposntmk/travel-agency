@@ -846,6 +846,14 @@ async function main() {
         title: "Find your tour",
         subtitle: "Search by keyword, destination, and tour type — we'll take you straight to matching departures.",
       },
+      whoWeAre: {
+        enabled: true,
+        heading: "Who we are",
+        title: "A Vietnam travel agency built around local knowledge.",
+        body: "TC Travel Vietnam designs private tours, small-group experiences, car transfers, cruises, and custom proposals with direct support from local specialists.",
+        actionLabel: "Meet Our Team",
+        actionHref: "/about-us",
+      },
       seasonalBanner: { enabled: true },
       featuredTours: {
         enabled: true,
@@ -854,6 +862,7 @@ async function main() {
         subtitle: "Curated departures for the current season — private guides, small groups, and free walking tours.",
         actionLabel: "View all tours",
         actionHref: "/tours",
+        tabLabel: "PRIVATE TOURS",
       },
       cruises: {
         enabled: true,
@@ -886,7 +895,12 @@ async function main() {
         title: "Featured Experiences",
         subtitle: "Day tours, tickets, and activities curated by trusted travel partners — booked externally, not through TC Travel.",
       },
-      testimonials: { enabled: true },
+      testimonials: {
+        enabled: true,
+        eyebrow: "Reviews",
+        title: "What Clients Say About Us",
+        subtitle: "Local team, clear pay-later booking, and verified traveller feedback across tours and transfers.",
+      },
       team: {
         enabled: true,
         eyebrow: "Meet the team",

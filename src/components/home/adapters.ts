@@ -6,12 +6,33 @@ import type {
   HomeBlogItem,
   HomeDestinationItem,
   HomeReviewItem,
+  HomeSectionCopy,
   HomeTourCardItem,
   SearchConfig,
   SearchOption,
   SearchTab,
   WhyChooseItem
 } from "./types";
+
+type RawSectionCopy = {
+  title?: string | null;
+  eyebrow?: string | null;
+  subtitle?: string | null;
+  actionLabel?: string | null;
+  actionHref?: string | null;
+} | null | undefined;
+
+// Maps a SiteSettings.homepage section group into section-header copy. Blank
+// fields collapse to undefined so each component keeps its built-in default.
+export function toSectionCopy(group: RawSectionCopy): HomeSectionCopy {
+  return {
+    title: clean(group?.title),
+    eyebrow: clean(group?.eyebrow),
+    subtitle: clean(group?.subtitle),
+    actionLabel: clean(group?.actionLabel),
+    actionHref: clean(group?.actionHref)
+  };
+}
 
 export function toHeroSlides(destinations: Destination[], tours: Tour[]): HeroSlide[] {
   const sources = [

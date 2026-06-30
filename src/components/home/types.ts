@@ -41,6 +41,15 @@ export interface HomeTourCardItem {
   price: string;
 }
 
+/** CMS-driven copy for a homepage section header (from SiteSettings.homepage). */
+export interface HomeSectionCopy {
+  title?: string;
+  eyebrow?: string;
+  subtitle?: string;
+  actionLabel?: string;
+  actionHref?: string;
+}
+
 export interface HomeDestinationItem {
   id: string;
   title: string;

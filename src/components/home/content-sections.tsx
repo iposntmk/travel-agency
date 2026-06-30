@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight, Star } from "lucide-react";
 import { DestinationMobileCarousel } from "./destination-carousel";
 import { ImageCard } from "./image-card";
-import type { CruiseFeatureItem, HomeDestinationItem, HomeReviewItem, WhyChooseItem } from "./types";
+import type { CruiseFeatureItem, HomeDestinationItem, HomeReviewItem, HomeSectionCopy, WhyChooseItem } from "./types";
 
 const WHY_ICONS: Record<string, string> = {
   compass: "/images/icons/icon-1.svg",
@@ -12,21 +12,33 @@ const WHY_ICONS: Record<string, string> = {
   heart: "/images/icons/icon-4.svg"
 };
 
-export function WhoWeAre({ title, body }: { title: string; body: string }) {
+export function WhoWeAre({
+  heading = "Who we are",
+  title,
+  body,
+  actionLabel = "Meet Our Team",
+  actionHref = "/about-us"
+}: {
+  heading?: string;
+  title: string;
+  body: string;
+  actionLabel?: string;
+  actionHref?: string;
+}) {
   return (
     <section className="border-b border-[var(--tctravel-border)] bg-white py-12 md:py-16">
       <div className="container-center">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="mb-6 text-[40px] font-bold leading-[48px] text-[var(--tctravel-text)] max-sm:text-[28px] max-sm:leading-[36px]">
-            <Link href="/about-us" className="transition-colors hover:text-[var(--tctravel-primary)]">Who we are</Link>
+            <Link href={actionHref} className="transition-colors hover:text-[var(--tctravel-primary)]">{heading}</Link>
           </h2>
           <div className="space-y-4 text-sm leading-relaxed text-[var(--tctravel-text-light)] md:text-base max-sm:text-[15px]">
             <p>{title}</p>
             <p>{body}</p>
           </div>
           <div className="mt-8 flex justify-center">
-            <Link href="/about-us" className="inline-flex items-center gap-2 rounded-lg bg-[var(--tctravel-orange)] px-6 py-3 text-sm font-bold uppercase tracking-wider text-white shadow transition-all hover:-translate-y-0.5 hover:bg-[var(--tctravel-orange-dark)] max-sm:min-h-[44px] max-sm:text-[15px]">
-              Meet Our Team <ArrowRight className="size-4" />
+            <Link href={actionHref} className="inline-flex items-center gap-2 rounded-lg bg-[var(--tctravel-orange)] px-6 py-3 text-sm font-bold uppercase tracking-wider text-white shadow transition-all hover:-translate-y-0.5 hover:bg-[var(--tctravel-orange-dark)] max-sm:min-h-[44px] max-sm:text-[15px]">
+              {actionLabel} <ArrowRight className="size-4" />
             </Link>
           </div>
         </div>
@@ -35,12 +47,12 @@ export function WhoWeAre({ title, body }: { title: string; body: string }) {
   );
 }
 
-export function WhyChooseUs({ items }: { items: WhyChooseItem[] }) {
+export function WhyChooseUs({ items, copy }: { items: WhyChooseItem[]; copy?: HomeSectionCopy }) {
   return (
     <section className="border-b border-[var(--tctravel-border)] bg-[#f8f9fa] py-12 md:py-16">
       <div className="container-center">
         <h2 className="mb-10 text-center text-2xl font-bold text-[var(--tctravel-text)] md:text-3xl max-sm:text-[28px]">
-          Why Travel With Us?
+          {copy?.title ?? "Why Travel With Us?"}
         </h2>
         <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2 lg:grid-cols-4 max-sm:gap-5">
           {items.map((item) => {
@@ -63,12 +75,12 @@ export function WhyChooseUs({ items }: { items: WhyChooseItem[] }) {
   );
 }
 
-export function Testimonials({ reviews, summary }: { reviews: HomeReviewItem[]; summary: string }) {
+export function Testimonials({ reviews, summary, title = "What Clients Say About Us" }: { reviews: HomeReviewItem[]; summary: string; title?: string }) {
   return (
     <section className="border-b border-[var(--tctravel-border)] bg-white py-10 sm:py-12 md:py-14">
       <div className="container-center">
         <div className="mb-4 text-center sm:mb-6">
-          <h2 className="mb-1 text-[18px] font-bold text-[var(--tctravel-text)] sm:text-[20px] md:text-[24px]">What Clients Say About Us</h2>
+          <h2 className="mb-1 text-[18px] font-bold text-[var(--tctravel-text)] sm:text-[20px] md:text-[24px]">{title}</h2>
           <p className="text-[12px] text-[var(--tctravel-text-light)] sm:text-[13px]">{summary}</p>
         </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
@@ -88,14 +100,14 @@ export function Testimonials({ reviews, summary }: { reviews: HomeReviewItem[]; 
   );
 }
 
-export function BestCruises({ items }: { items: CruiseFeatureItem[] }) {
+export function BestCruises({ items, copy }: { items: CruiseFeatureItem[]; copy?: HomeSectionCopy }) {
   return (
     <section className="border-b border-[var(--tctravel-border)] bg-[#f8f9fa] py-12 md:py-16">
       <div className="container-center">
         <div className="mb-12 text-center">
-          <h2 className="mb-4 text-[40px] font-bold leading-[48px] text-[var(--tctravel-text)] max-sm:text-[28px] max-sm:leading-[36px]">Best Cruises</h2>
+          <h2 className="mb-4 text-[40px] font-bold leading-[48px] text-[var(--tctravel-text)] max-sm:text-[28px] max-sm:leading-[36px]">{copy?.title ?? "Best Cruises"}</h2>
           <p className="mx-auto max-w-4xl text-sm leading-relaxed text-[var(--tctravel-text-light)] md:text-base max-sm:text-[15px]">
-            Choose from featured cruise itineraries and river journeys, then ask our local team to shape details around your budget and travel style.
+            {copy?.subtitle ?? "Choose from featured cruise itineraries and river journeys, then ask our local team to shape details around your budget and travel style."}
           </p>
         </div>
         <div className="space-y-12">
@@ -119,17 +131,14 @@ export function BestCruises({ items }: { items: CruiseFeatureItem[] }) {
   );
 }
 
-export function Destinations({ items }: { items: HomeDestinationItem[] }) {
-  const top4 = items.slice(0, 4);
-  const rest = items.slice(4);
-
+export function Destinations({ items, copy }: { items: HomeDestinationItem[]; copy?: HomeSectionCopy }) {
   return (
     <section className="border-b border-[var(--tctravel-border)] bg-[#f8f9fa] py-12 md:py-16">
       <div className="container-center">
         <div className="mb-10 text-center md:mb-14">
-          <h2 className="mb-4 text-2xl font-bold text-[var(--tctravel-text)] md:text-3xl lg:text-4xl max-sm:text-[28px]">Top Destinations</h2>
+          <h2 className="mb-4 text-2xl font-bold text-[var(--tctravel-text)] md:text-3xl lg:text-4xl max-sm:text-[28px]">{copy?.title ?? "Top Destinations"}</h2>
           <p className="mx-auto max-w-3xl text-sm leading-relaxed text-[var(--tctravel-text-light)] md:text-base max-sm:text-[15px]">
-            Discover popular destinations in Vietnam with local tours, food, culture, beaches, and daily-life experiences.
+            {copy?.subtitle ?? "Discover popular destinations in Vietnam with local tours, food, culture, beaches, and daily-life experiences."}
           </p>
         </div>
 

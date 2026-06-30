@@ -838,6 +838,29 @@ export interface SiteSetting {
       title?: string | null;
       subtitle?: string | null;
     };
+    /**
+     * Short intro block under the search form.
+     */
+    whoWeAre?: {
+      /**
+       * Show this section on the homepage.
+       */
+      enabled?: boolean | null;
+      /**
+       * Section heading, e.g. "Who we are".
+       */
+      heading?: string | null;
+      /**
+       * First paragraph.
+       */
+      title?: string | null;
+      /**
+       * Second paragraph.
+       */
+      body?: string | null;
+      actionLabel?: string | null;
+      actionHref?: string | null;
+    };
     seasonalBanner?: {
       /**
        * Show this section on the homepage.
@@ -854,6 +877,10 @@ export interface SiteSetting {
       subtitle?: string | null;
       actionLabel?: string | null;
       actionHref?: string | null;
+      /**
+       * Filter tab label, e.g. "PRIVATE TOURS".
+       */
+      tabLabel?: string | null;
     };
     cruises?: {
       /**
@@ -909,6 +936,9 @@ export interface SiteSetting {
        * Show this section on the homepage.
        */
       enabled?: boolean | null;
+      eyebrow?: string | null;
+      title?: string | null;
+      subtitle?: string | null;
     };
     team?: {
       /**
@@ -2010,6 +2040,16 @@ export interface SiteSettingsSelect<T extends boolean = true> {
               title?: T;
               subtitle?: T;
             };
+        whoWeAre?:
+          | T
+          | {
+              enabled?: T;
+              heading?: T;
+              title?: T;
+              body?: T;
+              actionLabel?: T;
+              actionHref?: T;
+            };
         seasonalBanner?:
           | T
           | {
@@ -2024,6 +2064,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
               subtitle?: T;
               actionLabel?: T;
               actionHref?: T;
+              tabLabel?: T;
             };
         cruises?:
           | T
@@ -2068,6 +2109,9 @@ export interface SiteSettingsSelect<T extends boolean = true> {
           | T
           | {
               enabled?: T;
+              eyebrow?: T;
+              title?: T;
+              subtitle?: T;
             };
         team?:
           | T

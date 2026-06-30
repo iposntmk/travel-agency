@@ -6,30 +6,40 @@ import { ArrowRight, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Price } from "@/components/currency/price";
-import type { HomeBlogItem, HomeTourCardItem } from "./types";
+import type { HomeBlogItem, HomeSectionCopy, HomeTourCardItem } from "./types";
 
-export function TourCards({ items }: { items: HomeTourCardItem[] }) {
-  return <CardRail eyebrow="Our team of local travel experts has curated unique experiences and tours at competitive prices." title="Featured Trips" items={items} href="/tours" kind="tour" />;
+export function TourCards({ items, copy, tabLabel = "PRIVATE TOURS" }: { items: HomeTourCardItem[]; copy?: HomeSectionCopy; tabLabel?: string }) {
+  return (
+    <CardRail
+      eyebrow={copy?.subtitle ?? "Our team of local travel experts has curated unique experiences and tours at competitive prices."}
+      title={copy?.title ?? "Featured Trips"}
+      items={items}
+      href={copy?.actionHref ?? "/tours"}
+      actionLabel={copy?.actionLabel ?? "See More"}
+      tabLabel={tabLabel}
+      kind="tour"
+    />
+  );
 }
 
-export function BlogSection({ items }: { items: HomeBlogItem[] }) {
+export function BlogSection({ items, copy }: { items: HomeBlogItem[]; copy?: HomeSectionCopy }) {
   return (
     <section className="border-b border-[var(--tctravel-border)] bg-[#f8f9fa] py-12 md:py-16">
       <div className="container-center">
         <div className="mb-10 text-center md:mb-14">
-          <h2 className="mb-3 text-2xl font-bold text-[var(--tctravel-text)] md:text-3xl lg:text-4xl max-sm:text-[28px]">Travel Guide</h2>
-          <p className="text-sm font-medium text-[var(--tctravel-text-light)] max-sm:text-[15px]">Get expert advice, destination inspiration, and the best travel tips.</p>
+          <h2 className="mb-3 text-2xl font-bold text-[var(--tctravel-text)] md:text-3xl lg:text-4xl max-sm:text-[28px]">{copy?.title ?? "Travel Guide"}</h2>
+          <p className="text-sm font-medium text-[var(--tctravel-text-light)] max-sm:text-[15px]">{copy?.subtitle ?? "Get expert advice, destination inspiration, and the best travel tips."}</p>
         </div>
         <Carousel items={items} render={(item) => <BlogCard item={item} />} cardClassName="px-4 md:px-3" />
         <div className="mt-8 flex justify-center">
-          <Link href="/blog" className="inline-flex items-center gap-2 rounded-lg bg-[var(--tctravel-orange)] px-8 py-3.5 text-sm font-bold uppercase tracking-wider text-white shadow transition-all hover:bg-[var(--tctravel-orange-dark)] max-sm:min-h-[44px] max-sm:text-[15px]">See More</Link>
+          <Link href={copy?.actionHref ?? "/blog"} className="inline-flex items-center gap-2 rounded-lg bg-[var(--tctravel-orange)] px-8 py-3.5 text-sm font-bold uppercase tracking-wider text-white shadow transition-all hover:bg-[var(--tctravel-orange-dark)] max-sm:min-h-[44px] max-sm:text-[15px]">{copy?.actionLabel ?? "See More"}</Link>
         </div>
       </div>
     </section>
   );
 }
 
-function CardRail({ eyebrow, title, items, href, kind }: { eyebrow: string; title: string; items: HomeTourCardItem[]; href: string; kind: "tour" }) {
+function CardRail({ eyebrow, title, items, href, actionLabel, tabLabel, kind }: { eyebrow: string; title: string; items: HomeTourCardItem[]; href: string; actionLabel: string; tabLabel: string; kind: "tour" }) {
   return (
     <section className="border-b border-[var(--tctravel-border)] bg-white py-12 md:py-16">
       <div className="container-center">
@@ -38,11 +48,11 @@ function CardRail({ eyebrow, title, items, href, kind }: { eyebrow: string; titl
           <p className="mx-auto max-w-3xl px-4 text-sm leading-relaxed text-[var(--tctravel-text-light)] md:text-base max-sm:text-[15px]">{eyebrow}</p>
         </div>
         <div className="mb-8 flex justify-center border-b border-[var(--tctravel-border)] pb-0.5">
-          <button className="border-b-2 border-[var(--tctravel-primary)] px-6 py-2 text-sm font-bold uppercase tracking-wide text-[var(--tctravel-primary)]">PRIVATE TOURS</button>
+          <button className="border-b-2 border-[var(--tctravel-primary)] px-6 py-2 text-sm font-bold uppercase tracking-wide text-[var(--tctravel-primary)]">{tabLabel}</button>
         </div>
         <Carousel items={items} render={(item) => <RailCard item={item} kind={kind} />} cardClassName="px-4 md:px-3" />
         <div className="mt-6 flex justify-center md:mt-8">
-          <Link href={href} className="rounded-lg bg-[var(--tctravel-orange)] px-8 py-3 text-[14px] font-bold uppercase tracking-wider text-white shadow transition-all hover:-translate-y-0.5 hover:bg-[var(--tctravel-orange-dark)] max-sm:min-h-[44px] max-sm:px-10 max-sm:py-3.5 max-sm:text-[15px]">See More</Link>
+          <Link href={href} className="rounded-lg bg-[var(--tctravel-orange)] px-8 py-3 text-[14px] font-bold uppercase tracking-wider text-white shadow transition-all hover:-translate-y-0.5 hover:bg-[var(--tctravel-orange-dark)] max-sm:min-h-[44px] max-sm:px-10 max-sm:py-3.5 max-sm:text-[15px]">{actionLabel}</Link>
         </div>
       </div>
     </section>

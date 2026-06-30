@@ -19,6 +19,7 @@ import {
   toReviewItems,
   toSearchConfig,
   toSearchStarts,
+  toSectionCopy,
   toTourCards,
   toWhyItems
 } from "@/components/home/adapters";
@@ -85,30 +86,38 @@ export default async function HomePage() {
         <TcTravelSearchForm starts={toSearchStarts(destinations)} config={toSearchConfig(siteSettings)} />
       ) : null}
 
-      <WhoWeAre
-        title={text(hp?.hero?.body, "A Vietnam travel agency built around local knowledge.")}
-        body={text(
-          hp?.search?.subtitle,
-          "TC Travel Vietnam designs private tours, small-group experiences, car transfers, cruises, and custom proposals with direct support from local specialists."
-        )}
-      />
+      {hp?.whoWeAre?.enabled !== false ? (
+        <WhoWeAre
+          heading={text(hp?.whoWeAre?.heading, "Who we are")}
+          title={text(hp?.whoWeAre?.title ?? hp?.hero?.body, "A Vietnam travel agency built around local knowledge.")}
+          body={text(
+            hp?.whoWeAre?.body ?? hp?.search?.subtitle,
+            "TC Travel Vietnam designs private tours, small-group experiences, car transfers, cruises, and custom proposals with direct support from local specialists."
+          )}
+          actionLabel={text(hp?.whoWeAre?.actionLabel, "Meet Our Team")}
+          actionHref={text(hp?.whoWeAre?.actionHref, "/about-us")}
+        />
+      ) : null}
 
-      {hp?.whyUs?.enabled !== false ? <WhyChooseUs items={toWhyItems(siteSettings)} /> : null}
+      {hp?.whyUs?.enabled !== false ? <WhyChooseUs items={toWhyItems(siteSettings)} copy={toSectionCopy(hp?.whyUs)} /> : null}
 
-      {hp?.featuredTours?.enabled !== false && tourCards.length > 0 ? <TourCards items={tourCards} /> : null}
+      {hp?.featuredTours?.enabled !== false && tourCards.length > 0 ? (
+        <TourCards items={tourCards} copy={toSectionCopy(hp?.featuredTours)} tabLabel={text(hp?.featuredTours?.tabLabel, "PRIVATE TOURS")} />
+      ) : null}
 
       {hp?.testimonials?.enabled !== false ? (
         <Testimonials
           reviews={toReviewItems(reviews)}
-          summary={siteSettings?.trust?.summary ?? `${siteSettings?.trust?.reviewAverage ?? 4.9}/5 from ${siteSettings?.trust?.reviewCount ?? 120}+ traveller reviews.`}
+          title={text(hp?.testimonials?.title, "What Clients Say About Us")}
+          summary={hp?.testimonials?.subtitle ?? siteSettings?.trust?.summary ?? `${siteSettings?.trust?.reviewAverage ?? 4.9}/5 from ${siteSettings?.trust?.reviewCount ?? 120}+ traveller reviews.`}
         />
       ) : null}
 
-      {hp?.cruises?.enabled !== false && cruiseItems.length > 0 ? <BestCruises items={cruiseItems} /> : null}
+      {hp?.cruises?.enabled !== false && cruiseItems.length > 0 ? <BestCruises items={cruiseItems} copy={toSectionCopy(hp?.cruises)} /> : null}
 
-      {hp?.destinations?.enabled !== false && destinationItems.length > 0 ? <Destinations items={destinationItems} /> : null}
+      {hp?.destinations?.enabled !== false && destinationItems.length > 0 ? <Destinations items={destinationItems} copy={toSectionCopy(hp?.destinations)} /> : null}
 
-      {hp?.blog?.enabled !== false && blogItems.length > 0 ? <BlogSection items={blogItems} /> : null}
+      {hp?.blog?.enabled !== false && blogItems.length > 0 ? <BlogSection items={blogItems} copy={toSectionCopy(hp?.blog)} /> : null}
     </main>
   );
 }
