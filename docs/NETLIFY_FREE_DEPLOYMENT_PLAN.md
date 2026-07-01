@@ -128,6 +128,8 @@ Domain:
 - Set toàn bộ env canonical/SEO về domain đó.
 - Kiểm tra lại `robots.txt`, `sitemap.xml`, OpenGraph URLs, và `/llms.txt`.
 
+**Cloudflare R2 CORS (BẮT BUỘC — không nằm trong repo):** storage-s3 dùng `clientUploads: true` → browser PUT thẳng lên `*.r2.cloudflarestorage.com`. Bucket CORS `AllowedOrigins` **phải chứa origin deploy** (`https://tc-travel.netlify.app`, và custom domain sau này), nếu không upload trong admin fail "Failed to fetch" / CORS preflight block. Đã thêm origin Netlify 2026-07-02 (giữ nguyên Vercel/localhost/LAN). Set qua S3 API `PutBucketCors` với R2 keys, hoặc Cloudflare dashboard → R2 → bucket → Settings → CORS. **Mỗi origin/domain mới phải thêm lại.**
+
 ## Biến Môi Trường
 
 Mirror production envs từ Vercel, nhưng đổi URL sang Netlify/custom domain.
@@ -212,9 +214,11 @@ Fallback:
 
 ### 2. Sharp native binary
 
-Mức rủi ro: cao cho media processing, thấp cho page view bình thường.
+Mức rủi ro: cao cho media processing, thấp cho page view bình thường. **Trạng thái 2026-07-02: R2 write PASS, Sharp pipeline CHƯA verify.**
 
 Repo import `sharp` trong `payload.config.ts` và `src/services/media-processor.ts`. Netlify phải cài đúng Linux binary.
+
+**Đo được 2026-07-02:** Upload qua Payload admin (storage-s3 `clientUploads`) **thành công sau khi fix R2 CORS** — nhưng chỉ lưu ảnh gốc ở root bucket (`Chua.jpg`), status default "ready", `r2Key`/`publicUrl`/`variants` rỗng. Admin **KHÔNG** kích hoạt pipeline webp/variant. Pipeline thật đi qua `/api/media/complete` → QStash `/api/qstash/media-process` → sharp (flow uploader custom, không phải admin). ⇒ Sharp-on-Netlify **chưa được exercise**; muốn verify phải chạy đúng flow custom hoặc test trực tiếp media-process. Ảnh cũ trên R2 (`.webp` + path `originals/…`) là do pipeline này tạo từ trước (trên Vercel).
 
 Cách kiểm tra:
 
