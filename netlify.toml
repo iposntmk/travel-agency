@@ -1,0 +1,14 @@
+[build]
+  command = "bash scripts/netlify-build.sh"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+  # Next.js inlines NEXT_PUBLIC_* into the client bundle by design, so
+  # Netlify secrets scanning must ignore them or every build fails.
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_SITE_URL,NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"
+
+# Next.js Runtime — handles SSR, ISR, image optimization and route handlers.
+# Auto-installed by Netlify from this reference (no lockfile change needed).
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

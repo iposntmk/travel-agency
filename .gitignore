@@ -49,3 +49,6 @@ start.ps1
 start.bat
 launch-codex.bat
 launch-opencode.bat
+
+# Local Netlify folder
+.netlify
