@@ -1,7 +1,32 @@
 # Kế Hoạch Triển Khai Netlify Free
 
-**Ngày:** 2026-06-30  
+**Ngày:** 2026-06-30 (kế hoạch) · **Cập nhật:** 2026-07-02 (đã deploy thật)  
 **Phạm vi:** Triển khai ứng dụng Travel Agency hiện tại lên Netlify Free như một phương án production chi phí thấp trong giai đoạn website còn ít traffic, ít pax và doanh thu chưa đủ để trả Vercel Pro.
+
+## Trạng Thái Thực Tế (2026-07-02)
+
+**Đã deploy thành công.** Site live: https://tc-travel.netlify.app (site id `9313198f-95c0-4f1f-a9f2-780615d350a6`, GitHub iposntmk/travel-agency `main`). Vercel vẫn giữ song song — hai target cùng trỏ 1 Neon prod DB.
+
+Lần deploy đầu **FAIL** (exit 2): default Netlify không đủ cho app này. Phải thêm config (khác với giả định ban đầu "test defaults trước, không thêm netlify.toml"):
+
+- `netlify.toml`: plugin `@netlify/plugin-nextjs`, `publish=.next`, `NODE_VERSION=22`, `SECRETS_SCAN_OMIT_KEYS` cho `NEXT_PUBLIC_*` (Next inline biến này vào client bundle → Netlify secrets scanning fail build nếu không omit — **rủi ro này plan gốc không lường**).
+- `scripts/netlify-build.sh`: gate `pnpm payload:migrate` theo `$CONTEXT=production` (biến Netlify, không phải `VERCEL_ENV`), rồi `pnpm build`. Plan gốc bỏ sót bước migrate.
+- 20 env vars push qua `netlify env:import`; `NEXT_PUBLIC_SITE_URL` = domain Netlify, bỏ `DEV_ORIGIN`.
+
+**Kết quả smoke test (2026-07-02):**
+
+| Mục | Kết quả |
+|---|---|
+| Public pages (`/tours`, `/tours/[slug]`, `/destinations`, `/free-tours`, `/car-rentals`, `/contact`, `/customize-tour`) | ✅ 200 |
+| `robots.txt` / `sitemap.xml` (912 URL, 840 detail slug) | ✅ |
+| `/llms.txt` | ✅ (đã fix — trước 500; thêm root route 308 → `/en/llms.txt`) |
+| Booking flow E2E | ✅ submit → confirmation → DB Booking ID 10 → Resend email nhận được |
+| Rate-limit (Upstash Redis) | ✅ không false-positive |
+| QStash `/api/qstash/media-process` signature | ✅ GET 405 / POST unsigned 401 |
+| Function bundle size (Payload+Sharp) | ✅ deploy ready ⇒ trong giới hạn |
+| Cold TTFB | ⚠️ 4–6s cold (car-rentals 6.3s, tours 4.5s); warm <1s. Netlify Free region US xa Neon Singapore |
+
+**Chưa verify (cần login Payload admin):** R2 upload + Sharp media-process end-to-end, revalidation sau sửa content. `DATABASE_URL_UNPOOLED` **chưa set** (chỉ có pooled) — migrate build này chạy qua pooler OK, nhưng migration nặng nên cân nhắc thêm unpooled.
 
 ## Quyết Định
 
@@ -66,15 +91,30 @@ Netlify chỉ phù hợp cho MVP production nếu tất cả kiểm tra này pas
 
 ## Cấu Hình Netlify Cần Có
 
-Dùng Netlify UI hoặc `netlify.toml` trong tương lai. Không thêm config đoán mò trước lần test đầu tiên.
+Config thực tế đang chạy nằm ở `netlify.toml` + `scripts/netlify-build.sh` (đã commit). Default Netlify **không đủ** — đã verify: thiếu plugin thì framework không detect và deploy fail.
+
+`netlify.toml`:
+
+```toml
+[build]
+  command = "bash scripts/netlify-build.sh"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_SITE_URL,NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+```
 
 Build:
 
-- Build command: `pnpm build`
-- Package manager: `pnpm`
-- Install command: `pnpm install --frozen-lockfile`
-- Publish directory: để Netlify/OpenNext tự detect Next.js output.
-- Node version: khớp với docs dự án. Docs hiện ghi Node.js 23+, nhưng phải verify Netlify support. Nếu Netlify không hỗ trợ version này sạch, cần chủ động đồng bộ lại docs/runtime.
+- Build command: `bash scripts/netlify-build.sh` — chạy `payload:migrate` chỉ khi `$CONTEXT=production`, rồi `pnpm build`.
+- Package manager: `pnpm` (Netlify tự đọc `packageManager` field).
+- Publish directory: `.next` (Next.js Runtime v5 dùng `.next`).
+- Node version: **22** (repo dùng `@types/node ^22`, không có `engines`). Node 23+ trong docs cũ là sai — đã đồng bộ.
+- **Secrets scanning:** Next inline `NEXT_PUBLIC_*` vào client bundle → phải khai `SECRETS_SCAN_OMIT_KEYS` cho các key public, nếu không build fail.
 
 Functions:
 
@@ -149,7 +189,7 @@ Khi test Netlify, các điểm này chưa chắc là blocker. Khi migration chí
 
 ### 1. Function bundle size
 
-Mức rủi ro: cao.
+Mức rủi ro: cao. **Trạng thái 2026-07-02: ĐÃ PASS** — deploy `ready`, không vượt limit. Payload+Sharp+Lexical fit. Vẫn theo dõi khi thêm deps.
 
 Payload, `@payloadcms/db-postgres`, `@payloadcms/storage-s3`, migrations, collections, Lexical, và `sharp` có thể làm server function bundle quá lớn.
 
@@ -288,17 +328,19 @@ Quy tắc riêng cho Netlify:
 - Không thay R2/Cloudflare media delivery bằng Netlify bandwidth-heavy delivery nếu chưa review cost rõ ràng.
 - Không bật indexing trên Netlify subdomain tạm.
 - Không set `NEXT_PUBLIC_SITE_URL` về preview domain cho production.
-- Không thêm `netlify.toml` đoán mò khi chưa test defaults hiện tại của Netlify/OpenNext.
+- `netlify.toml` baseline (plugin + publish + Node + secrets omit) đã được xác lập và verify — không sửa đoán mò ngoài baseline này khi chưa có lý do đo được.
 - Không xem `included_files` là cách giảm bundle size. Nó thường dùng để include file; không phải công cụ exclude dependency lớn.
 - Nếu function size fail, phân tích bundle output trước. Sau đó mới quyết định trim deps, tách Payload, hoặc chuyển processor/backend.
 - Tách bạch admin owner-only với frontend pax-facing. `/admin` chậm có thể chấp nhận; public tour pages chậm thì không.
 
 ## Quy Trình Test Netlify Lần Đầu
 
+> **Đã thực hiện 2026-07-02.** Bước 3–4 dưới đây (build `pnpm build`, không thêm config) đã **fail** — thực tế phải dùng `netlify.toml` + `netlify-build.sh` (xem "Trạng Thái Thực Tế" đầu doc). Giữ lại để tham chiếu lịch sử.
+
 1. Tạo Netlify site từ test branch, không dùng `master`.
 2. Thêm toàn bộ env vars cần thiết với `ALLOW_INDEXING=false`.
-3. Set build command là `pnpm build`.
-4. Deploy lần đầu không thêm custom Netlify config trừ khi bắt buộc.
+3. ~~Set build command là `pnpm build`~~ → thực tế: `bash scripts/netlify-build.sh` (migrate gate + build).
+4. ~~Deploy lần đầu không thêm custom Netlify config~~ → thực tế: **bắt buộc** `netlify.toml` với plugin `@netlify/plugin-nextjs`, nếu không deploy fail exit 2.
 5. Xem build logs: OpenNext adapter, function size, native dependency warnings, và route/function mapping.
 6. Smoke test public pages:
    - `/`
