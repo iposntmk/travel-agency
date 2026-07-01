@@ -52,3 +52,6 @@ launch-opencode.bat
 
 # Local Netlify folder
 .netlify
+
+# docs — keep local only, do not publish to github
+docs/
