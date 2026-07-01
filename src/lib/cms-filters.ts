@@ -15,6 +15,7 @@ export interface ToursQuery {
   freeOnly?: boolean;
   featuredOnly?: boolean;
   limit?: number;
+  locale?: string;
 }
 
 export function buildToursWhere(input: ToursQuery): { and: Record<string, unknown>[] } {

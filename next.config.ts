@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 import { withPayload } from "@payloadcms/next/withPayload";
 import withBundleAnalyzer from "@next/bundle-analyzer";
+import createNextIntlPlugin from "next-intl/plugin";
 import { getNextConfigEnv } from "./src/config/env";
 
 const env = getNextConfigEnv();
@@ -87,4 +88,5 @@ const nextConfig: NextConfig = {
 };
 
 const analyze = withBundleAnalyzer({ enabled: process.env.ANALYZE === "true", openAnalyzer: false });
-export default analyze(withPayload(nextConfig));
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
+export default analyze(withPayload(withNextIntl(nextConfig)));

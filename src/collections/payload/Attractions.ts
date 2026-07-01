@@ -11,10 +11,10 @@ export const Attractions: CollectionConfig = {
     delete: adminOnly
   },
   fields: [
-    { name: "title", type: "text", required: true },
-    { name: "slug", type: "text", required: true, unique: true, index: true },
+    { name: "title", type: "text", required: true, localized: true },
+    { name: "slug", type: "text", required: true, index: true, localized: true },
     { name: "destination", type: "relationship", relationTo: "destinations", required: true, index: true },
-    { name: "summary", type: "textarea" },
+    { name: "summary", type: "textarea", localized: true },
     { name: "featuredImage", type: "upload", relationTo: "media" },
     { name: "categories", type: "relationship", relationTo: "product-categories" as never, hasMany: true },
     { name: "sortWeight", type: "number", defaultValue: 0, index: true },
@@ -22,8 +22,8 @@ export const Attractions: CollectionConfig = {
       name: "seo",
       type: "group",
       fields: [
-        { name: "metaTitle", type: "text" },
-        { name: "metaDescription", type: "textarea" },
+        { name: "metaTitle", type: "text", localized: true },
+        { name: "metaDescription", type: "textarea", localized: true },
         { name: "ogImage", type: "upload", relationTo: "media" }
       ]
     }

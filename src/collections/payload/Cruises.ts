@@ -16,18 +16,19 @@ export const Cruises: CollectionConfig = {
     afterDelete: [revalidateCruiseAfterDelete]
   },
   fields: [
-    { name: "title", type: "text", required: true },
-    { name: "slug", type: "text", required: true, unique: true },
-    { name: "description", type: "richText" },
+    { name: "title", type: "text", required: true, localized: true },
+    { name: "slug", type: "text", required: true, index: true, localized: true },
+    { name: "description", type: "richText", localized: true },
     { name: "featuredImage", type: "upload", relationTo: "media" },
     { name: "gallery", type: "relationship", relationTo: "media", hasMany: true },
     { name: "destination", type: "relationship", relationTo: "destinations", required: true },
     { name: "nights", type: "number", min: 1, index: true },
-    { name: "durationText", type: "text" },
-    { name: "routeSummary", type: "text" },
+    { name: "durationText", type: "text", localized: true },
+    { name: "routeSummary", type: "text", localized: true },
     {
       name: "cabinTypes",
       type: "array",
+      localized: true,
       fields: [
         { name: "label", type: "text", required: true },
         { name: "price", type: "number", required: true, min: 0 },
@@ -56,6 +57,7 @@ export const Cruises: CollectionConfig = {
     {
       name: "itinerary",
       type: "array",
+      localized: true,
       fields: [
         { name: "time", type: "text" },
         { name: "activity", type: "richText" }
@@ -65,8 +67,8 @@ export const Cruises: CollectionConfig = {
       name: "seo",
       type: "group",
       fields: [
-        { name: "metaTitle", type: "text" },
-        { name: "metaDescription", type: "textarea" },
+        { name: "metaTitle", type: "text", localized: true },
+        { name: "metaDescription", type: "textarea", localized: true },
         { name: "ogImage", type: "upload", relationTo: "media" }
       ]
     }

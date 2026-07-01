@@ -89,6 +89,7 @@ export interface Config {
     payments: Payment;
     'affiliate-clicks': AffiliateClick;
     currencies: Currency;
+    translations: Translation;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -118,6 +119,7 @@ export interface Config {
     payments: PaymentsSelect<false> | PaymentsSelect<true>;
     'affiliate-clicks': AffiliateClicksSelect<false> | AffiliateClicksSelect<true>;
     currencies: CurrenciesSelect<false> | CurrenciesSelect<true>;
+    translations: TranslationsSelect<false> | TranslationsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -126,10 +128,15 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
+  fallbackLocale:
+    | ('false' | 'none' | 'null')
+    | false
+    | null
+    | ('en' | 'fr' | 'es' | 'de' | 'it' | 'pt' | 'zh-Hans' | 'zh-Hant')
+    | ('en' | 'fr' | 'es' | 'de' | 'it' | 'pt' | 'zh-Hans' | 'zh-Hant')[];
   globals: {};
   globalsSelect: {};
-  locale: null;
+  locale: 'en' | 'fr' | 'es' | 'de' | 'it' | 'pt' | 'zh-Hans' | 'zh-Hant';
   widgets: {
     collections: CollectionsWidget;
   };
@@ -807,7 +814,7 @@ export interface SiteSetting {
     summary?: string | null;
   };
   /**
-   * Toggle each homepage section on/off and override its copy. Leave a text field blank to keep the built-in default.
+   * Toggle each homepage section on/off and override its copy. Leave a text field blank to keep the built-in default. Copy fields are translatable per language.
    */
   homepage?: {
     hero?: {
@@ -1371,6 +1378,31 @@ export interface Currency {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "translations".
+ */
+export interface Translation {
+  id: number;
+  /**
+   * Dot-notation message key read by the code, e.g. "footer.tagline". Do NOT rename without updating the component that calls t() for it.
+   */
+  key: string;
+  /**
+   * Grouping for admin filtering only. Auto-set to the key prefix (the part before the first dot), e.g. footer, card, consent.
+   */
+  group?: string | null;
+  /**
+   * The translated text for the currently selected locale. Switch locale (top-right of the admin) to translate the other languages. Empty locales fall back to English.
+   */
+  value: string;
+  /**
+   * Optional context for translators (where the string appears, tone, length limits).
+   */
+  description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -1480,6 +1512,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'currencies';
         value: number | Currency;
+      } | null)
+    | ({
+        relationTo: 'translations';
+        value: number | Translation;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -2400,6 +2436,18 @@ export interface CurrenciesSelect<T extends boolean = true> {
   active?: T;
   isDefault?: T;
   sort?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "translations_select".
+ */
+export interface TranslationsSelect<T extends boolean = true> {
+  key?: T;
+  group?: T;
+  value?: T;
+  description?: T;
   updatedAt?: T;
   createdAt?: T;
 }

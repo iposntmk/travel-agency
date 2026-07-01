@@ -13,7 +13,7 @@ const targetOptions = [
 ];
 
 const childLinkFields: CollectionConfig["fields"] = [
-  { name: "label", type: "text", required: true },
+  { name: "label", type: "text", required: true, localized: true },
   {
     name: "href",
     type: "text",
@@ -66,7 +66,7 @@ export const Navigation: CollectionConfig = {
       required: true,
       minRows: 1,
       fields: [
-        { name: "label", type: "text", required: true },
+        { name: "label", type: "text", required: true, localized: true },
         {
           name: "href",
           type: "text",

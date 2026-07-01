@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ArrowRight, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Price } from "@/components/currency/price";
 import type { HomeBlogItem, HomeSectionCopy, HomeTourCardItem } from "./types";
@@ -60,6 +61,7 @@ function CardRail({ eyebrow, title, items, href, actionLabel, tabLabel, kind }: 
 }
 
 function Carousel<T extends { id: string }>({ items, render, cardClassName }: { items: T[]; render: (item: T) => React.ReactNode; cardClassName?: string }) {
+  const tCommon = useTranslations();
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(3);
   const touchStart = useRef(0);
@@ -94,7 +96,7 @@ function Carousel<T extends { id: string }>({ items, render, cardClassName }: { 
       </div>
       <div className="mt-5 flex justify-center gap-2">
         {Array.from({ length: dots }).map((_, dot) => (
-          <button key={dot} type="button" onClick={() => go(dot)} className={cn("size-2 rounded-full transition-all duration-300 cursor-pointer border border-white/30", dot === index ? "bg-[var(--tctravel-primary)]" : "bg-white hover:bg-white/80")} aria-label={`Go to slide ${dot + 1}`} />
+          <button key={dot} type="button" onClick={() => go(dot)} className={cn("size-2 rounded-full transition-all duration-300 cursor-pointer border border-white/30", dot === index ? "bg-[var(--tctravel-primary)]" : "bg-white hover:bg-white/80")} aria-label={tCommon("home.goToSlide", { number: dot + 1 })} />
         ))}
       </div>
     </>
@@ -102,15 +104,17 @@ function Carousel<T extends { id: string }>({ items, render, cardClassName }: { 
 }
 
 function ArrowButton({ side, onClick }: { side: "left" | "right"; onClick: () => void }) {
+  const t = useTranslations("common");
   const Icon = side === "left" ? ChevronLeft : ChevronRight;
   return (
-    <button type="button" onClick={onClick} className={cn("absolute top-1/2 z-20 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white shadow-lg md:size-10", side === "left" ? "left-2 md:-left-5" : "right-2 md:-right-5")} aria-label={side === "left" ? "Previous" : "Next"}>
+    <button type="button" onClick={onClick} className={cn("absolute top-1/2 z-20 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white shadow-lg md:size-10", side === "left" ? "left-2 md:-left-5" : "right-2 md:-right-5")} aria-label={side === "left" ? t("previous") : t("next")}>
       <Icon className="size-5 text-[var(--tctravel-text)]" />
     </button>
   );
 }
 
 function RailCard({ item }: { item: HomeTourCardItem; kind: "tour" }) {
+  const t = useTranslations();
   return (
     <Link href={item.href} className="group relative block aspect-[3/4] w-full overflow-hidden rounded-2xl shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
       <Image src={item.image.url} alt={item.image.alt} fill sizes="(min-width:1024px) 33vw, 82vw" className="object-cover transition duration-500 group-hover:scale-105" style={{ objectPosition: item.image.objectPosition }} />
@@ -123,9 +127,9 @@ function RailCard({ item }: { item: HomeTourCardItem; kind: "tour" }) {
         </div>
         <div className="mt-0.5 flex items-center justify-between border-t border-white/20 pt-2.5">
           <span className="text-[18px] font-extrabold text-[var(--tctravel-orange)] max-sm:text-[20px]">
-            {item.priceFrom ? <>From <Price base={item.priceFrom} /></> : item.price}
+            {item.priceFrom ? <>{t("card.from")} <Price base={item.priceFrom} /></> : item.price}
           </span>
-          <span className="rounded bg-[var(--tctravel-orange)] px-4 py-2 text-[12px] font-bold uppercase tracking-wider text-white">View detail</span>
+          <span className="rounded bg-[var(--tctravel-orange)] px-4 py-2 text-[12px] font-bold uppercase tracking-wider text-white">{t("home.viewDetail")}</span>
         </div>
       </div>
     </Link>
@@ -133,6 +137,7 @@ function RailCard({ item }: { item: HomeTourCardItem; kind: "tour" }) {
 }
 
 function BlogCard({ item }: { item: HomeBlogItem }) {
+  const t = useTranslations();
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[#f0f0f0] bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
       <Link href={item.href} className="relative aspect-[16/9] overflow-hidden">
@@ -140,10 +145,10 @@ function BlogCard({ item }: { item: HomeBlogItem }) {
         <span className="absolute left-3 top-3 z-10 rounded-full bg-[var(--tctravel-primary)] px-3 py-1 text-xs font-semibold text-white shadow-md">{item.category}</span>
       </Link>
       <div className="flex flex-1 flex-col gap-3 p-5 text-left">
-        <div className="flex items-center gap-1.5 text-xs font-medium text-[var(--tctravel-text-light)]"><Calendar className="size-3.5" /> Last update {item.date}</div>
+        <div className="flex items-center gap-1.5 text-xs font-medium text-[var(--tctravel-text-light)]"><Calendar className="size-3.5" /> {t("home.lastUpdate")} {item.date}</div>
         <h3 className="line-clamp-2 text-base font-bold leading-snug text-[var(--tctravel-text)] transition-colors group-hover:text-[var(--tctravel-primary)] max-sm:text-[17px]"><Link href={item.href}>{item.title}</Link></h3>
         <p className="line-clamp-3 text-sm leading-relaxed text-[var(--tctravel-text-light)]">{item.excerpt}</p>
-        <Link href={item.href} className="mt-auto inline-flex items-center gap-1.5 pt-2 text-sm font-semibold text-[var(--tctravel-primary)]">Read more <ArrowRight className="size-3.5" /></Link>
+        <Link href={item.href} className="mt-auto inline-flex items-center gap-1.5 pt-2 text-sm font-semibold text-[var(--tctravel-primary)]">{t("common.readMore")} <ArrowRight className="size-3.5" /></Link>
       </div>
     </article>
   );

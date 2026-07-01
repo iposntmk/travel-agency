@@ -11,11 +11,11 @@ export const CarRentals: CollectionConfig = {
     delete: adminOnly
   },
   fields: [
-    { name: "title", type: "text", required: true },
-    { name: "slug", type: "text", required: true, unique: true, index: true },
+    { name: "title", type: "text", required: true, localized: true },
+    { name: "slug", type: "text", required: true, index: true, localized: true },
     { name: "destination", type: "relationship", relationTo: "destinations", required: true, index: true },
-    { name: "routeFrom", type: "text", required: true, index: true },
-    { name: "routeTo", type: "text", required: true, index: true },
+    { name: "routeFrom", type: "text", required: true, index: true, localized: true },
+    { name: "routeTo", type: "text", required: true, index: true, localized: true },
     {
       name: "vehicleType",
       type: "select",
@@ -29,7 +29,7 @@ export const CarRentals: CollectionConfig = {
         { label: "Minibus", value: "minibus" }
       ]
     },
-    { name: "durationText", type: "text" },
+    { name: "durationText", type: "text", localized: true },
     { name: "priceFrom", type: "number", min: 0, index: true },
     { name: "currency", type: "text", defaultValue: "USD" },
     { name: "featuredImage", type: "upload", relationTo: "media" },
@@ -50,8 +50,8 @@ export const CarRentals: CollectionConfig = {
       name: "seo",
       type: "group",
       fields: [
-        { name: "metaTitle", type: "text" },
-        { name: "metaDescription", type: "textarea" },
+        { name: "metaTitle", type: "text", localized: true },
+        { name: "metaDescription", type: "textarea", localized: true },
         { name: "ogImage", type: "upload", relationTo: "media" }
       ]
     }

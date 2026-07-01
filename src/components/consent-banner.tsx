@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 export const CONSENT_KEY = "tc.consent.v1";
 
@@ -13,6 +14,7 @@ export function getConsent(): ConsentState {
 }
 
 export function ConsentBanner() {
+  const t = useTranslations("consent");
   const [state, setState] = useState<ConsentState>("undecided");
   const [mounted, setMounted] = useState(false);
 
@@ -34,7 +36,7 @@ export function ConsentBanner() {
   return (
     <div
       role="dialog"
-      aria-label="Cookie preferences"
+      aria-label={t("dialogLabel")}
       aria-live="polite"
       className="pointer-events-none fixed inset-x-0 bottom-0 z-50 p-3 md:p-5"
     >
@@ -54,8 +56,7 @@ export function ConsentBanner() {
             </svg>
           </span>
           <p className="text-sm leading-7 text-slate-700">
-            We use cookies only when you opt in — for site analytics and improving tour recommendations.
-            No tracking happens before you choose.
+            {t("message")}
           </p>
         </div>
         <div className="flex shrink-0 flex-wrap gap-2 md:flex-nowrap">
@@ -64,14 +65,14 @@ export function ConsentBanner() {
             onClick={() => decide("rejected")}
             className="inline-flex min-h-11 items-center justify-center rounded-full border border-navy-200 bg-white px-4 py-2 text-sm font-semibold text-navy-900 transition hover:bg-navy-50"
           >
-            Reject
+            {t("reject")}
           </button>
           <button
             type="button"
             onClick={() => decide("accepted")}
             className="inline-flex min-h-11 items-center justify-center rounded-full bg-navy-900 px-5 py-2 text-sm font-semibold text-white shadow-card transition hover:bg-navy-800"
           >
-            Accept
+            {t("accept")}
           </button>
         </div>
       </div>

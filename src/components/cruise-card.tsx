@@ -1,6 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ArrowRight } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import type { Cruise, Destination } from "@/payload-types";
 import { resolveImage } from "@/lib/media";
 
@@ -8,7 +9,8 @@ interface CruiseCardProps {
   cruise: Cruise;
 }
 
-export function CruiseCard({ cruise }: CruiseCardProps) {
+export async function CruiseCard({ cruise }: CruiseCardProps) {
+  const t = await getTranslations("card");
   const image = resolveImage(cruise.featuredImage, cruise.title, { variant: "card" });
   const destination =
     cruise.destination && typeof cruise.destination === "object"
@@ -35,14 +37,14 @@ export function CruiseCard({ cruise }: CruiseCardProps) {
         ) : null}
         {cruise.priceFrom ? (
           <span className="absolute right-3 top-3 inline-flex items-center rounded-full bg-brand-green px-3 py-1 text-[11px] font-semibold text-white shadow-card">
-            From ${cruise.priceFrom}
+            {t("from")} ${cruise.priceFrom}
           </span>
         ) : null}
       </Link>
       <div className="flex flex-1 flex-col gap-2 p-5">
         <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-navy-500">
-          Cruise
-          {cruise.nights ? ` · ${cruise.nights} night${cruise.nights === 1 ? "" : "s"}` : ""}
+          {t("cruise")}
+          {cruise.nights ? ` · ${t("nights", { count: cruise.nights })}` : ""}
         </p>
         <h3 className="text-lg font-semibold leading-snug tracking-tight text-navy-950">
           <Link href={href} className="transition-colors hover:text-navy-700">
@@ -52,19 +54,19 @@ export function CruiseCard({ cruise }: CruiseCardProps) {
         <div className="space-y-1 text-sm leading-6 text-slate-600">
           {cruise.routeSummary ? <p>{cruise.routeSummary}</p> : null}
           <p>
-            {cruise.durationText ?? "Flexible departure"}
+            {cruise.durationText ?? t("flexibleDeparture")}
             {cruise.ratingAverage && cruise.ratingCount
               ? ` · ${cruise.ratingAverage.toFixed(1)} (${cruise.ratingCount})`
               : ""}
           </p>
         </div>
         <div className="mt-auto flex items-center justify-between gap-3 pt-3">
-          <span className="text-sm font-medium text-slate-600">{cruise.currency ?? "USD"} · per person</span>
+          <span className="text-sm font-medium text-slate-600">{cruise.currency ?? "USD"} · {t("perPerson")}</span>
           <Link
             href={href}
             className="inline-flex items-center gap-1 rounded-full bg-brand-green px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-green-dark"
           >
-            View details
+            {t("viewDetails")}
             <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden="true" />
           </Link>
         </div>

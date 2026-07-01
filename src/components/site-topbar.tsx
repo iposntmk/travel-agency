@@ -1,5 +1,7 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import Image from "next/image";
+import { getLocale, getTranslations } from "next-intl/server";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { getSiteSettings } from "@/lib/cms";
 
 const DEFAULTS = {
@@ -13,7 +15,8 @@ function toWaLink(value: string): string {
 }
 
 export async function SiteTopbar() {
-  const settings = await getSiteSettings();
+  const locale = await getLocale();
+  const [settings, t] = await Promise.all([getSiteSettings(locale), getTranslations("nav")]);
   const whatsapp = settings?.whatsapp ?? DEFAULTS.whatsapp;
   const email = settings?.salesEmail ?? DEFAULTS.salesEmail;
 
@@ -43,12 +46,13 @@ export async function SiteTopbar() {
           </a>
         </div>
         <div className="flex items-center gap-4">
+          <LanguageSwitcher className="flex items-center gap-1 text-white/90" />
           <Link
             href="/customize-tour"
             className="rounded-md bg-[var(--tctravel-orange)] px-4 py-1.5 text-xs font-bold text-white transition-all hover:bg-[var(--tctravel-orange-dark)] flex items-center gap-1.5 shadow"
           >
             <Image src="/images/icons/customize_2.svg" alt="" width={14} height={14} className="invert brightness-0" />
-            Start designing my trip
+            {t("customizeTour").toUpperCase()}
           </Link>
         </div>
       </div>

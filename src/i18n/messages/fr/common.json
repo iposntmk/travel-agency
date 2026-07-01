@@ -1,0 +1,197 @@
+{
+  "siteName": "TC Travel Vietnam",
+  "nav": {
+    "tours": "Circuits",
+    "destinations": "Destinations",
+    "carRentals": "Location de voiture",
+    "cruises": "Croisières",
+    "blog": "Guide de voyage",
+    "about": "À propos",
+    "contact": "Contact",
+    "customizeTour": "Personnaliser le voyage"
+  },
+  "booking": {
+    "cta": "Réserver maintenant",
+    "payLater": "Réservez maintenant, payez plus tard",
+    "from": "À partir de",
+    "perPerson": "par personne",
+    "checkAvailability": "Vérifier les disponibilités",
+    "requestQuote": "Demander un devis"
+  },
+  "common": {
+    "readMore": "Lire la suite",
+    "viewAll": "Voir tout",
+    "loading": "Chargement…",
+    "search": "Rechercher",
+    "filters": "Filtres",
+    "clear": "Effacer",
+    "showMore": "Afficher plus",
+    "showLess": "Afficher moins",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "page": "Page",
+    "home": "Accueil"
+  },
+  "footer": {
+    "rights": "Tous droits réservés.",
+    "quickLinks": "Liens rapides",
+    "followUs": "Suivez-nous",
+    "tagline": "Votre expert local pour les circuits au Vietnam.",
+    "helpTitle": "Une question ? Laissez-nous vous aider !",
+    "payLaterTagline": "Réservez maintenant, payez plus tard.",
+    "trustLine": "Guides locaux · Itinéraires sur mesure · La confiance des voyageurs"
+  },
+  "newsletter": {
+    "placeholder": "Votre adresse e-mail",
+    "success": "Inscription réussie !",
+    "submit": "S'inscrire à la newsletter"
+  },
+  "consent": {
+    "message": "Nous utilisons des cookies uniquement avec votre accord — pour les statistiques du site et l'amélioration des recommandations de circuits. Aucun suivi avant votre choix.",
+    "accept": "Accepter",
+    "reject": "Refuser",
+    "dialogLabel": "Préférences de cookies"
+  },
+  "actions": {
+    "whatsapp": "Discuter avec nous sur WhatsApp",
+    "messenger": "Discuter avec nous sur Messenger",
+    "customTrip": "Planifier un voyage sur mesure",
+    "backToTop": "Retour en haut"
+  },
+  "search": {
+    "startFrom": "Départ de",
+    "tourType": "Type de circuit",
+    "duration": "Durée",
+    "travelStyle": "Style de voyage",
+    "submit": "Rechercher",
+    "tabs": {
+      "tours": "Circuits",
+      "halongCruises": "Croisières baie d'Halong",
+      "mekongCruises": "Croisières sur le Mékong"
+    },
+    "tourTypes": {
+      "paid-private": "Circuit privé",
+      "paid-group": "Circuit en groupe",
+      "family": "Circuit en famille",
+      "adventure": "Circuit aventure",
+      "cultural": "Circuit culturel"
+    },
+    "durations": {
+      "1-5": "1-5 jours",
+      "6-10": "6-10 jours",
+      "11-15": "11-15 jours",
+      "16-": "16+ jours"
+    },
+    "cruiseNights": {
+      "1": "1 nuit",
+      "2": "2 nuits",
+      "3": "3 nuits"
+    },
+    "styles": {
+      "culture": "Culture",
+      "food": "Gastronomie",
+      "family": "Famille",
+      "adventure": "Aventure",
+      "nature": "Nature",
+      "history": "Histoire"
+    }
+  },
+  "home": {
+    "viewCruises": "Voir les croisières",
+    "viewDetail": "Voir le détail",
+    "lastUpdate": "Dernière mise à jour",
+    "goToSlide": "Aller à la diapositive {number}",
+    "heroCta": "PERSONNALISEZ VOTRE VOYAGE",
+    "heroAriaLabel": "Carrousel principal"
+  },
+  "card": {
+    "free": "Gratuit",
+    "from": "À partir de",
+    "perPerson": "par personne",
+    "perPax": "/pers.",
+    "tipsAppreciated": "Pourboire apprécié",
+    "viewDetails": "Voir les détails",
+    "viewDetail": "Voir le détail",
+    "details": "Détails",
+    "register": "S'inscrire",
+    "explore": "Explorer",
+    "readArticle": "Lire l'article",
+    "readingTime": "{count} min de lecture",
+    "reviews": "Avis",
+    "routeLabel": "Itinéraire :",
+    "offeredInLabel": "Proposé en :",
+    "tourTypeLabel": "Type de circuit :",
+    "seasonLabel": "Saison :",
+    "flexibleTiming": "Horaires flexibles",
+    "flexibleDeparture": "Départ flexible",
+    "flexiblePrivateTransfer": "Transfert privé flexible",
+    "quoteOnRequest": "Devis sur demande",
+    "cruise": "Croisière",
+    "nights": "{count, plural, one {# nuit} other {# nuits}}",
+    "privateCar": "Voiture privée",
+    "routeJoin": "à"
+  },
+  "tours": {
+    "heroEyebrow": "Vietnam central",
+    "heroTitle": "Circuits",
+    "heroSubtitle": "Circuits privés, en petit groupe, partenaires et gratuits à travers le Vietnam central. Conçus par des guides locaux.",
+    "searchPlaceholder": "Rechercher des circuits par mot-clé",
+    "filterAria": "Filtrer les circuits",
+    "noResults": "Aucun circuit ne correspond à ces filtres.",
+    "clearFilters": "Effacer les filtres",
+    "showingFiltered": "Résultats filtrés.",
+    "found": "{count, plural, one {# circuit trouvé} other {# circuits trouvés}}",
+    "all": "Tous",
+    "any": "Tous",
+    "ratingFilter": "4★+",
+    "group": {
+      "destination": "Destination",
+      "tourType": "Type de circuit",
+      "season": "Saison",
+      "duration": "Durée",
+      "groupSize": "Taille du groupe",
+      "sort": "Trier"
+    },
+    "type": {
+      "paid-private": "Privé",
+      "paid-group": "Petit groupe",
+      "free-walking": "Marche gratuite",
+      "free-cycling": "Vélo gratuit",
+      "adventure": "Aventure",
+      "family": "Famille",
+      "cultural": "Culturel"
+    },
+    "season": {
+      "summer": "Été",
+      "winter": "Hiver",
+      "year-round": "Toute l'année"
+    },
+    "durationOpt": {
+      "1": "1 jour",
+      "3": "Jusqu'à 3 jours",
+      "7": "Jusqu'à 1 semaine"
+    },
+    "groupSizeOpt": {
+      "2": "2 personnes",
+      "4": "4 personnes",
+      "8": "8+ personnes"
+    },
+    "sortOpt": {
+      "featured": "En vedette",
+      "price": "Prix",
+      "rating": "Note",
+      "duration": "Durée"
+    }
+  },
+  "languageSwitcher": {
+    "label": "Langue",
+    "selectLabel": "Choisir la langue"
+  },
+  "a11y": {
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "menuOverlay": "Fermer le menu",
+    "primaryNav": "Principal",
+    "toggleSubmenu": "Afficher/masquer {label}"
+  }
+}

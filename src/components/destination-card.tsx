@@ -1,6 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ArrowRight } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { destinationRegionLabel } from "@/lib/destination-regions";
 import { lexicalToPlainText } from "@/lib/lexical";
 import { resolveImage } from "@/lib/media";
@@ -10,7 +11,8 @@ interface Props {
   destination: Destination;
 }
 
-export function DestinationCard({ destination }: Props) {
+export async function DestinationCard({ destination }: Props) {
+  const t = await getTranslations("card");
   const image = resolveImage(destination.featuredImage, destination.title, { variant: "card" });
   const summary = lexicalToPlainText(destination.description, 140);
   const region = destinationRegionLabel(destination.region);
@@ -42,7 +44,7 @@ export function DestinationCard({ destination }: Props) {
         </h2>
         {summary ? <p className="text-sm leading-7 text-slate-600">{summary}</p> : null}
         <span className="mt-auto inline-flex items-center gap-1 pt-3 text-sm font-semibold text-navy-700">
-          Explore
+          {t("explore")}
           <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden="true" />
         </span>
       </div>

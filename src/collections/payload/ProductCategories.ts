@@ -11,8 +11,8 @@ export const ProductCategories: CollectionConfig = {
     delete: adminOnly
   },
   fields: [
-    { name: "title", type: "text", required: true },
-    { name: "slug", type: "text", required: true, unique: true, index: true },
+    { name: "title", type: "text", required: true, localized: true },
+    { name: "slug", type: "text", required: true, index: true, localized: true },
     {
       name: "type",
       type: "select",

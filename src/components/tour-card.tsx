@@ -1,6 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ArrowRight } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import type { Tour, Destination } from "@/payload-types";
 import { resolveImage } from "@/lib/media";
 import { ActiveCurrencyCode, Price } from "@/components/currency/price";
@@ -11,7 +12,8 @@ interface TourCardProps {
   ctaLabel?: string;
 }
 
-export function TourCard({ tour, ctaHref, ctaLabel }: TourCardProps) {
+export async function TourCard({ tour, ctaHref, ctaLabel }: TourCardProps) {
+  const t = await getTranslations("card");
   const image = resolveImage(tour.featuredImage, tour.title, { variant: "card" });
   const destination =
     tour.destination && typeof tour.destination === "object"
@@ -20,7 +22,7 @@ export function TourCard({ tour, ctaHref, ctaLabel }: TourCardProps) {
   const isFree = !tour.priceFrom || tour.priceFrom === 0;
 
   const href = ctaHref ?? `/tours/${tour.slug}`;
-  const label = ctaLabel ?? (isFree ? "Register" : "View details");
+  const label = ctaLabel ?? (isFree ? t("register") : t("viewDetails"));
   const details = tour as Tour & {
     durationText?: string;
     routeSummary?: string;
@@ -52,7 +54,7 @@ export function TourCard({ tour, ctaHref, ctaLabel }: TourCardProps) {
               : "absolute right-3 top-3 inline-flex items-center rounded-full bg-brand-green px-3 py-1 text-[11px] font-semibold text-white shadow-card"
           }
         >
-          {isFree ? "Free" : <>From <Price base={tour.priceFrom ?? 0} /></>}
+          {isFree ? t("free") : <>{t("from")} <Price base={tour.priceFrom ?? 0} /></>}
         </span>
       </Link>
       <div className="flex flex-1 flex-col gap-2 p-5">
@@ -68,7 +70,7 @@ export function TourCard({ tour, ctaHref, ctaLabel }: TourCardProps) {
         <div className="space-y-1 text-sm leading-6 text-slate-600">
           {details.routeSummary ? <p>{details.routeSummary}</p> : null}
           <p>
-            {details.durationText ?? "Flexible timing"}
+            {details.durationText ?? t("flexibleTiming")}
             {details.ratingAverage && details.ratingCount
               ? ` · ${details.ratingAverage.toFixed(1)} (${details.ratingCount})`
               : ""}
@@ -76,7 +78,7 @@ export function TourCard({ tour, ctaHref, ctaLabel }: TourCardProps) {
         </div>
         <div className="mt-auto flex items-center justify-between gap-3 pt-3">
           <span className="text-sm font-medium text-slate-600">
-            {isFree ? "Tips appreciated" : <><ActiveCurrencyCode fallback={tour.currency ?? "USD"} /> · per person</>}
+            {isFree ? t("tipsAppreciated") : <><ActiveCurrencyCode fallback={tour.currency ?? "USD"} /> · {t("perPerson")}</>}
           </span>
           <Link
             href={href}

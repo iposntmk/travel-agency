@@ -16,10 +16,10 @@ export const Posts: CollectionConfig = {
     afterDelete: [revalidatePostAfterDelete]
   },
   fields: [
-    { name: "title", type: "text", required: true },
-    { name: "slug", type: "text", required: true, unique: true },
+    { name: "title", type: "text", required: true, localized: true },
+    { name: "slug", type: "text", required: true, index: true, localized: true },
     { name: "featuredImage", type: "upload", relationTo: "media" },
-    { name: "content", type: "richText", required: true },
+    { name: "content", type: "richText", required: true, localized: true },
     {
       name: "status",
       type: "select",
@@ -55,6 +55,7 @@ export const Posts: CollectionConfig = {
     {
       name: "tags",
       type: "array",
+      localized: true,
       fields: [{ name: "tag", type: "text", required: true }]
     },
     { name: "author", type: "text", admin: { description: "Author display name" } },
@@ -71,10 +72,10 @@ export const Posts: CollectionConfig = {
       name: "seo",
       type: "group",
       fields: [
-        { name: "metaTitle", type: "text" },
-        { name: "metaDescription", type: "textarea" },
+        { name: "metaTitle", type: "text", localized: true },
+        { name: "metaDescription", type: "textarea", localized: true },
         { name: "ogImage", type: "upload", relationTo: "media" },
-        { name: "keywords", type: "text" }
+        { name: "keywords", type: "text", localized: true }
       ]
     }
   ]

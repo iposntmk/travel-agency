@@ -2,6 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
+import { getLocale } from "next-intl/server";
 import { getPayloadClient } from "@/lib/payload";
 import type { NavItem, NavTarget } from "@/types/navigation";
 
@@ -26,7 +27,7 @@ const DEFAULT_HEADER_NAV: NavItem[] = [];
 
 const DEFAULT_FOOTER_NAV: NavItem[] = [];
 
-async function fetchNavigation(location: NavigationLocation): Promise<NavItem[]> {
+async function fetchNavigation(location: NavigationLocation, locale: string): Promise<NavItem[]> {
   const payload = (await getPayloadClient()) as unknown as PublicFindPayload;
   try {
     const result = await payload.find({
@@ -34,7 +35,8 @@ async function fetchNavigation(location: NavigationLocation): Promise<NavItem[]>
       where: { and: [{ location: { equals: location } }, { status: { equals: "published" } }] },
       limit: 1,
       depth: 0,
-      sort: "-updatedAt"
+      sort: "-updatedAt",
+      locale
     });
     const doc = result.docs[0] as RawNavigationDoc | undefined;
     return normalizeItems(doc?.items);
@@ -44,19 +46,21 @@ async function fetchNavigation(location: NavigationLocation): Promise<NavItem[]>
   }
 }
 
-const getNavigationCached = cache((location: NavigationLocation) =>
-  unstable_cache(() => fetchNavigation(location), ["cms", "navigation", location], {
+const getNavigationCached = cache((location: NavigationLocation, locale: string) =>
+  unstable_cache(() => fetchNavigation(location, locale), ["cms", "navigation", location, locale], {
     tags: ["navigation", `navigation-${location}`]
   })()
 );
 
 export async function getHeaderNavigation(): Promise<NavItem[]> {
-  const items = await getNavigationCached("header");
+  const locale = await getLocale();
+  const items = await getNavigationCached("header", locale);
   return items.length > 0 ? items : DEFAULT_HEADER_NAV;
 }
 
 export async function getFooterNavigation(): Promise<NavItem[]> {
-  const items = await getNavigationCached("footer");
+  const locale = await getLocale();
+  const items = await getNavigationCached("footer", locale);
   return items.length > 0 ? items : DEFAULT_FOOTER_NAV;
 }
 

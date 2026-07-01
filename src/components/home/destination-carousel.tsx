@@ -2,11 +2,13 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { ImageCard } from "./image-card";
 import type { HomeDestinationItem } from "./types";
 
 export function DestinationMobileCarousel({ items }: { items: HomeDestinationItem[] }) {
+  const t = useTranslations();
   const [index, setIndex] = useState(0);
   const touchStart = useRef(0);
   const touchEnd = useRef(0);
@@ -40,7 +42,7 @@ export function DestinationMobileCarousel({ items }: { items: HomeDestinationIte
       </div>
       <div className="mt-4 flex justify-center gap-2">
         {items.map((item, dot) => (
-          <button key={item.id} type="button" onClick={() => go(dot)} className={cn("size-2 rounded-full transition-all duration-300 border border-white/30", dot === index ? "bg-[var(--tctravel-primary)]" : "bg-white hover:bg-white/80")} aria-label={`Go to slide ${dot + 1}`} />
+          <button key={item.id} type="button" onClick={() => go(dot)} className={cn("size-2 rounded-full transition-all duration-300 border border-white/30", dot === index ? "bg-[var(--tctravel-primary)]" : "bg-white hover:bg-white/80")} aria-label={t("home.goToSlide", { number: dot + 1 })} />
         ))}
       </div>
     </div>
@@ -48,9 +50,10 @@ export function DestinationMobileCarousel({ items }: { items: HomeDestinationIte
 }
 
 function Arrow({ side, onClick }: { side: "left" | "right"; onClick: () => void }) {
+  const t = useTranslations("common");
   const Icon = side === "left" ? ChevronLeft : ChevronRight;
   return (
-    <button type="button" onClick={onClick} className={cn("absolute top-1/2 z-20 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white shadow-lg", side === "left" ? "left-2" : "right-2")} aria-label={side === "left" ? "Previous" : "Next"}>
+    <button type="button" onClick={onClick} className={cn("absolute top-1/2 z-20 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white shadow-lg", side === "left" ? "left-2" : "right-2")} aria-label={side === "left" ? t("previous") : t("next")}>
       <Icon className="size-5 text-[var(--tctravel-text)]" />
     </button>
   );

@@ -1,0 +1,197 @@
+{
+  "siteName": "TC Travel Vietnam",
+  "nav": {
+    "tours": "Passeios",
+    "destinations": "Destinos",
+    "carRentals": "Aluguer de carros",
+    "cruises": "Cruzeiros",
+    "blog": "Guia de viagem",
+    "about": "Sobre nós",
+    "contact": "Contacto",
+    "customizeTour": "Personalizar viagem"
+  },
+  "booking": {
+    "cta": "Reservar agora",
+    "payLater": "Reserve agora, pague depois",
+    "from": "A partir de",
+    "perPerson": "por pessoa",
+    "checkAvailability": "Ver disponibilidade",
+    "requestQuote": "Pedir orçamento"
+  },
+  "common": {
+    "readMore": "Ler mais",
+    "viewAll": "Ver tudo",
+    "loading": "A carregar…",
+    "search": "Pesquisar",
+    "filters": "Filtros",
+    "clear": "Limpar",
+    "showMore": "Mostrar mais",
+    "showLess": "Mostrar menos",
+    "previous": "Anterior",
+    "next": "Seguinte",
+    "page": "Página",
+    "home": "Início"
+  },
+  "footer": {
+    "rights": "Todos os direitos reservados.",
+    "quickLinks": "Ligações rápidas",
+    "followUs": "Siga-nos",
+    "tagline": "O seu especialista local em tours pelo Vietname.",
+    "helpTitle": "Tem alguma pergunta? Deixe-nos ajudar!",
+    "payLaterTagline": "Reserve agora, pague depois.",
+    "trustLine": "Guias locais · Itinerários à medida · A confiança dos viajantes"
+  },
+  "newsletter": {
+    "placeholder": "O seu endereço de e-mail",
+    "success": "Subscrição efetuada com sucesso!",
+    "submit": "Subscrever a newsletter"
+  },
+  "consent": {
+    "message": "Usamos cookies apenas com o seu consentimento — para estatísticas do site e para melhorar as recomendações de tours. Não há rastreio antes da sua escolha.",
+    "accept": "Aceitar",
+    "reject": "Recusar",
+    "dialogLabel": "Preferências de cookies"
+  },
+  "actions": {
+    "whatsapp": "Fale connosco no WhatsApp",
+    "messenger": "Fale connosco no Messenger",
+    "customTrip": "Planeie uma viagem personalizada",
+    "backToTop": "Voltar ao topo"
+  },
+  "search": {
+    "startFrom": "Partida de",
+    "tourType": "Tipo de tour",
+    "duration": "Duração",
+    "travelStyle": "Estilo de viagem",
+    "submit": "Pesquisar",
+    "tabs": {
+      "tours": "Passeios",
+      "halongCruises": "Cruzeiros na baía de Ha Long",
+      "mekongCruises": "Cruzeiros no rio Mekong"
+    },
+    "tourTypes": {
+      "paid-private": "Passeio privado",
+      "paid-group": "Passeio em grupo",
+      "family": "Passeio em família",
+      "adventure": "Passeio de aventura",
+      "cultural": "Passeio cultural"
+    },
+    "durations": {
+      "1-5": "1-5 dias",
+      "6-10": "6-10 dias",
+      "11-15": "11-15 dias",
+      "16-": "16+ dias"
+    },
+    "cruiseNights": {
+      "1": "1 noite",
+      "2": "2 noites",
+      "3": "3 noites"
+    },
+    "styles": {
+      "culture": "Cultura",
+      "food": "Gastronomia",
+      "family": "Família",
+      "adventure": "Aventura",
+      "nature": "Natureza",
+      "history": "História"
+    }
+  },
+  "home": {
+    "viewCruises": "Ver cruzeiros",
+    "viewDetail": "Ver detalhe",
+    "lastUpdate": "Última atualização",
+    "goToSlide": "Ir para o slide {number}",
+    "heroCta": "PERSONALIZE A SUA VIAGEM",
+    "heroAriaLabel": "Carrossel principal"
+  },
+  "card": {
+    "free": "Grátis",
+    "from": "A partir de",
+    "perPerson": "por pessoa",
+    "perPax": "/pess.",
+    "tipsAppreciated": "Gorjeta apreciada",
+    "viewDetails": "Ver detalhes",
+    "viewDetail": "Ver detalhe",
+    "details": "Detalhes",
+    "register": "Registar",
+    "explore": "Explorar",
+    "readArticle": "Ler artigo",
+    "readingTime": "{count} min de leitura",
+    "reviews": "Avaliações",
+    "routeLabel": "Itinerário:",
+    "offeredInLabel": "Oferecido em:",
+    "tourTypeLabel": "Tipo de tour:",
+    "seasonLabel": "Época:",
+    "flexibleTiming": "Horário flexível",
+    "flexibleDeparture": "Partida flexível",
+    "flexiblePrivateTransfer": "Transfer privado flexível",
+    "quoteOnRequest": "Orçamento sob consulta",
+    "cruise": "Cruzeiro",
+    "nights": "{count, plural, one {# noite} other {# noites}}",
+    "privateCar": "Carro privado",
+    "routeJoin": "a"
+  },
+  "tours": {
+    "heroEyebrow": "Vietname central",
+    "heroTitle": "Passeios",
+    "heroSubtitle": "Passeios privados, em pequenos grupos, de parceiros e gratuitos por todo o Vietname central. Criados por guias locais.",
+    "searchPlaceholder": "Pesquisar passeios por palavra-chave",
+    "filterAria": "Filtrar passeios",
+    "noResults": "Nenhum passeio corresponde a estes filtros.",
+    "clearFilters": "Limpar filtros",
+    "showingFiltered": "A mostrar resultados filtrados.",
+    "found": "{count, plural, one {# passeio encontrado} other {# passeios encontrados}}",
+    "all": "Todos",
+    "any": "Qualquer",
+    "ratingFilter": "4★+",
+    "group": {
+      "destination": "Destino",
+      "tourType": "Tipo de passeio",
+      "season": "Época",
+      "duration": "Duração",
+      "groupSize": "Tamanho do grupo",
+      "sort": "Ordenar"
+    },
+    "type": {
+      "paid-private": "Privado",
+      "paid-group": "Pequeno grupo",
+      "free-walking": "Caminhada gratuita",
+      "free-cycling": "Ciclismo gratuito",
+      "adventure": "Aventura",
+      "family": "Família",
+      "cultural": "Cultural"
+    },
+    "season": {
+      "summer": "Verão",
+      "winter": "Inverno",
+      "year-round": "Todo o ano"
+    },
+    "durationOpt": {
+      "1": "1 dia",
+      "3": "Até 3 dias",
+      "7": "Até 1 semana"
+    },
+    "groupSizeOpt": {
+      "2": "2 pessoas",
+      "4": "4 pessoas",
+      "8": "8+ pessoas"
+    },
+    "sortOpt": {
+      "featured": "Destaques",
+      "price": "Preço",
+      "rating": "Avaliação",
+      "duration": "Duração"
+    }
+  },
+  "languageSwitcher": {
+    "label": "Idioma",
+    "selectLabel": "Selecionar idioma"
+  },
+  "a11y": {
+    "openMenu": "Abrir menu",
+    "closeMenu": "Fechar menu",
+    "menuOverlay": "Fechar menu",
+    "primaryNav": "Principal",
+    "toggleSubmenu": "Mostrar/ocultar {label}"
+  }
+}

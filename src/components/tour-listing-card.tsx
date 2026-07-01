@@ -1,6 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Star } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { cn } from "@/lib/utils";
 import type { Tour, Destination } from "@/payload-types";
 import { resolveImage } from "@/lib/media";
@@ -45,7 +46,8 @@ function InfoRow({ icon, label, value, highlight }: {
   );
 }
 
-export function TourListingCard({ tour }: TourListingCardProps) {
+export async function TourListingCard({ tour }: TourListingCardProps) {
+  const t = await getTranslations("card");
   const image = resolveImage(tour.featuredImage, tour.title, { variant: "card" });
   const destination =
     tour.destination && typeof tour.destination === "object"
@@ -85,7 +87,7 @@ export function TourListingCard({ tour }: TourListingCardProps) {
         ) : null}
         {isFree ? (
           <span className="absolute right-0 top-0 z-[2] rounded-bl-[5px] bg-[#C65A3A] px-2 py-1 text-[12px] font-bold uppercase text-white">
-            Free
+            {t("free")}
           </span>
         ) : null}
       </Link>
@@ -109,22 +111,22 @@ export function TourListingCard({ tour }: TourListingCardProps) {
           <div className="mt-2 mb-1 flex items-center gap-1">
             <StarRating rating={Math.round(details.ratingAverage)} />
             <span className="text-xs text-slate-400">
-              ({String(details.ratingCount).padStart(2, "0")} Reviews)
+              ({String(details.ratingCount).padStart(2, "0")} {t("reviews")})
             </span>
           </div>
         ) : null}
 
         {details.routeSummary ? (
-          <InfoRow icon="📍" label="Route:" value={details.routeSummary} />
+          <InfoRow icon="📍" label={t("routeLabel")} value={details.routeSummary} />
         ) : null}
         {operationLabel ? (
-          <InfoRow icon="🗣️" label="Offered in:" value={operationLabel} />
+          <InfoRow icon="🗣️" label={t("offeredInLabel")} value={operationLabel} />
         ) : null}
-        <InfoRow icon="🗺️" label="Tour type:" value={tourTypeLabel} />
+        <InfoRow icon="🗺️" label={t("tourTypeLabel")} value={tourTypeLabel} />
         {tour.season && tour.season !== "year-round" ? (
           <InfoRow
             icon="🌿"
-            label="Season:"
+            label={t("seasonLabel")}
             value={tour.season}
             highlight
           />
@@ -135,14 +137,14 @@ export function TourListingCard({ tour }: TourListingCardProps) {
         <div className="mt-auto flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-baseline gap-1">
             <span className="text-[13px] text-brand-red">
-              {isFree ? "Tips appreciated" : "From"}
+              {isFree ? t("tipsAppreciated") : t("from")}
             </span>
             {!isFree ? (
               <>
                 <span className="text-lg font-bold leading-6 text-brand-red">
                   <Price base={tour.priceFrom ?? 0} />
                 </span>
-                <span className="text-[13px] text-slate-400">/pax</span>
+                <span className="text-[13px] text-slate-400">{t("perPax")}</span>
               </>
             ) : null}
           </div>
@@ -150,7 +152,7 @@ export function TourListingCard({ tour }: TourListingCardProps) {
             href={href}
             className="inline-flex items-center rounded-[5px] bg-brand-green px-5 py-2 text-[13px] font-bold capitalize leading-5 text-white transition-colors hover:bg-brand-green-dark max-sm:min-h-[44px]"
           >
-            View Detail
+            {t("viewDetail")}
           </Link>
         </div>
       </div>

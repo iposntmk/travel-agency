@@ -16,23 +16,24 @@ export const Tours: CollectionConfig = {
     afterDelete: [revalidateTourAfterDelete]
   },
   fields: [
-    { name: "title", type: "text", required: true },
-    { name: "slug", type: "text", required: true, unique: true },
-    { name: "description", type: "richText" },
+    { name: "title", type: "text", required: true, localized: true },
+    { name: "slug", type: "text", required: true, index: true, localized: true },
+    { name: "description", type: "richText", localized: true },
     { name: "featuredImage", type: "upload", relationTo: "media" },
     { name: "gallery", type: "relationship", relationTo: "media", hasMany: true },
     { name: "destination", type: "relationship", relationTo: "destinations", required: true },
     { name: "durationDays", type: "number", min: 1, index: true },
-    { name: "durationText", type: "text" },
-    { name: "routeSummary", type: "text" },
-    { name: "startEnd", type: "text" },
-    { name: "travelStyle", type: "text" },
-    { name: "guideLanguages", type: "text" },
+    { name: "durationText", type: "text", localized: true },
+    { name: "routeSummary", type: "text", localized: true },
+    { name: "startEnd", type: "text", localized: true },
+    { name: "travelStyle", type: "text", localized: true },
+    { name: "guideLanguages", type: "text", localized: true },
     { name: "mapImage", type: "upload", relationTo: "media" },
-    { name: "highlightIntro", type: "textarea" },
+    { name: "highlightIntro", type: "textarea", localized: true },
     {
       name: "highlights",
       type: "array",
+      localized: true,
       fields: [
         { name: "title", type: "text", required: true },
         { name: "description", type: "text" }
@@ -41,11 +42,13 @@ export const Tours: CollectionConfig = {
     {
       name: "inclusions",
       type: "array",
+      localized: true,
       fields: [{ name: "item", type: "text", required: true }]
     },
     {
       name: "exclusions",
       type: "array",
+      localized: true,
       fields: [{ name: "item", type: "text", required: true }]
     },
     { name: "groupSizeMin", type: "number", min: 1 },
@@ -130,6 +133,7 @@ export const Tours: CollectionConfig = {
     {
       name: "itinerary",
       type: "array",
+      localized: true,
       fields: [
         { name: "time", type: "text" },
         { name: "location", type: "text" },
@@ -151,6 +155,7 @@ export const Tours: CollectionConfig = {
     {
       name: "faqs",
       type: "array",
+      localized: true,
       label: "FAQs (tour-specific)",
       admin: {
         description: "Short Q&A pairs surfaced to travellers and emitted as FAQPage structured data for AI/search engines."
@@ -164,8 +169,8 @@ export const Tours: CollectionConfig = {
       name: "seo",
       type: "group",
       fields: [
-        { name: "metaTitle", type: "text" },
-        { name: "metaDescription", type: "textarea" },
+        { name: "metaTitle", type: "text", localized: true },
+        { name: "metaDescription", type: "textarea", localized: true },
         { name: "ogImage", type: "upload", relationTo: "media" }
       ]
     }

@@ -54,7 +54,7 @@ export const SiteSettings: CollectionConfig = {
           ]
         },
         { name: "url", type: "text", required: true },
-        { name: "label", type: "text", admin: { description: "Accessible label, e.g. \"TC Travel on Facebook\"." } }
+        { name: "label", type: "text", localized: true, admin: { description: "Accessible label, e.g. \"TC Travel on Facebook\"." } }
       ]
     },
     {
@@ -62,8 +62,8 @@ export const SiteSettings: CollectionConfig = {
       type: "group",
       fields: [
         { name: "companyName", type: "text" },
-        { name: "legalText", type: "textarea" },
-        { name: "address", type: "textarea" }
+        { name: "legalText", type: "textarea", localized: true },
+        { name: "address", type: "textarea", localized: true }
       ]
     },
     {
@@ -72,7 +72,7 @@ export const SiteSettings: CollectionConfig = {
       fields: [
         { name: "reviewAverage", type: "number", min: 0, max: 5 },
         { name: "reviewCount", type: "number", min: 0 },
-        { name: "summary", type: "textarea" }
+        { name: "summary", type: "textarea", localized: true }
       ]
     },
     homepageField,

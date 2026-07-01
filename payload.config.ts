@@ -26,6 +26,7 @@ import { Reviews } from "@/collections/payload/Reviews";
 import { SiteSettings } from "@/collections/payload/SiteSettings";
 import { TeamMembers } from "@/collections/payload/TeamMembers";
 import { Tours } from "@/collections/payload/Tours";
+import { Translations } from "@/collections/payload/Translations";
 import { Users } from "@/collections/payload/Users";
 import { getPayloadConfigEnv, getPayloadStorageEnv } from "@/config/env";
 import { migrations } from "@/migrations";
@@ -92,7 +93,8 @@ export default buildConfig({
     Promotions,
     Payments,
     AffiliateClicks,
-    Currencies
+    Currencies,
+    Translations
   ],
   db: postgresAdapter({
     migrationDir: path.resolve(dirname, "src/migrations"),
@@ -106,6 +108,22 @@ export default buildConfig({
     push: false
   }),
   editor: lexicalEditor(),
+  localization: {
+    // Locale codes are BCP-47 so they map 1:1 to next-intl routing + hreflang.
+    // PH/MY/SG/IN are English-speaking markets served by `en` — no separate locale.
+    locales: [
+      { label: "English", code: "en" },
+      { label: "Français", code: "fr" },
+      { label: "Español", code: "es" },
+      { label: "Deutsch", code: "de" },
+      { label: "Italiano", code: "it" },
+      { label: "Português", code: "pt" },
+      { label: "简体中文", code: "zh-Hans" },
+      { label: "繁體中文", code: "zh-Hant" }
+    ],
+    defaultLocale: "en",
+    fallback: true
+  },
   plugins: [
     ...(storageEnv
       ? [

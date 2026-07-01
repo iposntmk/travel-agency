@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import type { RefObject } from "react";
 import { cn } from "@/lib/utils";
 import type { HeaderNavItem } from "@/types/navigation";

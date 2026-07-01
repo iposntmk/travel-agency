@@ -21,6 +21,10 @@ import * as migration_20260629_095204_faqs_tour_field from './20260629_095204_fa
 import * as migration_20260629_161614_search_form_fields from './20260629_161614_search_form_fields';
 import * as migration_20260630_085825_homepage_section_copy_fields from './20260630_085825_homepage_section_copy_fields';
 import * as migration_20260630_120000_currencies_collection from './20260630_120000_currencies_collection';
+import * as migration_20260630_151020_i18n_localization from './20260630_151020_i18n_localization';
+import * as migration_20260701_004654_translations_collection from './20260701_004654_translations_collection';
+import * as migration_20260701_010239_translations_group_to_text from './20260701_010239_translations_group_to_text';
+import * as migration_20260701_120000_homepage_localized from './20260701_120000_homepage_localized';
 
 export const migrations = [
   {
@@ -137,5 +141,25 @@ export const migrations = [
     up: migration_20260630_120000_currencies_collection.up,
     down: migration_20260630_120000_currencies_collection.down,
     name: '20260630_120000_currencies_collection',
+  },
+  {
+    up: migration_20260630_151020_i18n_localization.up,
+    down: migration_20260630_151020_i18n_localization.down,
+    name: '20260630_151020_i18n_localization',
+  },
+  {
+    up: migration_20260701_004654_translations_collection.up,
+    down: migration_20260701_004654_translations_collection.down,
+    name: '20260701_004654_translations_collection',
+  },
+  {
+    up: migration_20260701_010239_translations_group_to_text.up,
+    down: migration_20260701_010239_translations_group_to_text.down,
+    name: '20260701_010239_translations_group_to_text',
+  },
+  {
+    up: migration_20260701_120000_homepage_localized.up,
+    down: migration_20260701_120000_homepage_localized.down,
+    name: '20260701_120000_homepage_localized',
   },
 ];

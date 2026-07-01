@@ -2,71 +2,60 @@
 
 import { Calendar, ChevronDown, Compass, MapPin, Search, Users } from "lucide-react";
 import { useState, type ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import type { SearchConfig, SearchOption, SearchTab } from "./types";
+
+type Translate = (key: string) => string;
 
 interface Props {
   starts: SearchOption[];
   config?: SearchConfig;
 }
 
-// Built-in fallbacks. Used when SiteSettings → searchForm leaves a list empty.
-const DEFAULT_TABS: SearchTab[] = [
-  { label: "Tours", target: "tours" },
-  { label: "Halong Bay Cruises", target: "cruises" },
-  { label: "Mekong River Cruises", target: "cruises" }
+// Built-in fallbacks. Labels are translated via the `search` message group;
+// values must stay stable (used for URL params + product-category slugs, see
+// scripts/seed.ts). Used when SiteSettings → searchForm leaves a list empty.
+const DEFAULT_TAB_TARGETS: { key: string; target: SearchTab["target"] }[] = [
+  { key: "tours", target: "tours" },
+  { key: "halongCruises", target: "cruises" },
+  { key: "mekongCruises", target: "cruises" }
 ];
+const DEFAULT_TOUR_TYPE_VALUES = ["paid-private", "paid-group", "family", "adventure", "cultural"] as const;
+const DEFAULT_DURATION_VALUES = ["1-5", "6-10", "11-15", "16-"] as const;
+const DEFAULT_CRUISE_NIGHT_VALUES = ["1", "2", "3"] as const;
+const DEFAULT_STYLE_VALUES = ["culture", "food", "family", "adventure", "nature", "history"] as const;
 
-const DEFAULT_TOUR_TYPES: SearchOption[] = [
-  { label: "Private Tour", value: "paid-private" },
-  { label: "Group Tour", value: "paid-group" },
-  { label: "Family Tour", value: "family" },
-  { label: "Adventure Tour", value: "adventure" },
-  { label: "Cultural Tour", value: "cultural" }
-];
-
-const DEFAULT_TOUR_DURATIONS: SearchOption[] = [
-  { label: "1-5 Days", value: "1-5" },
-  { label: "6-10 Days", value: "6-10" },
-  { label: "11-15 Days", value: "11-15" },
-  { label: "16+ Days", value: "16-" }
-];
-
-const DEFAULT_CRUISE_NIGHTS: SearchOption[] = [
-  { label: "1 Night", value: "1" },
-  { label: "2 Nights", value: "2" },
-  { label: "3 Nights", value: "3" }
-];
-
-// Values must match product-category slugs (see scripts/seed.ts).
-const DEFAULT_STYLES: SearchOption[] = [
-  { label: "Culture", value: "culture" },
-  { label: "Food", value: "food" },
-  { label: "Family", value: "family" },
-  { label: "Adventure", value: "adventure" },
-  { label: "Nature", value: "nature" },
-  { label: "History", value: "history" }
-];
-
-function withDefaults(config?: SearchConfig): Required<SearchConfig> {
+function withDefaults(t: Translate, config?: SearchConfig): Required<SearchConfig> {
   return {
-    tabs: config?.tabs?.length ? config.tabs : DEFAULT_TABS,
-    tourTypes: config?.tourTypes?.length ? config.tourTypes : DEFAULT_TOUR_TYPES,
-    tourDurations: config?.tourDurations?.length ? config.tourDurations : DEFAULT_TOUR_DURATIONS,
-    cruiseNights: config?.cruiseNights?.length ? config.cruiseNights : DEFAULT_CRUISE_NIGHTS,
-    styles: config?.styles?.length ? config.styles : DEFAULT_STYLES
+    tabs: config?.tabs?.length
+      ? config.tabs
+      : DEFAULT_TAB_TARGETS.map(({ key, target }) => ({ label: t(`tabs.${key}`), target })),
+    tourTypes: config?.tourTypes?.length
+      ? config.tourTypes
+      : DEFAULT_TOUR_TYPE_VALUES.map((value) => ({ label: t(`tourTypes.${value}`), value })),
+    tourDurations: config?.tourDurations?.length
+      ? config.tourDurations
+      : DEFAULT_DURATION_VALUES.map((value) => ({ label: t(`durations.${value}`), value })),
+    cruiseNights: config?.cruiseNights?.length
+      ? config.cruiseNights
+      : DEFAULT_CRUISE_NIGHT_VALUES.map((value) => ({ label: t(`cruiseNights.${value}`), value })),
+    styles: config?.styles?.length
+      ? config.styles
+      : DEFAULT_STYLE_VALUES.map((value) => ({ label: t(`styles.${value}`), value }))
   };
 }
 
 export function TcTravelSearchForm({ starts, config }: Props) {
-  const resolved = withDefaults(config);
+  const t = useTranslations("search");
+  const resolved = withDefaults(t, config);
   const [activeIndex, setActiveIndex] = useState(0);
   const [start, setStart] = useState("");
   const [type, setType] = useState("");
   const [duration, setDuration] = useState("");
   const [style, setStyle] = useState("");
 
-  const activeTab = resolved.tabs[activeIndex] ?? resolved.tabs[0] ?? DEFAULT_TABS[0];
+  const activeTab = resolved.tabs[activeIndex] ?? resolved.tabs[0];
   const isTours = activeTab.target === "tours";
 
   function reset(index: number) {
@@ -112,21 +101,21 @@ export function TcTravelSearchForm({ starts, config }: Props) {
                 isTours ? "lg:grid-cols-[1fr_1fr_1fr_1fr_auto]" : "lg:grid-cols-[1fr_1fr_auto]"
               )}
             >
-              <SearchField icon={<MapPin />} value={start} setValue={setStart} placeholder="Start From" options={starts} />
+              <SearchField icon={<MapPin />} value={start} setValue={setStart} placeholder={t("startFrom")} options={starts} />
               {isTours ? (
-                <SearchField icon={<Users />} value={type} setValue={setType} placeholder="Tour type" options={resolved.tourTypes} />
+                <SearchField icon={<Users />} value={type} setValue={setType} placeholder={t("tourType")} options={resolved.tourTypes} />
               ) : null}
               <SearchField
                 icon={<Calendar />}
                 value={duration}
                 setValue={setDuration}
-                placeholder="Duration"
+                placeholder={t("duration")}
                 options={isTours ? resolved.tourDurations : resolved.cruiseNights}
               />
               {isTours ? (
-                <SearchField icon={<Compass />} value={style} setValue={setStyle} placeholder="Travel style" options={resolved.styles} />
+                <SearchField icon={<Compass />} value={style} setValue={setStyle} placeholder={t("travelStyle")} options={resolved.styles} />
               ) : null}
-              <SubmitButton full />
+              <SubmitButton full label={t("submit")} />
             </form>
           </div>
         </div>
@@ -172,10 +161,10 @@ function SearchField({ icon, value, setValue, placeholder, options }: { icon: Re
   );
 }
 
-function SubmitButton({ full = false }: { full?: boolean }) {
+function SubmitButton({ full = false, label }: { full?: boolean; label: string }) {
   return (
     <button type="submit" className={cn("flex h-12 items-center justify-center gap-2 rounded-lg border-0 bg-[var(--tctravel-orange)] px-6 text-sm font-bold text-white shadow transition hover:bg-[var(--tctravel-orange-dark)]", full && "w-full max-sm:h-[52px]")}>
-      <Search className="size-4" /> Search
+      <Search className="size-4" /> {label}
     </button>
   );
 }

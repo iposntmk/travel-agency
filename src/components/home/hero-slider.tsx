@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import type { HeroSlide } from "./types";
 
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export function TcTravelHeroSlider({ slides, title, subtitle }: Props) {
+  const t = useTranslations("home");
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
   const transitionRef = useRef(false);
@@ -62,7 +64,7 @@ export function TcTravelHeroSlider({ slides, title, subtitle }: Props) {
         touchEndX.current = event.touches[0].clientX;
       }}
       onTouchEnd={handleTouchEnd}
-      aria-label="Hero carousel"
+      aria-label={t("heroAriaLabel")}
     >
       {list.map((slide, index) => (
         <div
@@ -95,7 +97,7 @@ export function TcTravelHeroSlider({ slides, title, subtitle }: Props) {
                 href="/customize-tour"
                 className="inline-flex min-h-12 items-center rounded-lg bg-[var(--tctravel-orange)] px-7 text-sm font-bold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[var(--tctravel-orange-dark)]"
               >
-                Start designing my trip
+                {t("heroCta")}
               </Link>
               <Dots list={list} current={current} goToSlide={goToSlide} mobile />
             </div>
@@ -108,6 +110,7 @@ export function TcTravelHeroSlider({ slides, title, subtitle }: Props) {
 }
 
 function Dots({ list, current, goToSlide, mobile = false }: { list: HeroSlide[]; current: number; goToSlide: (index: number) => void; mobile?: boolean }) {
+  const t = useTranslations("home");
   return (
     <div className={mobile ? "mt-4 flex gap-2 md:hidden" : "absolute bottom-16 left-1/2 z-30 hidden -translate-x-1/2 gap-2.5 md:bottom-24 md:flex"}>
       {list.map((slide, index) => (
@@ -121,7 +124,7 @@ function Dots({ list, current, goToSlide, mobile = false }: { list: HeroSlide[];
               ? "bg-[var(--tctravel-primary)]"
               : "bg-white hover:bg-white/80"
           )}
-          aria-label={`Go to slide ${index + 1}`}
+          aria-label={t("goToSlide", { number: index + 1 })}
           aria-current={index === current}
         />
       ))}

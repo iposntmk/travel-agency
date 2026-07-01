@@ -1,0 +1,119 @@
+{
+  "footer": {
+    "tagline": "您的越南旅遊在地專家。",
+    "helpTitle": "有任何問題？讓我們為您服務！",
+    "payLaterTagline": "先預訂，後付款。",
+    "trustLine": "在地嚮導 · 精選行程 · 深受入境旅客信賴"
+  },
+  "newsletter": {
+    "placeholder": "您的電子郵箱",
+    "success": "訂閱成功！",
+    "submit": "訂閱電子報"
+  },
+  "consent": {
+    "message": "我們僅在您同意後使用 Cookie——用於網站分析和改善旅遊推薦。在您選擇之前不會進行任何追蹤。",
+    "accept": "接受",
+    "reject": "拒絕",
+    "dialogLabel": "Cookie 偏好設定"
+  },
+  "actions": {
+    "whatsapp": "透過 WhatsApp 聯絡我們",
+    "messenger": "透過 Messenger 聯絡我們",
+    "customTrip": "規劃您的專屬行程",
+    "backToTop": "返回頂部"
+  },
+  "search": {
+    "startFrom": "出發地",
+    "tourType": "行程類型",
+    "duration": "時長",
+    "travelStyle": "旅行風格",
+    "submit": "搜尋"
+  },
+  "home": {
+    "viewCruises": "查看遊輪",
+    "viewDetail": "查看詳情",
+    "lastUpdate": "最近更新",
+    "goToSlide": "跳至第 {number} 張",
+    "heroCta": "立即定制您的行程",
+    "heroAriaLabel": "主橫幅輪播"
+  },
+  "card": {
+    "free": "免費",
+    "from": "低至",
+    "perPerson": "每人",
+    "perPax": "/人",
+    "tipsAppreciated": "歡迎打賞",
+    "viewDetails": "查看詳情",
+    "viewDetail": "查看詳情",
+    "details": "詳情",
+    "register": "報名",
+    "explore": "探索",
+    "readArticle": "閱讀文章",
+    "readingTime": "閱讀時間 {count} 分鐘",
+    "reviews": "則評價",
+    "routeLabel": "路線：",
+    "offeredInLabel": "提供語言：",
+    "tourTypeLabel": "行程類型：",
+    "seasonLabel": "季節：",
+    "flexibleTiming": "時間彈性",
+    "flexibleDeparture": "出發時間彈性",
+    "flexiblePrivateTransfer": "彈性私人接送",
+    "quoteOnRequest": "價格面議",
+    "cruise": "遊輪",
+    "nights": "{count} 晚",
+    "privateCar": "私家車",
+    "routeJoin": "至"
+  },
+  "tours": {
+    "heroEyebrow": "越南中部",
+    "heroTitle": "行程",
+    "heroSubtitle": "越南中部的私人、小團、合作及免費行程，由在地嚮導精心策劃。",
+    "searchPlaceholder": "按關鍵字搜尋行程",
+    "filterAria": "篩選行程",
+    "noResults": "沒有符合這些篩選條件的行程。",
+    "clearFilters": "清除篩選",
+    "showingFiltered": "顯示篩選結果。",
+    "found": "找到 {count} 個行程",
+    "all": "全部",
+    "any": "不限",
+    "ratingFilter": "4★+",
+    "group": {
+      "destination": "目的地",
+      "tourType": "行程類型",
+      "season": "季節",
+      "duration": "時長",
+      "groupSize": "團隊規模",
+      "sort": "排序"
+    },
+    "type": {
+      "paid-private": "私人",
+      "paid-group": "小團",
+      "free-walking": "免費徒步",
+      "free-cycling": "免費騎行",
+      "adventure": "探險",
+      "family": "家庭",
+      "cultural": "文化"
+    },
+    "season": {
+      "summer": "夏季",
+      "winter": "冬季",
+      "year-round": "全年"
+    },
+    "durationOpt": {
+      "1": "1 天",
+      "3": "最多 3 天",
+      "7": "最多 1 週"
+    },
+    "groupSizeOpt": {
+      "2": "2 人",
+      "4": "4 人",
+      "8": "8+ 人"
+    },
+    "sortOpt": {
+      "featured": "推薦",
+      "price": "價格",
+      "rating": "評分",
+      "duration": "時長"
+    }
+  }
+}

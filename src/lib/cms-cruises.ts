@@ -4,7 +4,9 @@ import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import type { Payload, Where } from "payload";
 import { getPayloadClient } from "@/lib/payload";
-import type { Cruise } from "@/payload-types";
+import type { Config, Cruise } from "@/payload-types";
+
+const asLocale = (locale?: string): Config["locale"] | undefined => locale as Config["locale"] | undefined;
 
 const DEFAULT_LIMIT = 12;
 
@@ -29,9 +31,11 @@ interface CruisesQuery {
   destinationSlug?: string;
   nights?: number;
   limit?: number;
+  locale?: string;
 }
 
 async function destinationIdForSlug(payload: Payload, slug: string): Promise<number | undefined> {
+  // Slug resolved against the default locale (localized slug `where` has no fallback).
   const destinations = await payload.find({
     collection: "destinations",
     where: { slug: { equals: slug } },
@@ -61,7 +65,8 @@ async function fetchCruisesForList(input: CruisesQuery): Promise<Cruise[]> {
     limit: input.limit ?? DEFAULT_LIMIT,
     depth: 1,
     sort: "-isFeatured",
-    select: CRUISE_LIST_SELECT
+    select: CRUISE_LIST_SELECT,
+    locale: asLocale(input.locale)
   });
 
   return result.docs as Cruise[];
@@ -79,28 +84,33 @@ export function getCruisesForList(input: CruisesQuery = {}): Promise<Cruise[]> {
       featuredOnly: input.featuredOnly,
       destinationSlug: input.destinationSlug,
       nights: input.nights,
-      limit: input.limit
+      limit: input.limit,
+      locale: input.locale
     })
   );
 }
 
-async function fetchCruiseBySlug(slug: string): Promise<Cruise | null> {
+async function fetchCruiseBySlug(slug: string, locale?: string): Promise<Cruise | null> {
   const payload = await getPayloadClient();
-  const result = await payload.find({
+  // Match slug in the default locale (Payload `where` has no locale fallback),
+  // then load content in the target locale.
+  const idResult = await payload.find({
     collection: "cruises",
     where: { and: [{ slug: { equals: slug } }, { status: { equals: "active" } }] },
     limit: 1,
-    depth: 1
+    depth: 0
   });
-  return result.docs[0] ?? null;
+  const id = idResult.docs[0]?.id;
+  if (!id) return null;
+  return (await payload.findByID({ collection: "cruises", id, depth: 1, locale: asLocale(locale) })) as Cruise;
 }
 
-const getCruiseBySlugCached = cache((slug: string) =>
-  unstable_cache(() => fetchCruiseBySlug(slug), ["cms", "cruise", slug], {
-    tags: ["cruises", `cruise-${slug}`]
+const getCruiseBySlugCached = cache((slug: string, locale: string) =>
+  unstable_cache(() => fetchCruiseBySlug(slug, locale), ["cms", "cruise", slug, locale], {
+    tags: ["cruises", `cruise-${slug}`, `${locale}-cruise-${slug}`]
   })()
 );
 
-export function getCruiseBySlug(slug: string): Promise<Cruise | null> {
-  return getCruiseBySlugCached(slug);
+export function getCruiseBySlug(slug: string, locale = "en"): Promise<Cruise | null> {
+  return getCruiseBySlugCached(slug, locale);
 }

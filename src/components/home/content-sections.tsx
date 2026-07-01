@@ -1,6 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ArrowRight, Star } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { DestinationMobileCarousel } from "./destination-carousel";
 import { ImageCard } from "./image-card";
 import type { CruiseFeatureItem, HomeDestinationItem, HomeReviewItem, HomeSectionCopy, WhyChooseItem } from "./types";
@@ -100,7 +101,8 @@ export function Testimonials({ reviews, summary, title = "What Clients Say About
   );
 }
 
-export function BestCruises({ items, copy }: { items: CruiseFeatureItem[]; copy?: HomeSectionCopy }) {
+export async function BestCruises({ items, copy }: { items: CruiseFeatureItem[]; copy?: HomeSectionCopy }) {
+  const t = await getTranslations("home");
   return (
     <section className="border-b border-[var(--tctravel-border)] bg-[#f8f9fa] py-12 md:py-16">
       <div className="container-center">
@@ -119,7 +121,7 @@ export function BestCruises({ items, copy }: { items: CruiseFeatureItem[]; copy?
                 </h3>
                 <p className="text-sm leading-relaxed text-[var(--tctravel-text-light)] md:text-base max-sm:text-[15px]">{item.summary}</p>
                 <Link href={item.href} className="hidden items-center gap-2 rounded-lg bg-[var(--tctravel-orange)] px-6 py-3 text-xs font-bold uppercase tracking-wider text-white shadow transition-all hover:bg-[var(--tctravel-orange-dark)] md:inline-flex">
-                  View Cruises <ArrowRight className="size-4" />
+                  {t("viewCruises")} <ArrowRight className="size-4" />
                 </Link>
               </div>
               <div className={index === 0 ? "order-1 md:order-2" : "md:order-1"}><ImageCard item={item} /></div>

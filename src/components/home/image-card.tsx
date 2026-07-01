@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import type { CruiseFeatureItem, HomeDestinationItem } from "./types";
 
 export function ImageCard({ item, wide = false, tall = false }: { item: HomeDestinationItem | CruiseFeatureItem; wide?: boolean; tall?: boolean }) {

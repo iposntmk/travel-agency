@@ -1,0 +1,197 @@
+{
+  "siteName": "TC Travel Vietnam",
+  "nav": {
+    "tours": "Tours",
+    "destinations": "Destinations",
+    "carRentals": "Car Rentals",
+    "cruises": "Cruises",
+    "blog": "Travel Guide",
+    "about": "About Us",
+    "contact": "Contact",
+    "customizeTour": "Customize Tour"
+  },
+  "booking": {
+    "cta": "Book Now",
+    "payLater": "Book Now, Pay Later",
+    "from": "From",
+    "perPerson": "per person",
+    "checkAvailability": "Check Availability",
+    "requestQuote": "Request a Quote"
+  },
+  "common": {
+    "readMore": "Read more",
+    "viewAll": "View all",
+    "loading": "Loading…",
+    "search": "Search",
+    "filters": "Filters",
+    "clear": "Clear",
+    "showMore": "Show more",
+    "showLess": "Show less",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page",
+    "home": "Home"
+  },
+  "footer": {
+    "rights": "All rights reserved.",
+    "quickLinks": "Quick Links",
+    "followUs": "Follow Us",
+    "tagline": "Your Local Expert for Vietnam Tours.",
+    "helpTitle": "If You Have Any Questions, Let Us Help You!",
+    "payLaterTagline": "Book Now — Pay Later.",
+    "trustLine": "Local guides · Curated itineraries · Trusted by inbound travellers"
+  },
+  "newsletter": {
+    "placeholder": "Your email address",
+    "success": "Subscribed successfully!",
+    "submit": "Submit newsletter"
+  },
+  "consent": {
+    "message": "We use cookies only when you opt in — for site analytics and improving tour recommendations. No tracking happens before you choose.",
+    "accept": "Accept",
+    "reject": "Reject",
+    "dialogLabel": "Cookie preferences"
+  },
+  "actions": {
+    "whatsapp": "Chat with us on WhatsApp",
+    "messenger": "Chat with us on Messenger",
+    "customTrip": "Plan a custom trip",
+    "backToTop": "Back to top"
+  },
+  "search": {
+    "startFrom": "Start From",
+    "tourType": "Tour type",
+    "duration": "Duration",
+    "travelStyle": "Travel style",
+    "submit": "Search",
+    "tabs": {
+      "tours": "Tours",
+      "halongCruises": "Halong Bay Cruises",
+      "mekongCruises": "Mekong River Cruises"
+    },
+    "tourTypes": {
+      "paid-private": "Private Tour",
+      "paid-group": "Group Tour",
+      "family": "Family Tour",
+      "adventure": "Adventure Tour",
+      "cultural": "Cultural Tour"
+    },
+    "durations": {
+      "1-5": "1-5 Days",
+      "6-10": "6-10 Days",
+      "11-15": "11-15 Days",
+      "16-": "16+ Days"
+    },
+    "cruiseNights": {
+      "1": "1 Night",
+      "2": "2 Nights",
+      "3": "3 Nights"
+    },
+    "styles": {
+      "culture": "Culture",
+      "food": "Food",
+      "family": "Family",
+      "adventure": "Adventure",
+      "nature": "Nature",
+      "history": "History"
+    }
+  },
+  "home": {
+    "viewCruises": "View Cruises",
+    "viewDetail": "View detail",
+    "lastUpdate": "Last update",
+    "goToSlide": "Go to slide {number}",
+    "heroCta": "CUSTOMIZE YOUR TRIP NOW",
+    "heroAriaLabel": "Hero carousel"
+  },
+  "card": {
+    "free": "Free",
+    "from": "From",
+    "perPerson": "per person",
+    "perPax": "/pax",
+    "tipsAppreciated": "Tips appreciated",
+    "viewDetails": "View details",
+    "viewDetail": "View Detail",
+    "details": "Details",
+    "register": "Register",
+    "explore": "Explore",
+    "readArticle": "Read article",
+    "readingTime": "{count} min read",
+    "reviews": "Reviews",
+    "routeLabel": "Route:",
+    "offeredInLabel": "Offered in:",
+    "tourTypeLabel": "Tour type:",
+    "seasonLabel": "Season:",
+    "flexibleTiming": "Flexible timing",
+    "flexibleDeparture": "Flexible departure",
+    "flexiblePrivateTransfer": "Flexible private transfer",
+    "quoteOnRequest": "Quote on request",
+    "cruise": "Cruise",
+    "nights": "{count, plural, one {# night} other {# nights}}",
+    "privateCar": "Private car",
+    "routeJoin": "to"
+  },
+  "tours": {
+    "heroEyebrow": "Central Vietnam",
+    "heroTitle": "Tours",
+    "heroSubtitle": "Private, small group, partner, and free tours across Central Vietnam. Curated by local guides.",
+    "searchPlaceholder": "Search tours by keyword",
+    "filterAria": "Filter tours",
+    "noResults": "No tours match these filters.",
+    "clearFilters": "Clear filters",
+    "showingFiltered": "Showing filtered results.",
+    "found": "{count, plural, one {# tour found} other {# tours found}}",
+    "all": "All",
+    "any": "Any",
+    "ratingFilter": "4★+",
+    "group": {
+      "destination": "Destination",
+      "tourType": "Tour type",
+      "season": "Season",
+      "duration": "Duration",
+      "groupSize": "Group size",
+      "sort": "Sort"
+    },
+    "type": {
+      "paid-private": "Private",
+      "paid-group": "Small group",
+      "free-walking": "Free walking",
+      "free-cycling": "Free cycling",
+      "adventure": "Adventure",
+      "family": "Family",
+      "cultural": "Cultural"
+    },
+    "season": {
+      "summer": "Summer",
+      "winter": "Winter",
+      "year-round": "Year-round"
+    },
+    "durationOpt": {
+      "1": "1 day",
+      "3": "Up to 3 days",
+      "7": "Up to 1 week"
+    },
+    "groupSizeOpt": {
+      "2": "2 guests",
+      "4": "4 guests",
+      "8": "8+ guests"
+    },
+    "sortOpt": {
+      "featured": "Featured",
+      "price": "Price",
+      "rating": "Rating",
+      "duration": "Duration"
+    }
+  },
+  "languageSwitcher": {
+    "label": "Language",
+    "selectLabel": "Select language"
+  },
+  "a11y": {
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "menuOverlay": "Close menu overlay",
+    "primaryNav": "Primary",
+    "toggleSubmenu": "Toggle {label}"
+  }
+}

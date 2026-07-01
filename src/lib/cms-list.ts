@@ -5,7 +5,9 @@ import { unstable_cache } from "next/cache";
 import type { Payload, Where } from "payload";
 import { buildToursWhere, type ToursQuery } from "@/lib/cms-filters";
 import { getPayloadClient } from "@/lib/payload";
-import type { Tour } from "@/payload-types";
+import type { Config, Tour } from "@/payload-types";
+
+const asLocale = (locale?: string): Config["locale"] | undefined => locale as Config["locale"] | undefined;
 
 const DEFAULT_LIMIT = 24;
 const TOUR_LIST_SELECT = {
@@ -46,11 +48,14 @@ function stableToursQuery(input: ToursQuery = {}): ToursQuery {
     ratingMin: input.ratingMin,
     season: input.season,
     sort: input.sort,
-    tourType: input.tourType
+    tourType: input.tourType,
+    locale: asLocale(input.locale)
   };
 }
 
 async function destinationIdForSlug(payload: Payload, slug: string): Promise<number | undefined> {
+  // Resolve slug against the default locale — slug is localized but its `where`
+  // match doesn't fall back, and only the default locale is guaranteed filled.
   const destinations = await payload.find({
     collection: "destinations",
     where: { slug: { equals: slug } },
@@ -91,7 +96,8 @@ async function fetchToursForList(input: ToursQuery): Promise<Tour[]> {
     limit: input.limit ?? DEFAULT_LIMIT,
     depth: 1,
     sort: sortForTours(input.sort),
-    select: TOUR_LIST_SELECT
+    select: TOUR_LIST_SELECT,
+    locale: asLocale(input.locale)
   });
 
   return result.docs as Tour[];
@@ -109,32 +115,34 @@ export function getToursForList(input: ToursQuery = {}): Promise<Tour[]> {
   return getToursForListCached(JSON.stringify(stableToursQuery(input)));
 }
 
-async function fetchToursForDestinationList(destinationId: number, limit: number): Promise<Tour[]> {
+async function fetchToursForDestinationList(destinationId: number, limit: number, locale?: string): Promise<Tour[]> {
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "tours",
     where: { and: [{ destination: { equals: destinationId } }, { status: { equals: "active" } }] },
     limit,
     depth: 1,
-    select: TOUR_LIST_SELECT
+    select: TOUR_LIST_SELECT,
+    locale: asLocale(locale)
   });
 
   return result.docs as Tour[];
 }
 
-const getToursForDestinationListCached = cache((destinationId: number, limit: number) =>
+const getToursForDestinationListCached = cache((destinationId: number, limit: number, locale: string) =>
   unstable_cache(
-    () => fetchToursForDestinationList(destinationId, limit),
-    ["cms", "tours-for-destination-list", String(destinationId), String(limit)],
+    () => fetchToursForDestinationList(destinationId, limit, locale),
+    ["cms", "tours-for-destination-list", String(destinationId), String(limit), locale],
     { tags: ["tours"] }
   )()
 );
 
-export function getToursForDestinationList(destinationId: number, limit = 6): Promise<Tour[]> {
-  return getToursForDestinationListCached(destinationId, limit);
+export function getToursForDestinationList(destinationId: number, limit = 6, locale = "en"): Promise<Tour[]> {
+  return getToursForDestinationListCached(destinationId, limit, locale);
 }
 
 async function entityIdForSlug(payload: Payload, collection: string, slug: string): Promise<number | undefined> {
+  // Slug resolved against the default locale (localized slug `where` has no fallback).
   const result = await (payload as unknown as { find(args: Record<string, unknown>): Promise<{ docs: { id?: number }[] }> }).find({
     collection,
     where: { slug: { equals: slug } },

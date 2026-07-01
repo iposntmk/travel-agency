@@ -1,5 +1,6 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Mail, Phone, MapPin } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { getSiteSettings } from "@/lib/cms";
 import { getFooterNavigation } from "@/lib/cms-navigation";
 import { SOCIAL_ICONS, type SocialPlatform } from "@/components/icons";
@@ -7,7 +8,11 @@ import { FooterNewsletter } from "@/components/footer-newsletter";
 import type { NavItem } from "@/types/navigation";
 
 export async function SiteFooter() {
-  const [settings, navigation] = await Promise.all([getSiteSettings(), getFooterNavigation()]);
+  const [settings, navigation, t] = await Promise.all([
+    getSiteSettings(),
+    getFooterNavigation(),
+    getTranslations("footer")
+  ]);
   const columns = navigation.map(toFooterColumn).filter((column): column is FooterColumn => column.links.length > 0);
   const email = settings?.salesEmail ?? "hello@tctravel.example";
   const whatsapp = settings?.whatsapp ?? "+84-903-111-222";
@@ -25,7 +30,7 @@ export async function SiteFooter() {
               <span className="ml-1 text-sm font-bold uppercase tracking-[0.16em] text-white">Travel Vietnam</span>
             </Link>
             <p className="mt-4 text-xs font-bold text-white/95 leading-normal">
-              Your Local Expert for Vietnam Tours.
+              {t("tagline")}
             </p>
             <div className="mt-4 space-y-3 text-xs text-white font-medium">
               <a href={`mailto:${email}`} className="flex items-center gap-2.5 hover:text-[var(--tctravel-primary)] transition-colors">
@@ -67,7 +72,7 @@ export async function SiteFooter() {
 
           <div className="space-y-4 text-left">
             <h4 className="text-xs font-bold uppercase tracking-wider text-white">
-              If You Have Any Questions, Let Us Help You!
+              {t("helpTitle")}
             </h4>
             <FooterNewsletter />
 
@@ -97,10 +102,10 @@ export async function SiteFooter() {
         <div className="border-t border-white/10 mt-8 pt-6">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <p className="text-xs text-white">
-              © {new Date().getFullYear()} {company}. Book Now — Pay Later.
+              © {new Date().getFullYear()} {company}. {t("payLaterTagline")}
             </p>
             <p className="text-xs text-white">
-              Local guides · Curated itineraries · Trusted by inbound travellers
+              {t("trustLine")}
             </p>
           </div>
         </div>

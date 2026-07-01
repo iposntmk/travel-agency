@@ -1,6 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ArrowRight } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { resolveImage } from "@/lib/media";
 import type { Destination, Post } from "@/payload-types";
 
@@ -8,7 +9,8 @@ interface Props {
   post: Post;
 }
 
-export function BlogCard({ post }: Props) {
+export async function BlogCard({ post }: Props) {
+  const t = await getTranslations("card");
   const image = resolveImage(post.featuredImage, post.title, { variant: "card" });
   const destination =
     post.destination && typeof post.destination === "object"
@@ -36,7 +38,7 @@ export function BlogCard({ post }: Props) {
       <div className="flex flex-1 flex-col gap-2 p-5">
         {post.readingTime ? (
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-navy-500">
-            {post.readingTime} min read
+            {t("readingTime", { count: post.readingTime })}
           </p>
         ) : null}
         <h2 className="text-lg font-semibold leading-snug tracking-tight text-navy-950">
@@ -45,7 +47,7 @@ export function BlogCard({ post }: Props) {
           </Link>
         </h2>
         <span className="mt-auto inline-flex items-center gap-1 pt-3 text-sm font-semibold text-navy-700">
-          Read article
+          {t("readArticle")}
           <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden="true" />
         </span>
       </div>

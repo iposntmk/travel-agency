@@ -1,11 +1,13 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { usePathname } from "next/navigation";
-import { ChevronDown, Globe, Menu, User, X } from "lucide-react";
+import { ChevronDown, Menu, User, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { CurrencySelector } from "@/components/currency/currency-selector";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import type { HeaderNavItem } from "@/types/navigation";
 
 interface Props {
@@ -14,10 +16,10 @@ interface Props {
 }
 
 export function SiteHeaderClient({ items, children }: Props) {
+  const t = useTranslations("a11y");
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [lang, setLang] = useState<"EN" | "VI">("EN");
   const closeRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => setOpen(false), [pathname]);
@@ -56,7 +58,7 @@ export function SiteHeaderClient({ items, children }: Props) {
           <button
             type="button"
             className="flex size-11 items-center justify-center rounded-md text-[var(--tctravel-text)] hover:bg-gray-100 lg:hidden"
-            aria-label={open ? "Close menu" : "Open menu"}
+            aria-label={open ? t("closeMenu") : t("openMenu")}
             aria-expanded={open}
             aria-controls="site-mobile-nav"
             onClick={() => setOpen((value) => !value)}
@@ -64,7 +66,7 @@ export function SiteHeaderClient({ items, children }: Props) {
             <Menu className="size-7" />
           </button>
           <Logo />
-          <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
+          <nav aria-label={t("primaryNav")} className="hidden items-center gap-1 lg:flex">
             {items.map((item) => (
               <DesktopDropdown key={`${item.href}-${item.label}`} item={item} isActive={isActive} />
             ))}
@@ -75,13 +77,7 @@ export function SiteHeaderClient({ items, children }: Props) {
           </nav>
           <div className="flex items-center gap-2 lg:hidden">
             <CurrencySelector />
-            <button
-              type="button"
-              onClick={() => setLang(lang === "EN" ? "VI" : "EN")}
-              className="flex items-center gap-1 rounded-full border border-[var(--tctravel-border)] px-4 py-2 text-sm font-bold"
-            >
-              <Globe className="size-4" /> {lang}
-            </button>
+            <LanguageSwitcher className="rounded-full border border-[var(--tctravel-border)] px-2 py-1.5 text-sm font-bold text-[var(--tctravel-text)]" />
           </div>
         </div>
       </div>
@@ -125,16 +121,17 @@ function DesktopDropdown({ item, isActive }: { item: HeaderNavItem; isActive: (h
 }
 
 function MobileDrawer({ open, items, closeRef, onClose }: { open: boolean; items: HeaderNavItem[]; closeRef: React.RefObject<HTMLButtonElement | null>; onClose: () => void }) {
+  const t = useTranslations("a11y");
   const [expanded, setExpanded] = useState<string | null>(null);
   if (!open) return null;
 
   return (
     <div id="site-mobile-nav" className="fixed inset-0 z-50 lg:hidden">
-      <button type="button" aria-label="Close menu overlay" className="absolute inset-0 bg-black/55" onClick={onClose} />
+      <button type="button" aria-label={t("menuOverlay")} className="absolute inset-0 bg-black/55" onClick={onClose} />
       <aside className="absolute right-0 top-0 h-full w-[86vw] max-w-sm overflow-y-auto bg-white shadow-2xl">
         <div className="flex h-[60px] items-center justify-between border-b border-[var(--tctravel-border)] px-4">
           <Logo />
-          <button ref={closeRef} type="button" onClick={onClose} className="flex size-10 items-center justify-center rounded-md hover:bg-gray-100" aria-label="Close menu">
+          <button ref={closeRef} type="button" onClick={onClose} className="flex size-10 items-center justify-center rounded-md hover:bg-gray-100" aria-label={t("closeMenu")}>
             <X className="size-6" />
           </button>
         </div>
@@ -146,7 +143,7 @@ function MobileDrawer({ open, items, closeRef, onClose }: { open: boolean; items
                 <div className="flex items-center justify-between">
                   <Link href={item.href} onClick={onClose} className="py-3 text-sm font-bold uppercase text-[var(--tctravel-dark)]">{item.label}</Link>
                   {hasChildren ? (
-                    <button type="button" onClick={() => setExpanded(expanded === item.href ? null : item.href)} className="size-10" aria-label={`Toggle ${item.label}`}>
+                    <button type="button" onClick={() => setExpanded(expanded === item.href ? null : item.href)} className="size-10" aria-label={t("toggleSubmenu", { label: item.label })}>
                       <ChevronDown className={cn("mx-auto size-4 transition", expanded === item.href && "rotate-180")} />
                     </button>
                   ) : null}

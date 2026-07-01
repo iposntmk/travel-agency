@@ -16,16 +16,17 @@ export const Destinations: CollectionConfig = {
     afterDelete: [revalidateDestinationAfterDelete]
   },
   fields: [
-    { name: "title", type: "text", required: true },
+    { name: "title", type: "text", required: true, localized: true },
     {
       name: "slug",
       type: "text",
       required: true,
-      unique: true,
+      index: true,
+      localized: true,
       admin: { description: "URL-friendly identifier, e.g. hoi-an" }
     },
-    { name: "description", type: "richText" },
-    { name: "summary", type: "textarea" },
+    { name: "description", type: "richText", localized: true },
+    { name: "summary", type: "textarea", localized: true },
     { name: "featuredImage", type: "upload", relationTo: "media" },
     { name: "heroImage", type: "upload", relationTo: "media" },
     {
@@ -37,8 +38,8 @@ export const Destinations: CollectionConfig = {
         { label: "Southern Vietnam", value: "south" }
       ]
     },
-    { name: "bestTimeToVisit", type: "textarea" },
-    { name: "hubIntro", type: "richText" },
+    { name: "bestTimeToVisit", type: "textarea", localized: true },
+    { name: "hubIntro", type: "richText", localized: true },
     { name: "sortWeight", type: "number", defaultValue: 0, index: true },
     { name: "featuredTours", type: "relationship", relationTo: "tours", hasMany: true },
     { name: "featuredCarRentals", type: "relationship", relationTo: "car-rentals" as never, hasMany: true },
@@ -47,8 +48,8 @@ export const Destinations: CollectionConfig = {
       name: "seo",
       type: "group",
       fields: [
-        { name: "metaTitle", type: "text" },
-        { name: "metaDescription", type: "textarea" },
+        { name: "metaTitle", type: "text", localized: true },
+        { name: "metaDescription", type: "textarea", localized: true },
         { name: "ogImage", type: "upload", relationTo: "media" }
       ]
     }
