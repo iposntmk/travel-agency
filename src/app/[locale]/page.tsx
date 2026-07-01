@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { buildAlternates, localizedUrl } from "@/lib/locale-path";
 import { JsonLd } from "@/components/json-ld";
 import {
@@ -29,6 +29,7 @@ import { getSiteUrl } from "@/config/env";
 import { getDestinations, getFeaturedReviews, getPublishedPosts, getSiteSettings } from "@/lib/cms";
 import { getCruisesForList } from "@/lib/cms-cruises";
 import { getToursForList } from "@/lib/cms-list";
+import type { WhyChooseItem } from "@/components/home/types";
 import { organizationJsonLd, webSiteJsonLd } from "@/lib/structured-data";
 
 function text(value: unknown, fallback: string): string {
@@ -61,8 +62,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     getSiteSettings(locale)
   ]);
 
+  const t = await getTranslations("home");
   const hp = siteSettings?.homepage;
-  const copy = heroCopy(siteSettings);
+  const copy = heroCopy(siteSettings, { title: t("heroTitle"), subtitle: t("heroSubtitle") });
+  const whyFallback: WhyChooseItem[] = [
+    { title: t("whyItem1Title"), body: t("whyItem1Body"), icon: "compass" },
+    { title: t("whyItem2Title"), body: t("whyItem2Body"), icon: "shield" },
+    { title: t("whyItem3Title"), body: t("whyItem3Body"), icon: "wallet" },
+    { title: t("whyItem4Title"), body: t("whyItem4Body"), icon: "heart" }
+  ];
 
   const sameAs = (siteSettings?.social ?? [])
     .map((s) => s?.url)
@@ -95,28 +103,32 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
       {hp?.whoWeAre?.enabled !== false ? (
         <WhoWeAre
-          heading={text(hp?.whoWeAre?.heading, "Who we are")}
-          title={text(hp?.whoWeAre?.title ?? hp?.hero?.body, "A Vietnam travel agency built around local knowledge.")}
-          body={text(
-            hp?.whoWeAre?.body ?? hp?.search?.subtitle,
-            "TC Travel Vietnam designs private tours, small-group experiences, car transfers, cruises, and custom proposals with direct support from local specialists."
-          )}
-          actionLabel={text(hp?.whoWeAre?.actionLabel, "Meet Our Team")}
+          heading={text(hp?.whoWeAre?.heading, t("whoWeAreHeading"))}
+          title={text(hp?.whoWeAre?.title ?? hp?.hero?.body, t("whoWeAreTitle"))}
+          body={text(hp?.whoWeAre?.body ?? hp?.search?.subtitle, t("whoWeAreBody"))}
+          actionLabel={text(hp?.whoWeAre?.actionLabel, t("meetTeam"))}
           actionHref={text(hp?.whoWeAre?.actionHref, "/about-us")}
         />
       ) : null}
 
-      {hp?.whyUs?.enabled !== false ? <WhyChooseUs items={toWhyItems(siteSettings)} copy={toSectionCopy(hp?.whyUs)} /> : null}
+      {hp?.whyUs?.enabled !== false ? <WhyChooseUs items={toWhyItems(siteSettings, whyFallback)} copy={toSectionCopy(hp?.whyUs)} /> : null}
 
       {hp?.featuredTours?.enabled !== false && tourCards.length > 0 ? (
-        <TourCards items={tourCards} copy={toSectionCopy(hp?.featuredTours)} tabLabel={text(hp?.featuredTours?.tabLabel, "PRIVATE TOURS")} />
+        <TourCards items={tourCards} copy={toSectionCopy(hp?.featuredTours)} tabLabel={text(hp?.featuredTours?.tabLabel, t("privateToursTab"))} />
       ) : null}
 
       {hp?.testimonials?.enabled !== false ? (
         <Testimonials
           reviews={toReviewItems(reviews)}
-          title={text(hp?.testimonials?.title, "What Clients Say About Us")}
-          summary={hp?.testimonials?.subtitle ?? siteSettings?.trust?.summary ?? `${siteSettings?.trust?.reviewAverage ?? 4.9}/5 from ${siteSettings?.trust?.reviewCount ?? 120}+ traveller reviews.`}
+          title={text(hp?.testimonials?.title, t("testimonialsTitle"))}
+          summary={
+            hp?.testimonials?.subtitle ??
+            siteSettings?.trust?.summary ??
+            t("reviewsSummary", {
+              average: siteSettings?.trust?.reviewAverage ?? 4.9,
+              count: siteSettings?.trust?.reviewCount ?? 120
+            })
+          }
         />
       ) : null}
 

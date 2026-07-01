@@ -127,27 +127,23 @@ export function toCruiseItems(cruises: Cruise[]): CruiseFeatureItem[] {
   }));
 }
 
-export function toWhyItems(settings: SiteSetting | null): WhyChooseItem[] {
+// CMS why-us items win when present; otherwise fall back to the caller-supplied
+// (translated) list so the section is never hardcoded English on non-en locales.
+export function toWhyItems(settings: SiteSetting | null, fallback: WhyChooseItem[]): WhyChooseItem[] {
   const items = settings?.homepage?.whyUs?.items?.filter((item) => item?.title && item?.body) ?? [];
   if (items.length > 0) {
     return items.slice(0, 4).map((item) => ({ title: item.title, body: item.body, icon: item.icon ?? undefined }));
   }
-  return [
-    { title: "Local Specialists", body: "Guides and trip planners based in Central Vietnam.", icon: "compass" },
-    { title: "Trusted Local Operator", body: "Real WhatsApp follow-up before every departure.", icon: "shield" },
-    { title: "Book Now, Pay Later", body: "Confirm details first, then pay when plans are clear.", icon: "wallet" },
-    { title: "Authentic Experiences", body: "Private routes and small groups shaped around local life.", icon: "heart" }
-  ];
+  return fallback;
 }
 
-export function heroCopy(settings: SiteSetting | null) {
+// Hero title/subtitle: CMS override first, then the caller-supplied translated
+// fallback (resolved via next-intl in the page).
+export function heroCopy(settings: SiteSetting | null, fallback: { title: string; subtitle: string }) {
   const hero = settings?.homepage?.hero;
   return {
-    title: clean(hero?.title) ?? "Explore Vietnam With A Local Tour Operator",
-    subtitle:
-      clean(hero?.subtitle) ??
-      clean(hero?.body) ??
-      "Private tours, cruises, car transfers, and custom proposals across Vietnam. Designed by local specialists, backed by real human support."
+    title: clean(hero?.title) ?? fallback.title,
+    subtitle: clean(hero?.subtitle) ?? clean(hero?.body) ?? fallback.subtitle
   };
 }
 

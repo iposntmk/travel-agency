@@ -48,12 +48,13 @@ export function WhoWeAre({
   );
 }
 
-export function WhyChooseUs({ items, copy }: { items: WhyChooseItem[]; copy?: HomeSectionCopy }) {
+export async function WhyChooseUs({ items, copy }: { items: WhyChooseItem[]; copy?: HomeSectionCopy }) {
+  const t = await getTranslations("home");
   return (
     <section className="border-b border-[var(--tctravel-border)] bg-[#f8f9fa] py-12 md:py-16">
       <div className="container-center">
         <h2 className="mb-10 text-center text-2xl font-bold text-[var(--tctravel-text)] md:text-3xl max-sm:text-[28px]">
-          {copy?.title ?? "Why Travel With Us?"}
+          {copy?.title ?? t("whyUsTitle")}
         </h2>
         <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2 lg:grid-cols-4 max-sm:gap-5">
           {items.map((item) => {
@@ -107,9 +108,9 @@ export async function BestCruises({ items, copy }: { items: CruiseFeatureItem[];
     <section className="border-b border-[var(--tctravel-border)] bg-[#f8f9fa] py-12 md:py-16">
       <div className="container-center">
         <div className="mb-12 text-center">
-          <h2 className="mb-4 text-[40px] font-bold leading-[48px] text-[var(--tctravel-text)] max-sm:text-[28px] max-sm:leading-[36px]">{copy?.title ?? "Best Cruises"}</h2>
+          <h2 className="mb-4 text-[40px] font-bold leading-[48px] text-[var(--tctravel-text)] max-sm:text-[28px] max-sm:leading-[36px]">{copy?.title ?? t("cruisesTitle")}</h2>
           <p className="mx-auto max-w-4xl text-sm leading-relaxed text-[var(--tctravel-text-light)] md:text-base max-sm:text-[15px]">
-            {copy?.subtitle ?? "Choose from featured cruise itineraries and river journeys, then ask our local team to shape details around your budget and travel style."}
+            {copy?.subtitle ?? t("cruisesSubtitle")}
           </p>
         </div>
         <div className="space-y-12">
@@ -133,14 +134,15 @@ export async function BestCruises({ items, copy }: { items: CruiseFeatureItem[];
   );
 }
 
-export function Destinations({ items, copy }: { items: HomeDestinationItem[]; copy?: HomeSectionCopy }) {
+export async function Destinations({ items, copy }: { items: HomeDestinationItem[]; copy?: HomeSectionCopy }) {
+  const t = await getTranslations("home");
   return (
     <section className="border-b border-[var(--tctravel-border)] bg-[#f8f9fa] py-12 md:py-16">
       <div className="container-center">
         <div className="mb-10 text-center md:mb-14">
-          <h2 className="mb-4 text-2xl font-bold text-[var(--tctravel-text)] md:text-3xl lg:text-4xl max-sm:text-[28px]">{copy?.title ?? "Top Destinations"}</h2>
+          <h2 className="mb-4 text-2xl font-bold text-[var(--tctravel-text)] md:text-3xl lg:text-4xl max-sm:text-[28px]">{copy?.title ?? t("destinationsTitle")}</h2>
           <p className="mx-auto max-w-3xl text-sm leading-relaxed text-[var(--tctravel-text-light)] md:text-base max-sm:text-[15px]">
-            {copy?.subtitle ?? "Discover popular destinations in Vietnam with local tours, food, culture, beaches, and daily-life experiences."}
+            {copy?.subtitle ?? t("destinationsSubtitle")}
           </p>
         </div>
 

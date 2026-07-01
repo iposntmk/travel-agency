@@ -9,31 +9,33 @@ import { cn } from "@/lib/utils";
 import { Price } from "@/components/currency/price";
 import type { HomeBlogItem, HomeSectionCopy, HomeTourCardItem } from "./types";
 
-export function TourCards({ items, copy, tabLabel = "PRIVATE TOURS" }: { items: HomeTourCardItem[]; copy?: HomeSectionCopy; tabLabel?: string }) {
+export function TourCards({ items, copy, tabLabel }: { items: HomeTourCardItem[]; copy?: HomeSectionCopy; tabLabel?: string }) {
+  const t = useTranslations("home");
   return (
     <CardRail
-      eyebrow={copy?.subtitle ?? "Our team of local travel experts has curated unique experiences and tours at competitive prices."}
-      title={copy?.title ?? "Featured Trips"}
+      eyebrow={copy?.subtitle ?? t("featuredToursSubtitle")}
+      title={copy?.title ?? t("featuredToursTitle")}
       items={items}
       href={copy?.actionHref ?? "/tours"}
-      actionLabel={copy?.actionLabel ?? "See More"}
-      tabLabel={tabLabel}
+      actionLabel={copy?.actionLabel ?? t("seeMore")}
+      tabLabel={tabLabel ?? t("privateToursTab")}
       kind="tour"
     />
   );
 }
 
 export function BlogSection({ items, copy }: { items: HomeBlogItem[]; copy?: HomeSectionCopy }) {
+  const t = useTranslations("home");
   return (
     <section className="border-b border-[var(--tctravel-border)] bg-[#f8f9fa] py-12 md:py-16">
       <div className="container-center">
         <div className="mb-10 text-center md:mb-14">
-          <h2 className="mb-3 text-2xl font-bold text-[var(--tctravel-text)] md:text-3xl lg:text-4xl max-sm:text-[28px]">{copy?.title ?? "Travel Guide"}</h2>
-          <p className="text-sm font-medium text-[var(--tctravel-text-light)] max-sm:text-[15px]">{copy?.subtitle ?? "Get expert advice, destination inspiration, and the best travel tips."}</p>
+          <h2 className="mb-3 text-2xl font-bold text-[var(--tctravel-text)] md:text-3xl lg:text-4xl max-sm:text-[28px]">{copy?.title ?? t("blogTitle")}</h2>
+          <p className="text-sm font-medium text-[var(--tctravel-text-light)] max-sm:text-[15px]">{copy?.subtitle ?? t("blogSubtitle")}</p>
         </div>
         <Carousel items={items} render={(item) => <BlogCard item={item} />} cardClassName="px-4 md:px-3" />
         <div className="mt-8 flex justify-center">
-          <Link href={copy?.actionHref ?? "/blog"} className="inline-flex items-center gap-2 rounded-lg bg-[var(--tctravel-orange)] px-8 py-3.5 text-sm font-bold uppercase tracking-wider text-white shadow transition-all hover:bg-[var(--tctravel-orange-dark)] max-sm:min-h-[44px] max-sm:text-[15px]">{copy?.actionLabel ?? "See More"}</Link>
+          <Link href={copy?.actionHref ?? "/blog"} className="inline-flex items-center gap-2 rounded-lg bg-[var(--tctravel-orange)] px-8 py-3.5 text-sm font-bold uppercase tracking-wider text-white shadow transition-all hover:bg-[var(--tctravel-orange-dark)] max-sm:min-h-[44px] max-sm:text-[15px]">{copy?.actionLabel ?? t("seeMore")}</Link>
         </div>
       </div>
     </section>
