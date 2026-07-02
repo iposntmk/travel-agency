@@ -123,7 +123,7 @@ brand-ink   #111827   (headings)
 | Background jobs | Upstash QStash |
 | Monitoring | Sentry (production) |
 | Tests | Vitest (node environment, `tests/**/*.test.ts`) |
-| Hosting | Vercel (push `master` → production) |
+| Hosting | **Netlify Free (production, cost-saving phase)** + Vercel in parallel — push `main` deploys both; single shared Neon prod DB |
 
 ## Knowledge stores
 
@@ -178,13 +178,40 @@ Never skip typecheck or tests before committing. Tests fail before your changes 
 ## Deployment
 
 ```
-git commit → git push origin master → Vercel auto-deploys production
+git commit → git push origin main → Netlify AND Vercel both auto-deploy production
 ```
 
-- Push `master` → Vercel builds + deploys automatically. Other branches → Preview URL.
+- **Production hosting is Netlify Free** (https://tc-travel.netlify.app) — deliberate cost decision while traffic is low. Vercel kept in parallel. Both targets point at the **same Neon prod DB**.
+- Netlify build baseline is `netlify.toml` + `scripts/netlify-build.sh` and is **verified working — do not change it without a measured reason**:
+  - `@netlify/plugin-nextjs` plugin (defaults fail without it, exit 2), `publish = ".next"`, `NODE_VERSION = "22"`.
+  - `SECRETS_SCAN_OMIT_KEYS` must list every `NEXT_PUBLIC_*` var (Next inlines them into the client bundle; Netlify secrets scanning fails the build otherwise). Add new `NEXT_PUBLIC_*` vars to this list.
+  - `netlify-build.sh` runs `pnpm payload:migrate` **only when `$CONTEXT=production`** (Netlify var, not `VERCEL_ENV`) — preview builds must never touch the prod DB.
 - Data (Neon Postgres, Cloudflare R2, Payload content) is external — independent of deployments. Redeploy never loses data.
-- Do not run `vercel --prod` from local unless user explicitly asks. If used, `git push` immediately after.
-- Do not commit `.vercel/`, `.env*.local`, or any file under `API-keys/`
+- Do not run `vercel --prod` / `netlify deploy` from local unless user explicitly asks. If used, `git push` immediately after.
+- Do not commit `.vercel/`, `.netlify/`, `.env*.local`, or any file under `API-keys/`
+- Full detail: `docs/NETLIFY_FREE_DEPLOYMENT_PLAN.md` (setup + risks), `docs/NETLIFY_FREE_LUU_Y.md` (Free limits + upgrade triggers).
+
+## Netlify Free + frontend performance rules (MANDATORY)
+
+Operating principle: **admin/Payload slow is acceptable; public pax-facing pages slow is not.** Netlify Free has hard limits (100 GB bandwidth, ~125k function invocations, 10s function timeout, 300 build min/month) — cache hits cost nothing, cache misses cost money and UX.
+
+### Rendering & caching (source of today's slow-page bugs)
+1. **Reading `searchParams` in a page forces dynamic rendering on every request** — `revalidate` is silently ignored. Build-table tell: route shows `●` but no revalidate column. Never read `searchParams` (page or `generateMetadata`) unless the page actually uses filters/pagination.
+2. Dynamic listing pages (`/tours`, `/car-rentals`, `/cruises`, `/blog/all`, `/blog/destination/[slug]`) are CDN-cached via `Netlify-CDN-Cache-Control` (s-maxage=300 + SWR) in `next.config.ts` `dynamicListingSources`. **Any new query-param page must be added to that list.** Netlify keys the cache by full URL including query string, so filters cache per-combination. Vercel ignores the header (harmless).
+3. **Every CMS read must go through `cache()` + `unstable_cache` with tags** (pattern: `src/lib/cms.ts`, `src/lib/cms-list.ts`). A raw `payload.find()` in a page/component path is a bug — it hits Neon (US↔Singapore latency) per request.
+4. **Every content collection needs revalidate hooks** (`src/collections/payload/hooks/revalidate-content.ts`, `afterChange`/`afterDelete`) matching the cache tags. CarRentals was missed for months — check when adding collections.
+5. `revalidateTag` purges the Next data cache but **not** Netlify's CDN cache — content edits can serve stale HTML up to `s-maxage` (5 min). Acceptable; do not "fix" by removing CDN caching.
+
+### Cost/limit guardrails
+6. **Images stay on Cloudflare R2** — never serve media through Netlify (burns the 100 GB bandwidth limit).
+7. **No synchronous Sharp / heavy work in any request path** — Free function timeout is 10s. Image processing goes through QStash → `/api/qstash/media-process`.
+8. Heavy new dependencies risk the Lambda bundle limit (50 MB zipped) — Payload+Sharp+Lexical already fits tightly; check deploy logs after adding server deps.
+9. Keep `ALLOW_INDEXING=false` until launch sign-off — crawlers burn function invocations. Never enable indexing on the `*.netlify.app` subdomain.
+10. **R2 CORS is per-origin**: every new deploy domain must be added to the R2 bucket CORS `AllowedOrigins`, or admin uploads fail with CORS/"Failed to fetch".
+
+### Dev ergonomics
+11. `NEXT_DIST_DIR=.next-prod pnpm build` builds into a separate dist dir so a running dev server's `.next` isn't clobbered (env hook in `next.config.ts`; ignored by git/eslint).
+12. Do not assume Vercel behavior on Netlify — verify build output and runtime headers (`x-nextjs-cache`, `netlify-cdn-cache-control`) after deploy.
 
 ## What NOT to do
 
@@ -277,3 +304,5 @@ Key files before writing code in an area:
 - `docs/EXTENSION_GUIDE.md` — how to add markets, payment providers, OTA integrations, languages
 - `docs/DEVELOPMENT_APPROACH.md` — layer-by-layer build roadmap
 - `docs/toiuu.md` — performance, SEO, security, and production readiness backlog
+- `docs/NETLIFY_FREE_DEPLOYMENT_PLAN.md` — Netlify production setup, verified config, risk checklist
+- `docs/NETLIFY_FREE_LUU_Y.md` — Netlify Free limits, weekly usage watch, upgrade triggers
