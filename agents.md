@@ -178,10 +178,12 @@ Never skip typecheck or tests before committing. Tests fail before your changes 
 ## Deployment
 
 ```
-git commit → git push origin main → Netlify AND Vercel both auto-deploy production
+git commit → git push origin main → Netlify auto-builds + deploys production
 ```
 
-- **Production hosting is Netlify Free** (https://tc-travel.netlify.app) — deliberate cost decision while traffic is low. Vercel kept in parallel. Both targets point at the **same Neon prod DB**.
+- **Production hosting is Netlify Free** (https://tc-travel.netlify.app) — deliberate cost decision while traffic is low. **Push to `main` IS the deploy pipeline**: Netlify pulls from GitHub, runs `scripts/netlify-build.sh` (migrations gated to `$CONTEXT=production`), publishes. No manual deploy step needed.
+- Vercel kept in parallel, but push to `main` only creates a Vercel **preview**; Vercel production updates only via `vercel --prod` CLI when the owner asks. Both targets point at the **same Neon prod DB**.
+- After pushing: `netlify watch` waits for the deploy; then smoke key pages (200s) and check `netlify-cdn-cache-control` header on listing pages.
 - Netlify build baseline is `netlify.toml` + `scripts/netlify-build.sh` and is **verified working — do not change it without a measured reason**:
   - `@netlify/plugin-nextjs` plugin (defaults fail without it, exit 2), `publish = ".next"`, `NODE_VERSION = "22"`.
   - `SECRETS_SCAN_OMIT_KEYS` must list every `NEXT_PUBLIC_*` var (Next inlines them into the client bundle; Netlify secrets scanning fails the build otherwise). Add new `NEXT_PUBLIC_*` vars to this list.
