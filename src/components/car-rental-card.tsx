@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import type { PublicCarRental } from "@/lib/cms";
 import { resolveImage } from "@/lib/media";
+import { Price } from "@/components/currency/price";
 
 interface Props {
   rental: PublicCarRental;
@@ -28,7 +29,7 @@ export async function CarRentalCard({ rental }: Props) {
         <p className="text-sm leading-6 text-slate-600">{route || t("flexiblePrivateTransfer")}</p>
         <div className="flex items-center justify-between gap-3 pt-2">
           <span className="text-sm font-semibold text-slate-900">
-            {rental.priceFrom ? `${t("from")} ${rental.currency ?? "USD"} ${rental.priceFrom}` : t("quoteOnRequest")}
+            {rental.priceFrom ? <>{t("from")} <Price base={rental.priceFrom} /></> : t("quoteOnRequest")}
           </span>
           <Link
             href={`/car-rentals/${rental.slug}`}

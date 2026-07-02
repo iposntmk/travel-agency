@@ -13,6 +13,7 @@ import { lexicalToHtml, lexicalToPlainText } from "@/lib/lexical";
 import { getPayloadClient } from "@/lib/payload";
 import { resolveImage, resolveOgImage } from "@/lib/media";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/structured-data";
+import { ActiveCurrencyCode, Price } from "@/components/currency/price";
 import type { Destination } from "@/payload-types";
 
 export const revalidate = 300;
@@ -162,8 +163,8 @@ export default async function CruiseDetailPage({ params }: PageProps) {
             <div className="rounded-2xl border border-navy-100 bg-white p-5 shadow-card">
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-navy-500">From</p>
               <p className="mt-1 text-3xl font-bold text-navy-950">
-                {cruise.priceFrom ? `$${cruise.priceFrom}` : "On request"}
-                <span className="ml-1 text-sm font-medium text-slate-500">{cruise.currency ?? "USD"} · per person</span>
+                {cruise.priceFrom ? <Price base={cruise.priceFrom} /> : "On request"}
+                <span className="ml-1 text-sm font-medium text-slate-500"><ActiveCurrencyCode fallback={cruise.currency ?? "USD"} /> · per person</span>
               </p>
 
               {cabinTypes.length > 0 ? (
@@ -171,7 +172,7 @@ export default async function CruiseDetailPage({ params }: PageProps) {
                   {cabinTypes.map((cabin, index) => (
                     <li key={cabin.id ?? index} className="flex items-center justify-between gap-3">
                       <span className="text-slate-700">{cabin.label}</span>
-                      <span className="font-semibold text-navy-900">${cabin.price}</span>
+                      <span className="font-semibold text-navy-900"><Price base={cabin.price} /></span>
                     </li>
                   ))}
                 </ul>

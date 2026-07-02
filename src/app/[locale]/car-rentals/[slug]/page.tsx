@@ -8,6 +8,7 @@ import { getSiteUrl } from "@/config/env";
 import { buildAlternates, localizedUrl } from "@/lib/locale-path";
 import { getCarRentalsForList } from "@/lib/cms";
 import { resolveImage } from "@/lib/media";
+import { Price } from "@/components/currency/price";
 
 export const revalidate = 300;
 
@@ -58,7 +59,7 @@ export default async function CarRentalDetailPage({ params }: PageProps) {
           <aside className="self-start rounded-lg border border-slate-200 bg-slate-50 p-6">
             <p className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-green">Private car</p>
             <p className="mt-3 text-2xl font-semibold text-slate-950">
-              {rental.priceFrom ? `From ${rental.currency ?? "USD"} ${rental.priceFrom}` : "Quote on request"}
+              {rental.priceFrom ? <>From <Price base={rental.priceFrom} /></> : "Quote on request"}
             </p>
             <p className="mt-2 text-sm leading-6 text-slate-600">{rental.durationText ?? "Timing confirmed before departure."}</p>
             <Link href="/customize-tour" className="mt-6 inline-flex w-full justify-center rounded-full bg-brand-green px-5 py-3 text-sm font-semibold text-white">

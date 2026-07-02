@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import type { Cruise, Destination } from "@/payload-types";
 import { resolveImage } from "@/lib/media";
+import { ActiveCurrencyCode, Price } from "@/components/currency/price";
 
 interface CruiseCardProps {
   cruise: Cruise;
@@ -37,7 +38,7 @@ export async function CruiseCard({ cruise }: CruiseCardProps) {
         ) : null}
         {cruise.priceFrom ? (
           <span className="absolute right-3 top-3 inline-flex items-center rounded-full bg-brand-green px-3 py-1 text-[11px] font-semibold text-white shadow-card">
-            {t("from")} ${cruise.priceFrom}
+            {t("from")} <Price base={cruise.priceFrom} />
           </span>
         ) : null}
       </Link>
@@ -61,7 +62,7 @@ export async function CruiseCard({ cruise }: CruiseCardProps) {
           </p>
         </div>
         <div className="mt-auto flex items-center justify-between gap-3 pt-3">
-          <span className="text-sm font-medium text-slate-600">{cruise.currency ?? "USD"} · {t("perPerson")}</span>
+          <span className="text-sm font-medium text-slate-600"><ActiveCurrencyCode fallback={cruise.currency ?? "USD"} /> · {t("perPerson")}</span>
           <Link
             href={href}
             className="inline-flex items-center gap-1 rounded-full bg-brand-green px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-green-dark"
