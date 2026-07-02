@@ -3,10 +3,12 @@ import { Link } from "@/i18n/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { CarRentalCard } from "@/components/car-rental-card";
+import { JsonLd } from "@/components/json-ld";
 import { MobileScrollRow } from "@/components/mobile-scroll-row";
 import { PageHero } from "@/components/section";
 import { getSiteUrl } from "@/config/env";
 import { buildAlternates, localizedUrl } from "@/lib/locale-path";
+import { breadcrumbJsonLd, itemListJsonLd } from "@/lib/structured-data";
 import { getCarRentalsForList, getDestinations } from "@/lib/cms";
 
 export const revalidate = 300;
@@ -43,8 +45,24 @@ export default async function CarRentalsPage({ params, searchParams }: PageProps
     getDestinations(12, locale)
   ]);
 
+  const siteUrl = getSiteUrl().replace(/\/$/, "");
+
   return (
     <main>
+      <JsonLd
+        data={[
+          breadcrumbJsonLd([
+            { name: "Home", url: localizedUrl(siteUrl, locale, "/") },
+            { name: "Car Rentals", url: localizedUrl(siteUrl, locale, "/car-rentals") }
+          ]),
+          itemListJsonLd(
+            rentals.map((rental) => ({
+              name: rental.title,
+              url: localizedUrl(siteUrl, locale, `/car-rentals/${rental.slug}`)
+            }))
+          )
+        ]}
+      />
       <PageHero
         eyebrow="Private transfers"
         title="Car Rentals"

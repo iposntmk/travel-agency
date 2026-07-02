@@ -9,7 +9,6 @@ import { getDestinations } from "@/lib/cms";
 import {
   hasSearchParams,
   readParam,
-  readPriceMax,
   readPositiveNumber,
   resultsKey,
   type SearchParamValue,
@@ -63,7 +62,7 @@ export default async function ToursPage({ params, searchParams }: ToursPageProps
     type: readParam(sp.type),
     season: readParam(sp.season),
     operation: readParam(sp.operation),
-    priceMax: readPriceMax(sp.priceMax),
+    priceMax: readPositiveNumber(sp.priceMax),
     duration: readPositiveNumber(sp.duration),
     durationMin: readPositiveNumber(sp.durationMin),
     groupSize: readPositiveNumber(sp.groupSize),

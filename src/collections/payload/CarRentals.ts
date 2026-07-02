@@ -1,9 +1,14 @@
 import type { CollectionConfig } from "payload";
 import { adminOnly, publicReadActive, staffOnly } from "./access";
+import { revalidateCarRentalAfterChange, revalidateCarRentalAfterDelete } from "./hooks/revalidate-content";
 
 export const CarRentals: CollectionConfig = {
   slug: "car-rentals",
   admin: { useAsTitle: "title" },
+  hooks: {
+    afterChange: [revalidateCarRentalAfterChange],
+    afterDelete: [revalidateCarRentalAfterDelete]
+  },
   access: {
     read: publicReadActive,
     create: staffOnly,

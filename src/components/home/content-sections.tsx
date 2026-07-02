@@ -2,7 +2,6 @@ import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { ArrowRight, Star } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { DestinationMobileCarousel } from "./destination-carousel";
 import { ImageCard } from "./image-card";
 import type { CruiseFeatureItem, HomeDestinationItem, HomeReviewItem, HomeSectionCopy, WhyChooseItem } from "./types";
 

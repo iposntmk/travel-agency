@@ -614,14 +614,16 @@ export async function getDestinationHub(slug: string, locale?: Locale): Promise<
   };
 }
 
-export async function getCarRentalsForList(query: {
+interface CarRentalsListQuery {
   destinationSlug?: string;
   vehicleType?: string;
   route?: string;
   priceMax?: number;
   limit?: number;
   locale?: Locale;
-} = {}): Promise<PublicCarRental[]> {
+}
+
+async function fetchCarRentalsForList(query: CarRentalsListQuery): Promise<PublicCarRental[]> {
   const payload = (await getPayloadClient()) as unknown as PublicFindPayload;
   const and: Record<string, unknown>[] = [{ status: { equals: "active" } }];
 
@@ -644,6 +646,29 @@ export async function getCarRentalsForList(query: {
   });
 
   return result.docs.map(toCarRental);
+}
+
+// Keyed on the full query JSON (same pattern as getToursForList). Tagged with
+// "destinations" too because destinationSlug resolves through that collection.
+const getCarRentalsForListCached = cache((cacheKey: string) =>
+  unstable_cache(
+    () => fetchCarRentalsForList(JSON.parse(cacheKey) as CarRentalsListQuery),
+    ["cms", "car-rentals-list", cacheKey],
+    { tags: ["car-rentals", "destinations"] }
+  )()
+);
+
+export function getCarRentalsForList(query: CarRentalsListQuery = {}): Promise<PublicCarRental[]> {
+  return getCarRentalsForListCached(
+    JSON.stringify({
+      destinationSlug: query.destinationSlug,
+      vehicleType: query.vehicleType,
+      route: query.route,
+      priceMax: query.priceMax,
+      limit: query.limit,
+      locale: localeKey(query.locale)
+    })
+  );
 }
 
 export async function getTravelGuidesForDestination(

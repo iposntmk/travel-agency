@@ -6,19 +6,18 @@ import { EmptyState, PageHero } from "@/components/section";
 import { getSiteUrl } from "@/config/env";
 import { buildAlternates, localizedUrl } from "@/lib/locale-path";
 import { getDestinations } from "@/lib/cms";
-import { hasSearchParams, type SearchParamValue } from "../tours/query";
 
 export const revalidate = 300;
 
+// No searchParams: this page has no filters, and reading searchParams forces
+// dynamic rendering (disables ISR). The canonical URL covers stray
+// query-string variants for SEO.
 interface DestinationsPageProps {
   params: Promise<{ locale: string }>;
-  searchParams?: Promise<Record<string, SearchParamValue>>;
 }
 
-export async function generateMetadata({ params, searchParams }: DestinationsPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: DestinationsPageProps): Promise<Metadata> {
   const { locale } = await params;
-  const sp = (await searchParams) ?? {};
-  const hasParams = hasSearchParams(sp);
 
   return {
     title: "Destinations",
@@ -26,8 +25,7 @@ export async function generateMetadata({ params, searchParams }: DestinationsPag
     alternates: {
       canonical: localizedUrl(getSiteUrl(), locale, "/destinations"),
       languages: buildAlternates(getSiteUrl(), "/destinations")
-    },
-    robots: hasParams ? { index: false, follow: true } : undefined
+    }
   };
 }
 

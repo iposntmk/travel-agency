@@ -31,6 +31,25 @@ const securityHeaders = [
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" }
 ];
 
+// Listing pages read searchParams (filters/pagination) so Next renders them
+// dynamically on every request — revalidate/ISR does not apply. Their HTML is
+// user-agnostic (currency/consent are client-side), so let Netlify's CDN cache
+// them instead: 5 min fresh + serve-stale-while-revalidating. Netlify keys the
+// function-response cache by full URL including the query string, so each
+// filter combination caches separately. Vercel ignores this header (harmless).
+const LOCALES_PATTERN = "(en|fr|es|de|it|pt|zh-Hans|zh-Hant)";
+const netlifyCdnCacheHeader = {
+  key: "Netlify-CDN-Cache-Control",
+  value: "public, durable, s-maxage=300, stale-while-revalidate=86400"
+};
+const dynamicListingSources = [
+  `/:locale${LOCALES_PATTERN}/tours`,
+  `/:locale${LOCALES_PATTERN}/car-rentals`,
+  `/:locale${LOCALES_PATTERN}/cruises`,
+  `/:locale${LOCALES_PATTERN}/blog/all`,
+  `/:locale${LOCALES_PATTERN}/blog/destination/:slug`
+];
+
 function buildRemotePatterns() {
   const patterns: { protocol: "https"; hostname: string }[] = [
     { protocol: "https", hostname: "**.r2.cloudflarestorage.com" },
@@ -57,6 +76,9 @@ function buildRemotePatterns() {
 }
 
 const nextConfig: NextConfig = {
+  // Allows a parallel prod build/serve (e.g. QA) without clobbering the .next
+  // directory a running dev server holds open.
+  ...(process.env.NEXT_DIST_DIR ? { distDir: process.env.NEXT_DIST_DIR } : {}),
   ...(devOrigin
     ? {
         allowedDevOrigins: [devOrigin.hostname],
@@ -82,7 +104,11 @@ const nextConfig: NextConfig = {
           ...securityHeaders,
           ...(env.ALLOW_INDEXING ? [] : [{ key: "X-Robots-Tag", value: robotsHeader }])
         ]
-      }
+      },
+      ...dynamicListingSources.map((source) => ({
+        source,
+        headers: [netlifyCdnCacheHeader]
+      }))
     ];
   }
 };

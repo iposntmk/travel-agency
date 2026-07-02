@@ -37,10 +37,6 @@ export function readParam(value: SearchParamValue): string | undefined {
   return Array.isArray(value) ? value[0] : value;
 }
 
-export function readPriceMax(value: SearchParamValue): number | undefined {
-  return readPositiveNumber(value);
-}
-
 export function readPositiveNumber(value: SearchParamValue): number | undefined {
   const raw = readParam(value);
   if (!raw) return undefined;
