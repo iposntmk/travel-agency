@@ -90,6 +90,8 @@ export interface Config {
     'affiliate-clicks': AffiliateClick;
     currencies: Currency;
     translations: Translation;
+    experiences: Experience;
+    vouchers: Voucher;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -120,6 +122,8 @@ export interface Config {
     'affiliate-clicks': AffiliateClicksSelect<false> | AffiliateClicksSelect<true>;
     currencies: CurrenciesSelect<false> | CurrenciesSelect<true>;
     translations: TranslationsSelect<false> | TranslationsSelect<true>;
+    experiences: ExperiencesSelect<false> | ExperiencesSelect<true>;
+    vouchers: VouchersSelect<false> | VouchersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -246,7 +250,50 @@ export interface Attraction {
   slug: string;
   destination: number | Destination;
   summary?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   featuredImage?: (number | null) | Media;
+  gallery?: (number | Media)[] | null;
+  highlights?:
+    | {
+        title: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  practicalInfo?: {
+    address?: string | null;
+    latitude?: number | null;
+    longitude?: number | null;
+    openingHours?: string | null;
+    /**
+     * Free-form, e.g. 'Free' or '120,000 VND entrance'
+     */
+    priceRange?: string | null;
+  };
+  /**
+   * Short Q&A pairs surfaced to travellers and emitted as FAQPage structured data for AI/search engines.
+   */
+  faqs?:
+    | {
+        question: string;
+        answer: string;
+        id?: string | null;
+      }[]
+    | null;
   categories?: (number | ProductCategory)[] | null;
   sortWeight?: number | null;
   seo?: {
@@ -304,6 +351,24 @@ export interface Destination {
     [k: string]: unknown;
   } | null;
   sortWeight?: number | null;
+  /**
+   * Q&A for the destination hub page (e.g. 'What are the best tours in Hoi An?'), emitted as FAQPage structured data.
+   */
+  faqs?:
+    | {
+        question: string;
+        answer: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Shown as 'Go beyond' cross-sell on the destination hub.
+   */
+  nearbyDestinations?: (number | Destination)[] | null;
+  /**
+   * Curated 1-click experience filters shown as chips on the hub (order matters).
+   */
+  themeChips?: (number | ProductCategory)[] | null;
   featuredTours?: (number | Tour)[] | null;
   featuredCarRentals?: (number | CarRental)[] | null;
   featuredGuides?: (number | Post)[] | null;
@@ -386,6 +451,17 @@ export interface Tour {
   status: 'active' | 'seasonal' | 'sold-out' | 'paused';
   priceFrom?: number | null;
   currency?: string | null;
+  /**
+   * Strike-through deal pricing. originalPrice must exceed priceFrom to display.
+   */
+  deal?: {
+    originalPrice?: number | null;
+    dealEndsAt?: string | null;
+    dealLabel?: string | null;
+  };
+  pickupAvailable?: boolean | null;
+  privateOption?: boolean | null;
+  isBestSeller?: boolean | null;
   pricingTiers?:
     | {
         label: string;
@@ -494,6 +570,17 @@ export interface CarRental {
   durationText?: string | null;
   priceFrom?: number | null;
   currency?: string | null;
+  /**
+   * Strike-through deal pricing. originalPrice must exceed priceFrom to display.
+   */
+  deal?: {
+    originalPrice?: number | null;
+    dealEndsAt?: string | null;
+    dealLabel?: string | null;
+  };
+  pickupAvailable?: boolean | null;
+  privateOption?: boolean | null;
+  isBestSeller?: boolean | null;
   featuredImage?: (number | null) | Media;
   gallery?: (number | Media)[] | null;
   partner?: (number | null) | Partner;
@@ -608,6 +695,17 @@ export interface Cruise {
     | null;
   priceFrom?: number | null;
   currency?: string | null;
+  /**
+   * Strike-through deal pricing. originalPrice must exceed priceFrom to display.
+   */
+  deal?: {
+    originalPrice?: number | null;
+    dealEndsAt?: string | null;
+    dealLabel?: string | null;
+  };
+  pickupAvailable?: boolean | null;
+  privateOption?: boolean | null;
+  isBestSeller?: boolean | null;
   ratingAverage?: number | null;
   ratingCount?: number | null;
   isFeatured?: boolean | null;
@@ -671,7 +769,31 @@ export interface Customer {
 export interface Booking {
   id: number;
   customer?: (number | null) | Customer;
-  tour: number | Tour;
+  tour?: (number | null) | Tour;
+  /**
+   * What is being booked. Tours also keep the legacy `tour` field for backward compatibility.
+   */
+  product?:
+    | ({
+        relationTo: 'tours';
+        value: number | Tour;
+      } | null)
+    | ({
+        relationTo: 'car-rentals';
+        value: number | CarRental;
+      } | null)
+    | ({
+        relationTo: 'cruises';
+        value: number | Cruise;
+      } | null)
+    | ({
+        relationTo: 'experiences';
+        value: number | Experience;
+      } | null);
+  /**
+   * Voucher code applied at inquiry time; flips to redeemed when this booking is confirmed.
+   */
+  appliedVoucher?: (number | null) | Voucher;
   numPax: number;
   preferredDate: string;
   specialRequest?: string | null;
@@ -709,6 +831,141 @@ export interface Booking {
         id?: string | null;
       }[]
     | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "experiences".
+ */
+export interface Experience {
+  id: number;
+  title: string;
+  slug: string;
+  destination: number | Destination;
+  experienceType: 'show-ticket' | 'massage-spa' | 'boat-ride' | 'other';
+  summary?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  featuredImage?: (number | null) | Media;
+  gallery?: (number | Media)[] | null;
+  partner?: (number | null) | Partner;
+  venue?: string | null;
+  sessionDuration?: string | null;
+  priceFrom?: number | null;
+  currency?: string | null;
+  /**
+   * Strike-through deal pricing. originalPrice must exceed priceFrom to display.
+   */
+  deal?: {
+    originalPrice?: number | null;
+    dealEndsAt?: string | null;
+    dealLabel?: string | null;
+  };
+  isFeatured?: boolean | null;
+  isBestSeller?: boolean | null;
+  sortWeight?: number | null;
+  status: 'active' | 'paused';
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vouchers".
+ */
+export interface Voucher {
+  id: number;
+  code: string;
+  promotion: number | Promotion;
+  customerEmail: string;
+  customer?: (number | null) | Customer;
+  sourceBooking: number | Booking;
+  status: 'issued' | 'redeemed' | 'expired' | 'void';
+  expiresAt?: string | null;
+  redeemedBooking?: (number | null) | Booking;
+  issuedAt: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "promotions".
+ */
+export interface Promotion {
+  id: number;
+  name: string;
+  code: string;
+  description?: string | null;
+  discountType: 'percentage' | 'fixed';
+  discountValue: number;
+  applicableTours?: (number | Tour)[] | null;
+  applicableMarkets?: ('EU' | 'US' | 'AU' | 'Asia' | 'VN')[] | null;
+  startDate: string;
+  endDate: string;
+  season?: ('summer' | 'winter' | 'year-round') | null;
+  /**
+   * Expose on the storefront (sale banner / cross-sell teaser) while inside the date window.
+   */
+  isPublic?: boolean | null;
+  bannerText?: string | null;
+  showCountdown?: boolean | null;
+  /**
+   * Cross-sell: confirming a booking of one of these products issues a voucher for this promotion.
+   */
+  triggerProducts?:
+    | (
+        | {
+            relationTo: 'car-rentals';
+            value: number | CarRental;
+          }
+        | {
+            relationTo: 'tours';
+            value: number | Tour;
+          }
+        | {
+            relationTo: 'cruises';
+            value: number | Cruise;
+          }
+      )[]
+    | null;
+  /**
+   * Products the issued voucher can be redeemed on (tours or experiences such as show tickets, massage, boat rides).
+   */
+  rewardApplicableTo?:
+    | (
+        | {
+            relationTo: 'tours';
+            value: number | Tour;
+          }
+        | {
+            relationTo: 'experiences';
+            value: number | Experience;
+          }
+      )[]
+    | null;
+  /**
+   * Days until an issued voucher expires.
+   */
+  voucherValidityDays?: number | null;
+  autoIssueVoucher?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -813,6 +1070,49 @@ export interface SiteSetting {
     reviewCount?: number | null;
     summary?: string | null;
   };
+  giveaway?: {
+    enabled?: boolean | null;
+    title?: string | null;
+    description?: string | null;
+    /**
+     * e.g. "Win a $500 Travel Voucher"
+     */
+    prizeText?: string | null;
+    ctaLabel?: string | null;
+    /**
+     * Seconds before the popup shows (also triggers on exit intent on desktop).
+     */
+    delaySeconds?: number | null;
+    /**
+     * Do not re-show to the same visitor for this many days.
+     */
+    frequencyDays?: number | null;
+  };
+  cancellationPolicy?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Shown on the /faq page and emitted as FAQPage structured data.
+   */
+  generalFaqs?:
+    | {
+        question: string;
+        answer: string;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * Toggle each homepage section on/off and override its copy. Leave a text field blank to keep the built-in default. Copy fields are translatable per language.
    */
@@ -1256,31 +1556,23 @@ export interface Comment {
  */
 export interface Review {
   id: number;
-  customer: number | Customer;
+  customer?: (number | null) | Customer;
+  /**
+   * Display name for public submissions (no customer record).
+   */
+  authorName?: string | null;
+  /**
+   * Never shown publicly.
+   */
+  authorEmail?: string | null;
   tour: number | Tour;
   booking?: (number | null) | Booking;
   rating: number;
   comment?: string | null;
+  photos?: (number | Media)[] | null;
+  submissionSource: 'staff' | 'public';
+  honeypotFlagged?: boolean | null;
   status: 'pending' | 'approved' | 'hidden';
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "promotions".
- */
-export interface Promotion {
-  id: number;
-  name: string;
-  code: string;
-  description?: string | null;
-  discountType: 'percentage' | 'fixed';
-  discountValue: number;
-  applicableTours?: (number | Tour)[] | null;
-  applicableMarkets?: ('EU' | 'US' | 'AU' | 'Asia' | 'VN')[] | null;
-  startDate: string;
-  endDate: string;
-  season?: ('summer' | 'winter' | 'year-round') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1516,6 +1808,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'translations';
         value: number | Translation;
+      } | null)
+    | ({
+        relationTo: 'experiences';
+        value: number | Experience;
+      } | null)
+    | ({
+        relationTo: 'vouchers';
+        value: number | Voucher;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1627,7 +1927,32 @@ export interface AttractionsSelect<T extends boolean = true> {
   slug?: T;
   destination?: T;
   summary?: T;
+  content?: T;
   featuredImage?: T;
+  gallery?: T;
+  highlights?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  practicalInfo?:
+    | T
+    | {
+        address?: T;
+        latitude?: T;
+        longitude?: T;
+        openingHours?: T;
+        priceRange?: T;
+      };
+  faqs?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
   categories?: T;
   sortWeight?: T;
   seo?:
@@ -1655,6 +1980,15 @@ export interface DestinationsSelect<T extends boolean = true> {
   bestTimeToVisit?: T;
   hubIntro?: T;
   sortWeight?: T;
+  faqs?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
+  nearbyDestinations?: T;
+  themeChips?: T;
   featuredTours?: T;
   featuredCarRentals?: T;
   featuredGuides?: T;
@@ -1745,6 +2079,16 @@ export interface ToursSelect<T extends boolean = true> {
   status?: T;
   priceFrom?: T;
   currency?: T;
+  deal?:
+    | T
+    | {
+        originalPrice?: T;
+        dealEndsAt?: T;
+        dealLabel?: T;
+      };
+  pickupAvailable?: T;
+  privateOption?: T;
+  isBestSeller?: T;
   pricingTiers?:
     | T
     | {
@@ -1822,6 +2166,16 @@ export interface CruisesSelect<T extends boolean = true> {
       };
   priceFrom?: T;
   currency?: T;
+  deal?:
+    | T
+    | {
+        originalPrice?: T;
+        dealEndsAt?: T;
+        dealLabel?: T;
+      };
+  pickupAvailable?: T;
+  privateOption?: T;
+  isBestSeller?: T;
   ratingAverage?: T;
   ratingCount?: T;
   isFeatured?: T;
@@ -1858,6 +2212,16 @@ export interface CarRentalsSelect<T extends boolean = true> {
   durationText?: T;
   priceFrom?: T;
   currency?: T;
+  deal?:
+    | T
+    | {
+        originalPrice?: T;
+        dealEndsAt?: T;
+        dealLabel?: T;
+      };
+  pickupAvailable?: T;
+  privateOption?: T;
+  isBestSeller?: T;
   featuredImage?: T;
   gallery?: T;
   partner?: T;
@@ -1894,6 +2258,8 @@ export interface CustomersSelect<T extends boolean = true> {
 export interface BookingsSelect<T extends boolean = true> {
   customer?: T;
   tour?: T;
+  product?: T;
+  appliedVoucher?: T;
   numPax?: T;
   preferredDate?: T;
   specialRequest?: T;
@@ -2049,6 +2415,25 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         reviewAverage?: T;
         reviewCount?: T;
         summary?: T;
+      };
+  giveaway?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        description?: T;
+        prizeText?: T;
+        ctaLabel?: T;
+        delaySeconds?: T;
+        frequencyDays?: T;
+      };
+  cancellationPolicy?: T;
+  generalFaqs?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
       };
   homepage?:
     | T
@@ -2365,10 +2750,15 @@ export interface CommentsSelect<T extends boolean = true> {
  */
 export interface ReviewsSelect<T extends boolean = true> {
   customer?: T;
+  authorName?: T;
+  authorEmail?: T;
   tour?: T;
   booking?: T;
   rating?: T;
   comment?: T;
+  photos?: T;
+  submissionSource?: T;
+  honeypotFlagged?: T;
   status?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -2388,6 +2778,13 @@ export interface PromotionsSelect<T extends boolean = true> {
   startDate?: T;
   endDate?: T;
   season?: T;
+  isPublic?: T;
+  bannerText?: T;
+  showCountdown?: T;
+  triggerProducts?: T;
+  rewardApplicableTo?: T;
+  voucherValidityDays?: T;
+  autoIssueVoucher?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2448,6 +2845,62 @@ export interface TranslationsSelect<T extends boolean = true> {
   group?: T;
   value?: T;
   description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "experiences_select".
+ */
+export interface ExperiencesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  destination?: T;
+  experienceType?: T;
+  summary?: T;
+  description?: T;
+  featuredImage?: T;
+  gallery?: T;
+  partner?: T;
+  venue?: T;
+  sessionDuration?: T;
+  priceFrom?: T;
+  currency?: T;
+  deal?:
+    | T
+    | {
+        originalPrice?: T;
+        dealEndsAt?: T;
+        dealLabel?: T;
+      };
+  isFeatured?: T;
+  isBestSeller?: T;
+  sortWeight?: T;
+  status?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vouchers_select".
+ */
+export interface VouchersSelect<T extends boolean = true> {
+  code?: T;
+  promotion?: T;
+  customerEmail?: T;
+  customer?: T;
+  sourceBooking?: T;
+  status?: T;
+  expiresAt?: T;
+  redeemedBooking?: T;
+  issuedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }

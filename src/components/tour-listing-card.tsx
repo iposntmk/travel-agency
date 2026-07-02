@@ -6,6 +6,10 @@ import { cn } from "@/lib/utils";
 import type { Tour, Destination } from "@/payload-types";
 import { resolveImage } from "@/lib/media";
 import { Price } from "@/components/currency/price";
+import { DealPrice } from "@/components/deal-price";
+import { ProductBadges } from "@/components/product-badges";
+import { WishlistButton } from "@/components/wishlist-button";
+import { ProductMeta } from "@/components/product-meta";
 
 interface TourListingCardProps {
   tour: Tour;
@@ -90,6 +94,15 @@ export async function TourListingCard({ tour }: TourListingCardProps) {
             {t("free")}
           </span>
         ) : null}
+        <ProductBadges
+          isFeatured={tour.isFeatured}
+          isBestSeller={tour.isBestSeller}
+          createdAt={tour.createdAt}
+          priceFrom={tour.priceFrom}
+          originalPrice={tour.deal?.originalPrice}
+          dealEndsAt={tour.deal?.dealEndsAt}
+          className="absolute bottom-3 left-3 z-[2] flex flex-wrap gap-1.5"
+        />
       </Link>
 
       <div className="flex flex-col p-[18px] max-sm:p-4">
@@ -100,11 +113,18 @@ export async function TourListingCard({ tour }: TourListingCardProps) {
           >
             {tour.title}
           </Link>
-          {details.durationText ? (
-            <span className="shrink-0 rounded-[5px] border border-brand-green px-2 py-0.5 text-[13px] font-bold text-brand-green">
-              {details.durationText}
-            </span>
-          ) : null}
+          <div className="flex shrink-0 items-center gap-2">
+            {details.durationText ? (
+              <span className="rounded-[5px] border border-brand-green px-2 py-0.5 text-[13px] font-bold text-brand-green">
+                {details.durationText}
+              </span>
+            ) : null}
+            <WishlistButton
+              type="tour"
+              slug={tour.slug}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-navy-900 transition hover:scale-105"
+            />
+          </div>
         </div>
 
         {details.ratingAverage && details.ratingCount ? (
@@ -131,22 +151,35 @@ export async function TourListingCard({ tour }: TourListingCardProps) {
             highlight
           />
         ) : null}
+        <ProductMeta
+          pickupAvailable={tour.pickupAvailable}
+          privateOption={tour.privateOption}
+          groupSizeMax={tour.groupSizeMax}
+          className="pt-1 text-[13px] leading-5 text-slate-500"
+        />
 
         <div className="my-3 h-px bg-slate-100" />
 
         <div className="mt-auto flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-baseline gap-1">
-            <span className="text-[13px] text-brand-red">
-              {isFree ? t("tipsAppreciated") : t("from")}
-            </span>
-            {!isFree ? (
+          <div className="flex flex-wrap items-baseline gap-1">
+            {isFree ? (
+              <span className="text-[13px] text-brand-red">{t("tipsAppreciated")}</span>
+            ) : tour.deal?.originalPrice ? (
+              <DealPrice
+                priceFrom={tour.priceFrom ?? 0}
+                originalPrice={tour.deal.originalPrice}
+                dealEndsAt={tour.deal.dealEndsAt}
+                className="text-sm font-semibold text-brand-red"
+              />
+            ) : (
               <>
+                <span className="text-[13px] text-brand-red">{t("from")}</span>
                 <span className="text-lg font-bold leading-6 text-brand-red">
                   <Price base={tour.priceFrom ?? 0} />
                 </span>
                 <span className="text-[13px] text-slate-400">{t("perPax")}</span>
               </>
-            ) : null}
+            )}
           </div>
           <Link
             href={href}

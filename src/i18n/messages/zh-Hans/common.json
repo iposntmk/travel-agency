@@ -91,6 +91,125 @@
     "privateCar": "私家车",
     "routeJoin": "至"
   },
+  "deals": {
+    "was": "原价",
+    "save": "立省",
+    "percentOff": "-{percent}%"
+  },
+  "badges": {
+    "topPick": "热门之选",
+    "bestSeller": "畅销",
+    "new": "新品"
+  },
+  "meta": {
+    "pickupAvailable": "可接送",
+    "privateOption": "私人选项",
+    "smallGroup": "小团"
+  },
+  "wishlist": {
+    "add": "加入心愿单",
+    "remove": "移出心愿单"
+  },
+  "promo": {
+    "endsIn": "距结束"
+  },
+  "experiences": {
+    "eyebrow": "门票与增值服务",
+    "title": "精彩体验",
+    "subtitle": "演出门票、spa按摩、竹篮船等本地体验——与旅行团一起预订。",
+    "metaDescription": "预订会安记忆演出门票、按摩spa、竹篮船等越南中部本地体验。",
+    "home": "首页",
+    "empty": "更多体验即将上线，敬请期待。",
+    "quoteOnRequest": "价格详询",
+    "venue": "地点",
+    "duration": "时长",
+    "bookViaWhatsApp": "通过 WhatsApp 预订",
+    "payLaterNote": "现在无需付款——团队确认档期和最终价格后再支付。"
+  },
+  "voucher": {
+    "title": "有优惠码？",
+    "check": "验证",
+    "valid": "「{name}」优惠 {discount} 已确认——预订时报此码即可！",
+    "invalid": {
+      "not-found": "未找到此优惠码，请检查拼写。",
+      "expired": "此优惠码已过期。",
+      "used": "此优惠码已被使用。",
+      "not-applicable": "此优惠码不适用于该产品。"
+    }
+  },
+  "hub": {
+    "explore": "探索",
+    "placesToSee": "必看景点",
+    "mustEat": "必吃美食",
+    "tripInspiration": "行程灵感",
+    "reviews": "评价",
+    "faq": "常见问题",
+    "allChip": "全部",
+    "viewAllMatching": "查看全部相关旅行团",
+    "placesEyebrow": "必看景点",
+    "placesTitle": "{destination}热门景点",
+    "nActivities": "{count, plural, other {# 个体验}}",
+    "mustEatEyebrow": "必吃美食",
+    "mustEatTitle": "{destination}美食指南",
+    "inspirationEyebrow": "行程灵感",
+    "inspirationTitle": "规划您的{destination}之旅",
+    "allGuides": "全部攻略",
+    "reviewsTitle": "旅客怎么评价{destination}",
+    "faqTitle": "在{destination}玩什么？",
+    "goBeyondEyebrow": "继续探索",
+    "goBeyondTitle": "{destination}周边",
+    "allDestinations": "全部目的地",
+    "highlights": "亮点",
+    "practicalInfo": "实用信息",
+    "address": "地址",
+    "openingHours": "开放时间",
+    "priceRange": "价格",
+    "toursEyebrow": "体验",
+    "toursVisiting": "包含{attraction}的旅行团",
+    "allTours": "全部旅行团"
+  },
+  "reviews": {
+    "title": "评价",
+    "count": "{count, plural, other {# 条评价}}",
+    "empty": "每次行程确认后会分享旅客评价。",
+    "write": "写评价",
+    "ratingLabel": "您的评分",
+    "ratingRequired": "请选择星级评分。",
+    "namePlaceholder": "您的姓名",
+    "emailPlaceholder": "您的邮箱（不会公开显示）",
+    "commentPlaceholder": "旅程如何？有什么想告诉其他旅客的？",
+    "submit": "提交评价",
+    "moderationNote": "评价将由团队审核后展示——通常在24小时内。",
+    "thanksTitle": "感谢您的评价！",
+    "pendingNote": "审核通过后将在此显示——通常在24小时内。"
+  },
+  "giveaway": {
+    "close": "关闭",
+    "emailPlaceholder": "您的电子邮箱",
+    "disclaimer": "注册即表示同意接收我们的旅行优惠邮件，可随时退订。",
+    "successTitle": "订阅成功！",
+    "successBody": "请查收邮箱——越南中部最优惠的行程即将送达。",
+    "defaultTitle": "第一时间获取最新旅行优惠！",
+    "defaultDescription": "订阅我们的邮件，获取越南中部旅行团、游船和接送服务的会员专属优惠。",
+    "defaultCta": "立即订阅"
+  },
+  "policy": {
+    "eyebrow": "安心保障",
+    "title": "取消政策",
+    "subtitle": "条款清晰、灵活友好——只要提前告知，大多数行程可免费更改。",
+    "metaDescription": "TC Travel Vietnam 取消政策：灵活改期、清晰退款条款、先预订后付款。",
+    "home": "首页",
+    "fallbackIntro": "每次预订都从免费咨询开始——在团队确认行程前不收取任何费用。已确认的预订请尽早告知变更；大多数旅行团和接送可在出发前24小时内免费改期或取消。",
+    "fallbackContact": "游船及第三方门票可能适用合作方条款——我们会在确认前明确说明。有疑问？通过 WhatsApp 或邮件联系我们。"
+  },
+  "faqPage": {
+    "eyebrow": "帮助中心",
+    "title": "常见问题",
+    "subtitle": "预订、付款、接送、天气——旅客最常问的问题都在这里。",
+    "metaDescription": "关于会安、顺化、岘港旅行团预订、接送、付款和取消的常见问题解答。",
+    "home": "首页",
+    "empty": "本页内容正在编写中——欢迎先通过 WhatsApp 提问，真人客服将为您解答。"
+  },
   "tours": {
     "heroEyebrow": "越南中部",
     "heroTitle": "行程",

@@ -543,6 +543,11 @@ export type PublicCarRental = {
   currency?: string;
   featuredImage?: unknown;
   destination?: unknown;
+  deal?: { originalPrice?: number | null; dealEndsAt?: string | null };
+  pickupAvailable?: boolean;
+  privateOption?: boolean;
+  isBestSeller?: boolean;
+  createdAt?: string;
 };
 
 export type PublicAttraction = {
@@ -551,6 +556,8 @@ export type PublicAttraction = {
   slug: string;
   summary?: string;
   featuredImage?: unknown;
+  /** Number of active tours visiting this attraction (GYG "N activities"). */
+  activityCount?: number;
 };
 
 export type DestinationHub = {
@@ -565,7 +572,7 @@ type PublicFindPayload = {
   find(args: Record<string, unknown>): Promise<{ docs: unknown[] }>;
 };
 
-export async function getDestinationHub(slug: string, locale?: Locale): Promise<DestinationHub | null> {
+async function fetchDestinationHub(slug: string, locale?: Locale): Promise<DestinationHub | null> {
   const destination = await getDestinationBySlug(slug, locale);
   if (!destination) return null;
   const payload = (await getPayloadClient()) as unknown as PublicFindPayload;
@@ -574,7 +581,7 @@ export async function getDestinationHub(slug: string, locale?: Locale): Promise<
     payload.find({
       collection: "tours",
       where: { and: [{ destination: { equals: destination.id } }, { status: { equals: "active" } }] },
-      limit: 6,
+      limit: 24,
       depth: 1,
       sort: "-isFeatured",
       locale
@@ -590,7 +597,7 @@ export async function getDestinationHub(slug: string, locale?: Locale): Promise<
     payload.find({
       collection: "posts",
       where: { and: [{ destination: { equals: destination.id } }, { status: { equals: "published" } }] },
-      limit: 6,
+      limit: 12,
       depth: 1,
       sort: "-sortWeight",
       locale
@@ -605,13 +612,37 @@ export async function getDestinationHub(slug: string, locale?: Locale): Promise<
     })
   ]);
 
+  // "N activities" per attraction, counted in JS from the tours already
+  // fetched (Tours.attractions relationship) — no extra query.
+  const tourDocs = tours.docs as Tour[];
+  const countByAttraction = new Map<string, number>();
+  for (const tour of tourDocs) {
+    for (const entry of tour.attractions ?? []) {
+      const id = String(typeof entry === "object" && entry !== null ? entry.id : entry);
+      countByAttraction.set(id, (countByAttraction.get(id) ?? 0) + 1);
+    }
+  }
+
   return {
     destination,
-    tours: tours.docs as Tour[],
+    tours: tourDocs,
     carRentals: carRentals.docs.map(toCarRental),
     guides: guides.docs as Post[],
-    attractions: attractions.docs.map(toAttraction)
+    attractions: attractions.docs.map((doc) => {
+      const attraction = toAttraction(doc);
+      return { ...attraction, activityCount: countByAttraction.get(String(attraction.id)) ?? 0 };
+    })
   };
+}
+
+const getDestinationHubCached = cache((slug: string, locale: Locale) =>
+  unstable_cache(() => fetchDestinationHub(slug, locale), ["cms", "destination-hub", slug, locale], {
+    tags: ["destinations", `destination-${slug}`, "tours", "car-rentals", "posts", "attractions"]
+  })()
+);
+
+export function getDestinationHub(slug: string, locale?: Locale): Promise<DestinationHub | null> {
+  return getDestinationHubCached(slug, localeKey(locale));
 }
 
 interface CarRentalsListQuery {
@@ -671,7 +702,7 @@ export function getCarRentalsForList(query: CarRentalsListQuery = {}): Promise<P
   );
 }
 
-export async function getTravelGuidesForDestination(
+async function fetchTravelGuidesForDestination(
   destinationSlug: string,
   category?: string,
   locale?: Locale
@@ -697,6 +728,24 @@ export async function getTravelGuidesForDestination(
   return result.docs as Post[];
 }
 
+// Keyed on slug+category+locale; tagged with "destinations" too because the
+// destination slug resolves through that collection.
+const getTravelGuidesForDestinationCached = cache((destinationSlug: string, category: string, locale: Locale) =>
+  unstable_cache(
+    () => fetchTravelGuidesForDestination(destinationSlug, category || undefined, locale),
+    ["cms", "destination-guides", destinationSlug, category, locale],
+    { tags: ["posts", "destinations", `destination-${destinationSlug}`] }
+  )()
+);
+
+export function getTravelGuidesForDestination(
+  destinationSlug: string,
+  category?: string,
+  locale?: Locale
+): Promise<Post[]> {
+  return getTravelGuidesForDestinationCached(destinationSlug, category ?? "", localeKey(locale));
+}
+
 export async function getHomePageContent(locale?: Locale) {
   const [heroDestinations, featuredTours, guides] = await Promise.all([
     getDestinations(6, locale),
@@ -715,6 +764,7 @@ export async function getHomePageContent(locale?: Locale) {
 
 function toCarRental(value: unknown): PublicCarRental {
   const record = asRecord(value);
+  const deal = asRecord(record.deal);
   return {
     id: idValue(record.id),
     title: stringValue(record.title) ?? "Private car rental",
@@ -726,7 +776,12 @@ function toCarRental(value: unknown): PublicCarRental {
     priceFrom: numberValue(record.priceFrom),
     currency: stringValue(record.currency),
     featuredImage: record.featuredImage,
-    destination: record.destination
+    destination: record.destination,
+    deal: { originalPrice: numberValue(deal.originalPrice), dealEndsAt: stringValue(deal.dealEndsAt) },
+    pickupAvailable: record.pickupAvailable === true,
+    privateOption: record.privateOption === true,
+    isBestSeller: record.isBestSeller === true,
+    createdAt: stringValue(record.createdAt)
   };
 }
 

@@ -223,6 +223,44 @@ export function touristDestinationJsonLd(input: DestinationSchemaInput): JsonLdD
   };
 }
 
+export interface AttractionSchemaInput {
+  title: string;
+  url: string;
+  description?: string;
+  image?: string;
+  latitude?: number;
+  longitude?: number;
+  address?: string;
+  openingHours?: string;
+  containedInPlaceName?: string;
+  containedInPlaceUrl?: string;
+}
+
+export function touristAttractionJsonLd(input: AttractionSchemaInput): JsonLdData {
+  return {
+    "@context": "https://schema.org",
+    "@type": "TouristAttraction",
+    name: input.title,
+    url: input.url,
+    ...(input.description ? { description: input.description } : {}),
+    ...(input.image ? { image: input.image } : {}),
+    ...(input.latitude !== undefined && input.longitude !== undefined
+      ? { geo: { "@type": "GeoCoordinates", latitude: input.latitude, longitude: input.longitude } }
+      : {}),
+    ...(input.address ? { address: input.address } : {}),
+    ...(input.openingHours ? { openingHours: input.openingHours } : {}),
+    ...(input.containedInPlaceName
+      ? {
+          containedInPlace: {
+            "@type": "TouristDestination",
+            name: input.containedInPlaceName,
+            ...(input.containedInPlaceUrl ? { url: input.containedInPlaceUrl } : {})
+          }
+        }
+      : {})
+  };
+}
+
 export function blogPostingJsonLd(input: BlogPostingSchemaInput): JsonLdData {
   return {
     "@context": "https://schema.org",

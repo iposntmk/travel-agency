@@ -158,6 +158,125 @@
     "privateCar": "Carro privado",
     "routeJoin": "a"
   },
+  "deals": {
+    "was": "Antes",
+    "save": "Poupe",
+    "percentOff": "-{percent}%"
+  },
+  "badges": {
+    "topPick": "Escolha top",
+    "bestSeller": "Mais vendido",
+    "new": "Novo"
+  },
+  "meta": {
+    "pickupAvailable": "Recolha disponível",
+    "privateOption": "Opção privada",
+    "smallGroup": "Grupo pequeno"
+  },
+  "wishlist": {
+    "add": "Adicionar aos favoritos",
+    "remove": "Remover dos favoritos"
+  },
+  "promo": {
+    "endsIn": "Termina em"
+  },
+  "experiences": {
+    "eyebrow": "Bilhetes e extras",
+    "title": "Experiências",
+    "subtitle": "Bilhetes de espetáculos, spa, passeios de barco-cesto e extras locais — reserve junto com o seu tour.",
+    "metaDescription": "Reserve bilhetes (Ky Uc Hoi An), massagem e spa, passeios de barco-cesto e mais experiências no centro do Vietname.",
+    "home": "Início",
+    "empty": "Novas experiências em breve.",
+    "quoteOnRequest": "Preço sob consulta",
+    "venue": "Local",
+    "duration": "Duração",
+    "bookViaWhatsApp": "Reservar por WhatsApp",
+    "payLaterNote": "Sem pagamento agora — a nossa equipa confirma primeiro disponibilidade e preço final."
+  },
+  "voucher": {
+    "title": "Tem um código?",
+    "check": "Verificar",
+    "valid": "{discount} aplicado com «{name}» — mencione este código ao reservar!",
+    "invalid": {
+      "not-found": "Código não encontrado. Verifique a escrita.",
+      "expired": "Este voucher expirou.",
+      "used": "Este voucher já foi utilizado.",
+      "not-applicable": "Este voucher não se aplica a este produto."
+    }
+  },
+  "hub": {
+    "explore": "Explorar",
+    "placesToSee": "Lugares para ver",
+    "mustEat": "O que comer",
+    "tripInspiration": "Inspiração de viagem",
+    "reviews": "Avaliações",
+    "faq": "FAQ",
+    "allChip": "Tudo",
+    "viewAllMatching": "Ver todos os tours correspondentes",
+    "placesEyebrow": "Lugares para ver",
+    "placesTitle": "Imperdíveis de {destination}",
+    "nActivities": "{count, plural, one {# atividade} other {# atividades}}",
+    "mustEatEyebrow": "O que comer",
+    "mustEatTitle": "O que comer em {destination}",
+    "inspirationEyebrow": "Inspiração de viagem",
+    "inspirationTitle": "Planeie a sua viagem a {destination}",
+    "allGuides": "Todos os guias",
+    "reviewsTitle": "O que dizem os viajantes sobre {destination}",
+    "faqTitle": "O que fazer em {destination}",
+    "goBeyondEyebrow": "Continue a explorar",
+    "goBeyondTitle": "Para além de {destination}",
+    "allDestinations": "Todos os destinos",
+    "highlights": "Destaques",
+    "practicalInfo": "Informações práticas",
+    "address": "Morada",
+    "openingHours": "Horário",
+    "priceRange": "Preço",
+    "toursEyebrow": "Experiências",
+    "toursVisiting": "Tours que visitam {attraction}",
+    "allTours": "Todos os tours"
+  },
+  "reviews": {
+    "title": "Avaliações",
+    "count": "{count, plural, one {# avaliação} other {# avaliações}}",
+    "empty": "As avaliações dos viajantes são publicadas após cada viagem confirmada.",
+    "write": "Escrever uma avaliação",
+    "ratingLabel": "A sua classificação",
+    "ratingRequired": "Selecione uma classificação por estrelas.",
+    "namePlaceholder": "O seu nome",
+    "emailPlaceholder": "O seu email (nunca mostrado publicamente)",
+    "commentPlaceholder": "Como foi a sua viagem? O que deviam saber outros viajantes?",
+    "submit": "Enviar avaliação",
+    "moderationNote": "As avaliações são verificadas pela nossa equipa antes de publicadas — normalmente em 24 horas.",
+    "thanksTitle": "Obrigado pela sua avaliação!",
+    "pendingNote": "Aparecerá aqui após aprovação da nossa equipa — normalmente em 24 horas."
+  },
+  "giveaway": {
+    "close": "Fechar",
+    "emailPlaceholder": "O seu endereço de email",
+    "disclaimer": "Ao inscrever-se aceita receber a nossa newsletter de ofertas de viagem. Cancele quando quiser.",
+    "successTitle": "Está feito!",
+    "successBody": "Verifique a sua caixa de entrada — as melhores ofertas do centro do Vietname estão a caminho.",
+    "defaultTitle": "Seja o primeiro a saber das novas ofertas!",
+    "defaultDescription": "Junte-se à nossa newsletter para ofertas exclusivas em tours, cruzeiros e transferes no centro do Vietname.",
+    "defaultCta": "Inscrever-me"
+  },
+  "policy": {
+    "eyebrow": "Tranquilidade",
+    "title": "Política de cancelamento",
+    "subtitle": "Condições claras e flexíveis — a maioria dos planos pode mudar sem custos se nos avisar cedo.",
+    "metaDescription": "Política de cancelamento da TC Travel Vietnam: alterações flexíveis, reembolsos claros e reservas com pagamento posterior.",
+    "home": "Início",
+    "fallbackIntro": "Cada reserva começa como um pedido gratuito — nada é cobrado até a nossa equipa confirmar o plano. Para reservas confirmadas, avise-nos o mais cedo possível; a maioria dos tours e transferes pode ser remarcada ou cancelada sem custos até 24 horas antes do início.",
+    "fallbackContact": "Para cruzeiros e bilhetes de terceiros podem aplicar-se condições de parceiros — indicamo-las sempre antes da confirmação. Dúvidas? Fale connosco por WhatsApp ou email."
+  },
+  "faqPage": {
+    "eyebrow": "Centro de ajuda",
+    "title": "Perguntas frequentes",
+    "subtitle": "Reservas, pagamento, recolha, clima — as respostas que os viajantes mais procuram.",
+    "metaDescription": "Respostas às perguntas mais comuns sobre reservas de tours, transferes, pagamento e cancelamento em Hoi An, Hue e Da Nang.",
+    "home": "Início",
+    "empty": "Estamos a escrever esta página — entretanto, envie a sua pergunta por WhatsApp e uma pessoa real responderá."
+  },
   "tours": {
     "heroEyebrow": "Vietname central",
     "heroTitle": "Passeios",

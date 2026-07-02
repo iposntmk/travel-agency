@@ -17,8 +17,18 @@ import { resolveOtaWidgets } from "@/lib/ota-providers";
 import { destinationRegionBestSeason, destinationRegionLabel } from "@/lib/destination-regions";
 import { lexicalToHtml, lexicalToPlainText } from "@/lib/lexical";
 import { resolveImage, resolveOgImage } from "@/lib/media";
-import { absoluteUrl, breadcrumbJsonLd, touristDestinationJsonLd } from "@/lib/structured-data";
+import { getTranslations } from "next-intl/server";
+import { getReviewsForDestination } from "@/lib/cms-reviews";
+import { absoluteUrl, breadcrumbJsonLd, itemListJsonLd, touristDestinationJsonLd } from "@/lib/structured-data";
+import { ReviewWall } from "@/components/reviews/review-wall";
+import type { Post, ProductCategory, Destination as DestinationType } from "@/payload-types";
+import { AttractionCard } from "./attraction-card";
 import { DestinationHubSections } from "./destination-hub-sections";
+import { GoBeyond } from "./go-beyond";
+import { HubFaq } from "./hub-faq";
+import { HubGuides } from "./hub-guides";
+import { HubSubnav, type HubSection } from "./hub-subnav";
+import { ThemeChipRow, type ChipFilterItem, type ThemeChip } from "./theme-chip-row";
 
 export const revalidate = 300;
 export const dynamicParams = true;
@@ -60,13 +70,57 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
+const MUST_EAT_CATEGORIES = new Set(["eat", "drink"]);
+
+function guideBuckets(guides: Post[]): { mustEat: Post[]; inspiration: Post[] } {
+  const mustEat: Post[] = [];
+  const inspiration: Post[] = [];
+  for (const post of guides) {
+    if (post.guideCategory && MUST_EAT_CATEGORIES.has(post.guideCategory)) mustEat.push(post);
+    else inspiration.push(post);
+  }
+  return { mustEat, inspiration };
+}
+
 export default async function DestinationDetailPage({ params }: PageProps) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
-  const [hub, siteSettings] = await Promise.all([getDestinationHub(slug, locale), getSiteSettings(locale)]);
+  const [hub, siteSettings, t] = await Promise.all([
+    getDestinationHub(slug, locale),
+    getSiteSettings(locale),
+    getTranslations("hub")
+  ]);
   if (!hub) notFound();
   const { destination, tours } = hub;
+  const reviews = await getReviewsForDestination(destination.id, 6);
   const otaWidgets = resolveOtaWidgets(siteSettings?.ota, "destination", destination.title);
+  const { mustEat, inspiration } = guideBuckets(hub.guides);
+  const faqs = (destination.faqs ?? []).filter((faq) => faq.question && faq.answer);
+  const nearby = (destination.nearbyDestinations ?? []).filter(
+    (entry): entry is DestinationType => typeof entry === "object" && entry !== null
+  );
+  const themeChips: ThemeChip[] = (destination.themeChips ?? [])
+    .filter((entry): entry is ProductCategory => typeof entry === "object" && entry !== null)
+    .map((category) => ({
+      id: String(category.id),
+      label: category.title,
+      href: `/tours?destination=${destination.slug}&category=${category.slug}`
+    }));
+  const chipItems: ChipFilterItem[] = tours.map((tour) => ({
+    key: tour.id,
+    categoryIds: (tour.categories ?? []).map((category) =>
+      String(typeof category === "object" && category !== null ? category.id : category)
+    ),
+    node: <TourCard key={tour.id} tour={tour} />
+  }));
+  const hubSections: HubSection[] = [
+    { id: "explore", label: t("explore") },
+    ...(hub.attractions.length > 0 ? [{ id: "places", label: t("placesToSee") }] : []),
+    ...(mustEat.length > 0 ? [{ id: "must-eat", label: t("mustEat") }] : []),
+    ...(inspiration.length > 0 ? [{ id: "inspiration", label: t("tripInspiration") }] : []),
+    ...(reviews.length > 0 ? [{ id: "reviews", label: t("reviews") }] : []),
+    ...(faqs.length > 0 ? [{ id: "faq", label: t("faq") }] : [])
+  ];
   const details = destination as typeof destination & {
     summary?: string;
     bestTimeToVisit?: string;
@@ -165,7 +219,11 @@ export default async function DestinationDetailPage({ params }: PageProps) {
           ) : null}
         </div>
 
-        <section className="mt-16">
+        <div className="mt-10">
+          <HubSubnav sections={hubSections} />
+        </div>
+
+        <section id="explore" className="mt-10 scroll-mt-24">
           <SectionHead
             eyebrow="Tour catalogue"
             title={`Tours in ${destination.title}`}
@@ -177,13 +235,58 @@ export default async function DestinationDetailPage({ params }: PageProps) {
               No tours published yet for this destination.
             </p>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {tours.map((tour) => (
-                <TourCard key={tour.id} tour={tour} />
-              ))}
-            </div>
+            <ThemeChipRow
+              chips={themeChips}
+              items={chipItems}
+              allLabel={t("allChip")}
+              viewAllLabel={t("viewAllMatching")}
+            />
           )}
         </section>
+
+        {hub.attractions.length > 0 ? (
+          <section id="places" className="mt-16 scroll-mt-24">
+            <JsonLd
+              data={itemListJsonLd(
+                hub.attractions.map((attraction) => ({
+                  name: attraction.title,
+                  url: absoluteUrl(siteUrl, `/destinations/${destination.slug}/attractions/${attraction.slug}`)
+                }))
+              )}
+            />
+            <SectionHead eyebrow={t("placesEyebrow")} title={t("placesTitle", { destination: destination.title })} />
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {hub.attractions.map((attraction) => (
+                <AttractionCard
+                  key={attraction.id}
+                  destinationSlug={destination.slug}
+                  slug={attraction.slug}
+                  title={attraction.title}
+                  summary={attraction.summary}
+                  featuredImage={attraction.featuredImage}
+                  activityCount={attraction.activityCount}
+                />
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        <HubGuides
+          destinationTitle={destination.title}
+          destinationSlug={destination.slug}
+          mustEat={mustEat}
+          inspiration={inspiration}
+        />
+
+        {reviews.length > 0 ? (
+          <section className="mt-16 scroll-mt-24">
+            <ReviewWall reviews={reviews} title={t("reviewsTitle", { destination: destination.title })} />
+          </section>
+        ) : null}
+
+        <HubFaq destinationTitle={destination.title} faqs={faqs} />
+
+        <GoBeyond destinationTitle={destination.title} nearby={nearby} />
 
         <DestinationHubSections hub={hub} />
 

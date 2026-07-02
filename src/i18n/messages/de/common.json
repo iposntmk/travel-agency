@@ -158,6 +158,125 @@
     "privateCar": "Privatwagen",
     "routeJoin": "nach"
   },
+  "deals": {
+    "was": "Vorher",
+    "save": "Sparen",
+    "percentOff": "-{percent}%"
+  },
+  "badges": {
+    "topPick": "Top-Wahl",
+    "bestSeller": "Bestseller",
+    "new": "Neu"
+  },
+  "meta": {
+    "pickupAvailable": "Abholung möglich",
+    "privateOption": "Private Option",
+    "smallGroup": "Kleine Gruppe"
+  },
+  "wishlist": {
+    "add": "Zur Wunschliste hinzufügen",
+    "remove": "Von Wunschliste entfernen"
+  },
+  "promo": {
+    "endsIn": "Endet in"
+  },
+  "experiences": {
+    "eyebrow": "Tickets & Extras",
+    "title": "Erlebnisse",
+    "subtitle": "Show-Tickets, Spa, Korbboot-Fahrten und lokale Extras — passend zu Ihrer Tour buchen.",
+    "metaDescription": "Buchen Sie Show-Tickets (Ky Uc Hoi An), Massage & Spa, Korbboot-Fahrten und mehr in Zentralvietnam.",
+    "home": "Startseite",
+    "empty": "Neue Erlebnisse folgen in Kürze.",
+    "quoteOnRequest": "Preis auf Anfrage",
+    "venue": "Ort",
+    "duration": "Dauer",
+    "bookViaWhatsApp": "Über WhatsApp buchen",
+    "payLaterNote": "Keine Zahlung jetzt — unser Team bestätigt zuerst Verfügbarkeit und Endpreis."
+  },
+  "voucher": {
+    "title": "Haben Sie einen Gutscheincode?",
+    "check": "Prüfen",
+    "valid": "{discount} mit „{name}“ — nennen Sie diesen Code bei der Buchung!",
+    "invalid": {
+      "not-found": "Code nicht gefunden. Bitte Schreibweise prüfen.",
+      "expired": "Dieser Gutschein ist abgelaufen.",
+      "used": "Dieser Gutschein wurde bereits eingelöst.",
+      "not-applicable": "Dieser Gutschein gilt nicht für dieses Produkt."
+    }
+  },
+  "hub": {
+    "explore": "Entdecken",
+    "placesToSee": "Sehenswertes",
+    "mustEat": "Kulinarik",
+    "tripInspiration": "Reiseinspiration",
+    "reviews": "Bewertungen",
+    "faq": "FAQ",
+    "allChip": "Alle",
+    "viewAllMatching": "Alle passenden Touren ansehen",
+    "placesEyebrow": "Sehenswertes",
+    "placesTitle": "Top-Sehenswürdigkeiten in {destination}",
+    "nActivities": "{count, plural, one {# Aktivität} other {# Aktivitäten}}",
+    "mustEatEyebrow": "Kulinarik",
+    "mustEatTitle": "Was man in {destination} essen sollte",
+    "inspirationEyebrow": "Reiseinspiration",
+    "inspirationTitle": "Planen Sie Ihre Reise nach {destination}",
+    "allGuides": "Alle Guides",
+    "reviewsTitle": "Was Reisende über {destination} sagen",
+    "faqTitle": "Was tun in {destination}?",
+    "goBeyondEyebrow": "Weiter entdecken",
+    "goBeyondTitle": "Über {destination} hinaus",
+    "allDestinations": "Alle Reiseziele",
+    "highlights": "Highlights",
+    "practicalInfo": "Praktische Infos",
+    "address": "Adresse",
+    "openingHours": "Öffnungszeiten",
+    "priceRange": "Preis",
+    "toursEyebrow": "Erlebnisse",
+    "toursVisiting": "Touren mit Besuch von {attraction}",
+    "allTours": "Alle Touren"
+  },
+  "reviews": {
+    "title": "Bewertungen",
+    "count": "{count, plural, one {# Bewertung} other {# Bewertungen}}",
+    "empty": "Gästebewertungen erscheinen nach jeder bestätigten Reise.",
+    "write": "Bewertung schreiben",
+    "ratingLabel": "Ihre Bewertung",
+    "ratingRequired": "Bitte wählen Sie eine Sternebewertung.",
+    "namePlaceholder": "Ihr Name",
+    "emailPlaceholder": "Ihre E-Mail (wird nie öffentlich angezeigt)",
+    "commentPlaceholder": "Wie war Ihre Reise? Was sollten andere Reisende wissen?",
+    "submit": "Bewertung absenden",
+    "moderationNote": "Bewertungen werden vor der Veröffentlichung von unserem Team geprüft — meist innerhalb von 24 Stunden.",
+    "thanksTitle": "Danke für Ihre Bewertung!",
+    "pendingNote": "Sie erscheint hier nach Freigabe durch unser Team — meist innerhalb von 24 Stunden."
+  },
+  "giveaway": {
+    "close": "Schließen",
+    "emailPlaceholder": "Ihre E-Mail-Adresse",
+    "disclaimer": "Mit der Anmeldung erhalten Sie unseren Reise-Deals-Newsletter. Jederzeit abbestellbar.",
+    "successTitle": "Geschafft!",
+    "successBody": "Prüfen Sie Ihren Posteingang — die besten Angebote für Zentralvietnam sind unterwegs.",
+    "defaultTitle": "Erfahren Sie als Erste/r von neuen Reiseangeboten!",
+    "defaultDescription": "Abonnieren Sie unseren Newsletter für exklusive Angebote zu Touren, Kreuzfahrten und Transfers in Zentralvietnam.",
+    "defaultCta": "Anmelden"
+  },
+  "policy": {
+    "eyebrow": "Sorgenfrei",
+    "title": "Stornierungsbedingungen",
+    "subtitle": "Klare, reisefreundliche Bedingungen — die meisten Pläne lassen sich bei früher Meldung kostenlos ändern.",
+    "metaDescription": "TC Travel Vietnam Stornierungsbedingungen: flexible Änderungen, klare Erstattungen und Buchung mit späterer Zahlung.",
+    "home": "Startseite",
+    "fallbackIntro": "Jede Buchung beginnt als kostenlose Anfrage — bezahlt wird erst nach Bestätigung durch unser Team. Bei bestätigten Buchungen melden Sie Änderungen bitte so früh wie möglich; die meisten Touren und Transfers können bis 24 Stunden vor Beginn kostenlos umgebucht oder storniert werden.",
+    "fallbackContact": "Für Kreuzfahrten und Tickets Dritter können Partnerbedingungen gelten — wir nennen sie immer vor der Bestätigung. Fragen? Erreichen Sie uns per WhatsApp oder E-Mail."
+  },
+  "faqPage": {
+    "eyebrow": "Hilfecenter",
+    "title": "Häufig gestellte Fragen",
+    "subtitle": "Buchung, Zahlung, Abholung, Wetter — die häufigsten Antworten für Reisende.",
+    "metaDescription": "Antworten auf häufige Fragen zu Buchung, Transfers, Zahlung und Stornierung in Hoi An, Hue und Da Nang.",
+    "home": "Startseite",
+    "empty": "Diese Seite entsteht gerade — schreiben Sie uns in der Zwischenzeit per WhatsApp, ein echter Mensch antwortet."
+  },
   "tours": {
     "heroEyebrow": "Zentralvietnam",
     "heroTitle": "Touren",

@@ -75,6 +75,49 @@ export const SiteSettings: CollectionConfig = {
         { name: "summary", type: "textarea", localized: true }
       ]
     },
+    {
+      name: "giveaway",
+      type: "group",
+      label: "Newsletter giveaway popup",
+      fields: [
+        { name: "enabled", type: "checkbox", defaultValue: false },
+        { name: "title", type: "text", localized: true },
+        { name: "description", type: "textarea", localized: true },
+        {
+          name: "prizeText",
+          type: "text",
+          localized: true,
+          admin: { description: "e.g. \"Win a $500 Travel Voucher\"" }
+        },
+        { name: "ctaLabel", type: "text", localized: true },
+        {
+          name: "delaySeconds",
+          type: "number",
+          min: 0,
+          defaultValue: 15,
+          admin: { description: "Seconds before the popup shows (also triggers on exit intent on desktop)." }
+        },
+        {
+          name: "frequencyDays",
+          type: "number",
+          min: 1,
+          defaultValue: 14,
+          admin: { description: "Do not re-show to the same visitor for this many days." }
+        }
+      ]
+    },
+    { name: "cancellationPolicy", type: "richText", localized: true },
+    {
+      name: "generalFaqs",
+      type: "array",
+      localized: true,
+      label: "General FAQs (site-wide)",
+      admin: { description: "Shown on the /faq page and emitted as FAQPage structured data." },
+      fields: [
+        { name: "question", type: "text", required: true },
+        { name: "answer", type: "textarea", required: true }
+      ]
+    },
     homepageField,
     searchFormField,
     otaField,

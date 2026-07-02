@@ -116,6 +116,19 @@ export const Tours: CollectionConfig = {
     { name: "priceFrom", type: "number", min: 0, index: true },
     { name: "currency", type: "text", defaultValue: "USD" },
     {
+      name: "deal",
+      type: "group",
+      admin: { description: "Strike-through deal pricing. originalPrice must exceed priceFrom to display." },
+      fields: [
+        { name: "originalPrice", type: "number", min: 0 },
+        { name: "dealEndsAt", type: "date" },
+        { name: "dealLabel", type: "text", localized: true }
+      ]
+    },
+    { name: "pickupAvailable", type: "checkbox", defaultValue: false },
+    { name: "privateOption", type: "checkbox", defaultValue: false },
+    { name: "isBestSeller", type: "checkbox", defaultValue: false, index: true },
+    {
       name: "pricingTiers",
       type: "array",
       fields: [

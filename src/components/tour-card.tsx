@@ -4,7 +4,10 @@ import { ArrowRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import type { Tour, Destination } from "@/payload-types";
 import { resolveImage } from "@/lib/media";
-import { ActiveCurrencyCode, Price } from "@/components/currency/price";
+import { DealPrice } from "@/components/deal-price";
+import { ProductBadges } from "@/components/product-badges";
+import { WishlistButton } from "@/components/wishlist-button";
+import { ProductMeta } from "@/components/product-meta";
 
 interface TourCardProps {
   tour: Tour;
@@ -42,21 +45,23 @@ export async function TourCard({ tour, ctaHref, ctaLabel }: TourCardProps) {
           style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined}
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy-950/30 via-navy-950/0 to-navy-950/0" />
-        {destination ? (
-          <span className="absolute left-3 top-3 inline-flex items-center rounded-full bg-white/95 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-navy-900 shadow-card backdrop-blur">
-            {destination}
-          </span>
-        ) : null}
-        <span
-          className={
-            isFree
-              ? "absolute right-3 top-3 inline-flex items-center rounded-full bg-[#C65A3A] px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white shadow-card"
-              : "absolute right-3 top-3 inline-flex items-center rounded-full bg-brand-green px-3 py-1 text-[11px] font-semibold text-white shadow-card"
-          }
-        >
-          {isFree ? t("free") : <>{t("from")} <Price base={tour.priceFrom ?? 0} /></>}
-        </span>
+        <div className="absolute left-3 top-3 flex flex-col items-start gap-1.5">
+          {destination ? (
+            <span className="inline-flex items-center rounded-full bg-white/95 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-navy-900 shadow-card backdrop-blur">
+              {destination}
+            </span>
+          ) : null}
+          <ProductBadges
+            isFeatured={tour.isFeatured}
+            isBestSeller={tour.isBestSeller}
+            createdAt={tour.createdAt}
+            priceFrom={tour.priceFrom}
+            originalPrice={tour.deal?.originalPrice}
+            dealEndsAt={tour.deal?.dealEndsAt}
+          />
+        </div>
       </Link>
+      <WishlistButton type="tour" slug={tour.slug} className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-navy-900 shadow-card backdrop-blur transition hover:scale-105" />
       <div className="flex flex-1 flex-col gap-2 p-5">
         <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-navy-500">
           {tour.tourType.replace(/-/g, " ")}
@@ -69,16 +74,27 @@ export async function TourCard({ tour, ctaHref, ctaLabel }: TourCardProps) {
         </h3>
         <div className="space-y-1 text-sm leading-6 text-slate-600">
           {details.routeSummary ? <p>{details.routeSummary}</p> : null}
-          <p>
-            {details.durationText ?? t("flexibleTiming")}
-            {details.ratingAverage && details.ratingCount
-              ? ` · ${details.ratingAverage.toFixed(1)} (${details.ratingCount})`
-              : ""}
-          </p>
+          <ProductMeta
+            durationText={details.durationText ?? t("flexibleTiming")}
+            pickupAvailable={tour.pickupAvailable}
+            privateOption={tour.privateOption}
+            groupSizeMax={tour.groupSizeMax}
+          />
+          {details.ratingAverage && details.ratingCount ? (
+            <p>{`${details.ratingAverage.toFixed(1)} (${details.ratingCount})`}</p>
+          ) : null}
         </div>
         <div className="mt-auto flex items-center justify-between gap-3 pt-3">
           <span className="text-sm font-medium text-slate-600">
-            {isFree ? t("tipsAppreciated") : <><ActiveCurrencyCode fallback={tour.currency ?? "USD"} /> · {t("perPerson")}</>}
+            {isFree ? (
+              t("tipsAppreciated")
+            ) : (
+              <DealPrice
+                priceFrom={tour.priceFrom ?? 0}
+                originalPrice={tour.deal?.originalPrice}
+                dealEndsAt={tour.deal?.dealEndsAt}
+              />
+            )}
           </span>
           <Link
             href={href}

@@ -41,6 +41,34 @@ export const Destinations: CollectionConfig = {
     { name: "bestTimeToVisit", type: "textarea", localized: true },
     { name: "hubIntro", type: "richText", localized: true },
     { name: "sortWeight", type: "number", defaultValue: 0, index: true },
+    {
+      name: "faqs",
+      type: "array",
+      localized: true,
+      label: "FAQs (destination-specific)",
+      admin: {
+        description:
+          "Q&A for the destination hub page (e.g. 'What are the best tours in Hoi An?'), emitted as FAQPage structured data."
+      },
+      fields: [
+        { name: "question", type: "text", required: true },
+        { name: "answer", type: "textarea", required: true }
+      ]
+    },
+    {
+      name: "nearbyDestinations",
+      type: "relationship",
+      relationTo: "destinations",
+      hasMany: true,
+      admin: { description: "Shown as 'Go beyond' cross-sell on the destination hub." }
+    },
+    {
+      name: "themeChips",
+      type: "relationship",
+      relationTo: "product-categories" as never,
+      hasMany: true,
+      admin: { description: "Curated 1-click experience filters shown as chips on the hub (order matters)." }
+    },
     { name: "featuredTours", type: "relationship", relationTo: "tours", hasMany: true },
     { name: "featuredCarRentals", type: "relationship", relationTo: "car-rentals" as never, hasMany: true },
     { name: "featuredGuides", type: "relationship", relationTo: "posts", hasMany: true },

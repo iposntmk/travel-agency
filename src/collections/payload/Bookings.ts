@@ -1,12 +1,14 @@
 import type { CollectionConfig } from "payload";
 import { adminOnly, adminOnlyField, staffOnly } from "./access";
 import { hardenBookingBeforeValidate } from "./hooks/booking-hardening";
+import { issueVouchersAfterBookingChange } from "./hooks/voucher-issuance";
 
 export const Bookings: CollectionConfig = {
   slug: "bookings",
   admin: { useAsTitle: "idempotencyKey" },
   hooks: {
-    beforeValidate: [hardenBookingBeforeValidate]
+    beforeValidate: [hardenBookingBeforeValidate],
+    afterChange: [issueVouchersAfterBookingChange]
   },
   access: {
     read: staffOnly,
@@ -16,7 +18,21 @@ export const Bookings: CollectionConfig = {
   },
   fields: [
     { name: "customer", type: "relationship", relationTo: "customers" },
-    { name: "tour", type: "relationship", relationTo: "tours", required: true },
+    { name: "tour", type: "relationship", relationTo: "tours" },
+    {
+      name: "product",
+      type: "relationship",
+      relationTo: ["tours", "car-rentals", "cruises", "experiences"] as never,
+      admin: {
+        description: "What is being booked. Tours also keep the legacy `tour` field for backward compatibility."
+      }
+    },
+    {
+      name: "appliedVoucher",
+      type: "relationship",
+      relationTo: "vouchers" as never,
+      admin: { description: "Voucher code applied at inquiry time; flips to redeemed when this booking is confirmed." }
+    },
     { name: "numPax", type: "number", required: true, min: 1 },
     { name: "preferredDate", type: "date", required: true },
     { name: "specialRequest", type: "textarea" },

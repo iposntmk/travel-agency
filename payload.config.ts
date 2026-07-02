@@ -15,6 +15,7 @@ import { Currencies } from "@/collections/payload/Currencies";
 import { CustomInquiries } from "@/collections/payload/CustomInquiries";
 import { Customers } from "@/collections/payload/Customers";
 import { Destinations } from "@/collections/payload/Destinations";
+import { Experiences } from "@/collections/payload/Experiences";
 import { Media } from "@/collections/payload/Media";
 import { Navigation } from "@/collections/payload/Navigation";
 import { Partners } from "@/collections/payload/Partners";
@@ -28,6 +29,7 @@ import { TeamMembers } from "@/collections/payload/TeamMembers";
 import { Tours } from "@/collections/payload/Tours";
 import { Translations } from "@/collections/payload/Translations";
 import { Users } from "@/collections/payload/Users";
+import { Vouchers } from "@/collections/payload/Vouchers";
 import { getPayloadConfigEnv, getPayloadStorageEnv } from "@/config/env";
 import { migrations } from "@/migrations";
 
@@ -94,7 +96,9 @@ export default buildConfig({
     Payments,
     AffiliateClicks,
     Currencies,
-    Translations
+    Translations,
+    Experiences,
+    Vouchers
   ],
   db: postgresAdapter({
     migrationDir: path.resolve(dirname, "src/migrations"),

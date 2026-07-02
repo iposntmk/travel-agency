@@ -158,6 +158,125 @@
     "privateCar": "Private car",
     "routeJoin": "to"
   },
+  "deals": {
+    "was": "Was",
+    "save": "Save",
+    "percentOff": "-{percent}%"
+  },
+  "badges": {
+    "topPick": "Top pick",
+    "bestSeller": "Best seller",
+    "new": "New"
+  },
+  "meta": {
+    "pickupAvailable": "Pickup available",
+    "privateOption": "Private option",
+    "smallGroup": "Small group"
+  },
+  "wishlist": {
+    "add": "Save to wishlist",
+    "remove": "Remove from wishlist"
+  },
+  "promo": {
+    "endsIn": "Ends in"
+  },
+  "experiences": {
+    "eyebrow": "Tickets & add-ons",
+    "title": "Experiences",
+    "subtitle": "Show tickets, spa sessions, basket-boat rides, and local add-ons — book alongside your tour.",
+    "metaDescription": "Book show tickets (Ky Uc Hoi An), massage & spa, basket boat rides, and more local experiences in Central Vietnam.",
+    "home": "Home",
+    "empty": "New experiences are being added — check back soon.",
+    "quoteOnRequest": "Quote on request",
+    "venue": "Venue",
+    "duration": "Duration",
+    "bookViaWhatsApp": "Book via WhatsApp",
+    "payLaterNote": "No payment now — our team confirms availability and final price first."
+  },
+  "voucher": {
+    "title": "Have a voucher code?",
+    "check": "Check",
+    "valid": "{discount} applied with \"{name}\" — quote this code when booking!",
+    "invalid": {
+      "not-found": "We couldn't find this code. Please check the spelling.",
+      "expired": "This voucher has expired.",
+      "used": "This voucher has already been used.",
+      "not-applicable": "This voucher doesn't apply to this product."
+    }
+  },
+  "hub": {
+    "explore": "Explore",
+    "placesToSee": "Places to see",
+    "mustEat": "Must eat",
+    "tripInspiration": "Trip inspiration",
+    "reviews": "Reviews",
+    "faq": "FAQ",
+    "allChip": "All",
+    "viewAllMatching": "View all matching tours",
+    "placesEyebrow": "Places to see",
+    "placesTitle": "Top sights in {destination}",
+    "nActivities": "{count, plural, one {# activity} other {# activities}}",
+    "mustEatEyebrow": "Must eat",
+    "mustEatTitle": "What to eat in {destination}",
+    "inspirationEyebrow": "Trip inspiration",
+    "inspirationTitle": "Plan your {destination} trip",
+    "allGuides": "All guides",
+    "reviewsTitle": "What travellers say about {destination}",
+    "faqTitle": "How to decide what to do in {destination}",
+    "goBeyondEyebrow": "Keep exploring",
+    "goBeyondTitle": "Go beyond {destination}",
+    "allDestinations": "All destinations",
+    "highlights": "Highlights",
+    "practicalInfo": "Practical info",
+    "address": "Address",
+    "openingHours": "Opening hours",
+    "priceRange": "Price",
+    "toursEyebrow": "Experiences",
+    "toursVisiting": "Tours visiting {attraction}",
+    "allTours": "All tours"
+  },
+  "reviews": {
+    "title": "Reviews",
+    "count": "{count, plural, one {# review} other {# reviews}}",
+    "empty": "Guest reviews are shared after each confirmed trip.",
+    "write": "Write your review",
+    "ratingLabel": "Your rating",
+    "ratingRequired": "Please select a star rating.",
+    "namePlaceholder": "Your name",
+    "emailPlaceholder": "Your email (never shown publicly)",
+    "commentPlaceholder": "How was your trip? What should other travellers know?",
+    "submit": "Submit review",
+    "moderationNote": "Reviews are checked by our team before they appear — usually within 24 hours.",
+    "thanksTitle": "Thank you for your review!",
+    "pendingNote": "It will appear here once our team approves it — usually within 24 hours."
+  },
+  "giveaway": {
+    "close": "Close",
+    "emailPlaceholder": "Your email address",
+    "disclaimer": "By signing up you agree to receive our travel deals newsletter. Unsubscribe anytime.",
+    "successTitle": "You're in!",
+    "successBody": "Check your inbox — the best Central Vietnam deals are on their way.",
+    "defaultTitle": "Be the first to hear about new travel deals!",
+    "defaultDescription": "Join our newsletter for member-only offers on tours, cruises, and transfers across Central Vietnam.",
+    "defaultCta": "Sign up"
+  },
+  "policy": {
+    "eyebrow": "Peace of mind",
+    "title": "Cancellation Policy",
+    "subtitle": "Clear, traveller-friendly terms — most plans can change without fees when you tell us early.",
+    "metaDescription": "TC Travel Vietnam cancellation policy: flexible changes, clear refund terms, and pay-later bookings for tours, cruises, and transfers.",
+    "home": "Home",
+    "fallbackIntro": "Every booking starts as a free inquiry — no payment is taken until a team member confirms your plan. For confirmed bookings, tell us as early as possible about changes; most tours and transfers can be rescheduled or cancelled without fees up to 24 hours before the start time.",
+    "fallbackContact": "For cruises and third-party tickets, partner terms may apply — we always state them before you confirm. Questions? Reach us on WhatsApp or email and we'll sort it out."
+  },
+  "faqPage": {
+    "eyebrow": "Help center",
+    "title": "Frequently Asked Questions",
+    "subtitle": "Booking, payment, pickup, weather — the answers travellers ask us most.",
+    "metaDescription": "Answers to common questions about booking tours, transfers, payment, cancellation, and travel in Hoi An, Hue, and Da Nang.",
+    "home": "Home",
+    "empty": "We're writing this page right now — meanwhile, message us on WhatsApp with any question and a real person will answer."
+  },
   "tours": {
     "heroEyebrow": "Central Vietnam",
     "heroTitle": "Tours",

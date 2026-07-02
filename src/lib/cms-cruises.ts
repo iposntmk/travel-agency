@@ -22,7 +22,11 @@ const CRUISE_LIST_SELECT = {
   ratingCount: true,
   priceFrom: true,
   currency: true,
+  isFeatured: true,
+  isBestSeller: true,
+  deal: true,
   status: true,
+  createdAt: true,
   updatedAt: true
 } as const;
 

@@ -25,9 +25,16 @@ const TOUR_LIST_SELECT = {
   tourType: true,
   season: true,
   isFeaturedInSeason: true,
+  isFeatured: true,
+  isBestSeller: true,
+  pickupAvailable: true,
+  privateOption: true,
+  groupSizeMax: true,
+  deal: true,
   status: true,
   priceFrom: true,
   currency: true,
+  createdAt: true,
   updatedAt: true
 } as const;
 

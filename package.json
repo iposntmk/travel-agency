@@ -21,6 +21,7 @@
     "seed:nav-labels": "node --env-file=.env --import=tsx/esm scripts/seed-nav-labels-all.ts",
     "seed:homepage-copy": "node --env-file=.env --import=tsx/esm scripts/seed-homepage-copy.ts",
     "seed:homepage-copy-i18n": "node --env-file=.env --import=tsx/esm scripts/seed-homepage-copy-i18n.ts",
+    "seed:competitor-parity": "node --env-file=.env --import=tsx/esm scripts/seed-competitor-parity.ts",
     "payload:migrate": "payload migrate",
     "r2:backfill-cache-control": "node --env-file=.env --import=tsx/esm scripts/backfill-r2-cache-control.ts",
     "qa:clerk-sync": "node --env-file=.env --import=tsx/esm scripts/verify-clerk-sync.ts",

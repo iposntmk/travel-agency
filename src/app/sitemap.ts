@@ -6,6 +6,7 @@ import {
   getPostSitemapEntries,
   getTourSitemapEntries
 } from "@/lib/cms-sitemap";
+import { getAttractionSitemapEntries } from "@/lib/cms-attractions";
 import { buildAlternates, localizedUrl } from "@/lib/locale-path";
 
 const STATIC_ROUTES = [
@@ -17,7 +18,9 @@ const STATIC_ROUTES = [
   "/blog",
   "/about-us",
   "/contact",
-  "/customize-tour"
+  "/customize-tour",
+  "/faq",
+  "/cancellation-policy"
 ] as const;
 export const revalidate = 86400;
 
@@ -27,10 +30,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Slugs are localized but currently only filled for the default locale (other
   // locales fall back), so a single default-locale fetch yields the slug used
   // across every locale URL.
-  const [tours, destinations, posts] = await Promise.all([
+  const [tours, destinations, posts, attractions] = await Promise.all([
     getTourSitemapEntries(200),
     getDestinationSitemapEntries(100),
-    getPostSitemapEntries(200)
+    getPostSitemapEntries(200),
+    getAttractionSitemapEntries(200)
   ]);
 
   const entries: MetadataRoute.Sitemap = [];
@@ -73,6 +77,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: post.updatedAt ? new Date(post.updatedAt) : undefined,
       changeFrequency: "monthly",
       priority: 0.5
+    });
+  }
+  for (const attraction of attractions) {
+    pushLocalized(`/destinations/${attraction.destinationSlug}/attractions/${attraction.slug}`, {
+      lastModified: attraction.updatedAt ? new Date(attraction.updatedAt) : undefined,
+      changeFrequency: "monthly",
+      priority: 0.6
     });
   }
 

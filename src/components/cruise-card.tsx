@@ -4,7 +4,10 @@ import { ArrowRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import type { Cruise, Destination } from "@/payload-types";
 import { resolveImage } from "@/lib/media";
-import { ActiveCurrencyCode, Price } from "@/components/currency/price";
+import { ActiveCurrencyCode } from "@/components/currency/price";
+import { DealPrice } from "@/components/deal-price";
+import { ProductBadges } from "@/components/product-badges";
+import { WishlistButton } from "@/components/wishlist-button";
 
 interface CruiseCardProps {
   cruise: Cruise;
@@ -31,17 +34,23 @@ export async function CruiseCard({ cruise }: CruiseCardProps) {
           style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined}
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy-950/30 via-navy-950/0 to-navy-950/0" />
-        {destination ? (
-          <span className="absolute left-3 top-3 inline-flex items-center rounded-full bg-white/95 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-navy-900 shadow-card backdrop-blur">
-            {destination}
-          </span>
-        ) : null}
-        {cruise.priceFrom ? (
-          <span className="absolute right-3 top-3 inline-flex items-center rounded-full bg-brand-green px-3 py-1 text-[11px] font-semibold text-white shadow-card">
-            {t("from")} <Price base={cruise.priceFrom} />
-          </span>
-        ) : null}
+        <div className="absolute left-3 top-3 flex flex-col items-start gap-1.5">
+          {destination ? (
+            <span className="inline-flex items-center rounded-full bg-white/95 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-navy-900 shadow-card backdrop-blur">
+              {destination}
+            </span>
+          ) : null}
+          <ProductBadges
+            isFeatured={cruise.isFeatured}
+            isBestSeller={cruise.isBestSeller}
+            createdAt={cruise.createdAt}
+            priceFrom={cruise.priceFrom}
+            originalPrice={cruise.deal?.originalPrice}
+            dealEndsAt={cruise.deal?.dealEndsAt}
+          />
+        </div>
       </Link>
+      <WishlistButton type="cruise" slug={cruise.slug} className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-navy-900 shadow-card backdrop-blur transition hover:scale-105" />
       <div className="flex flex-1 flex-col gap-2 p-5">
         <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-navy-500">
           {t("cruise")}
@@ -62,7 +71,17 @@ export async function CruiseCard({ cruise }: CruiseCardProps) {
           </p>
         </div>
         <div className="mt-auto flex items-center justify-between gap-3 pt-3">
-          <span className="text-sm font-medium text-slate-600"><ActiveCurrencyCode fallback={cruise.currency ?? "USD"} /> · {t("perPerson")}</span>
+          <span className="text-sm font-medium text-slate-600">
+            {cruise.priceFrom ? (
+              <DealPrice
+                priceFrom={cruise.priceFrom}
+                originalPrice={cruise.deal?.originalPrice}
+                dealEndsAt={cruise.deal?.dealEndsAt}
+              />
+            ) : (
+              <><ActiveCurrencyCode fallback={cruise.currency ?? "USD"} /> · {t("perPerson")}</>
+            )}
+          </span>
           <Link
             href={href}
             className="inline-flex items-center gap-1 rounded-full bg-brand-green px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-green-dark"

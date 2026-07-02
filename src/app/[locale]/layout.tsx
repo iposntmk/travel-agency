@@ -7,6 +7,8 @@ import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { ConsentBanner } from "@/components/consent-banner";
 import { CurrencyProvider } from "@/components/currency/currency-provider";
+import { NewsletterPopupServer } from "@/components/newsletter-popup-server";
+import { PromoBanner } from "@/components/promo-banner";
 import { SiteFloating } from "@/components/site-floating";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -103,10 +105,12 @@ export default async function LocaleLayout({
           <CurrencyProvider currencies={currencies}>
             <SiteHeader />
             <div id="main-content" className="pt-[60px] lg:pt-[110px]">
+              <PromoBanner locale={locale} />
               {children}
             </div>
             <SiteFooter />
             <SiteFloating />
+            <NewsletterPopupServer locale={locale} />
           </CurrencyProvider>
           <ConsentBanner />
         </NextIntlClientProvider>

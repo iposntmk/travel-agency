@@ -37,6 +37,19 @@ export const Cruises: CollectionConfig = {
     },
     { name: "priceFrom", type: "number", min: 0, index: true },
     { name: "currency", type: "text", defaultValue: "USD" },
+    {
+      name: "deal",
+      type: "group",
+      admin: { description: "Strike-through deal pricing. originalPrice must exceed priceFrom to display." },
+      fields: [
+        { name: "originalPrice", type: "number", min: 0 },
+        { name: "dealEndsAt", type: "date" },
+        { name: "dealLabel", type: "text", localized: true }
+      ]
+    },
+    { name: "pickupAvailable", type: "checkbox", defaultValue: false },
+    { name: "privateOption", type: "checkbox", defaultValue: false },
+    { name: "isBestSeller", type: "checkbox", defaultValue: false, index: true },
     { name: "ratingAverage", type: "number", min: 0, max: 5, defaultValue: 0, index: true },
     { name: "ratingCount", type: "number", min: 0, defaultValue: 0 },
     { name: "isFeatured", type: "checkbox", defaultValue: false, index: true },

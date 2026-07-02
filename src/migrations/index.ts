@@ -25,6 +25,8 @@ import * as migration_20260630_151020_i18n_localization from './20260630_151020_
 import * as migration_20260701_004654_translations_collection from './20260701_004654_translations_collection';
 import * as migration_20260701_010239_translations_group_to_text from './20260701_010239_translations_group_to_text';
 import * as migration_20260701_120000_homepage_localized from './20260701_120000_homepage_localized';
+import * as migration_20260702_091041_competitor_parity_phase0 from './20260702_091041_competitor_parity_phase0';
+import * as migration_20260702_105616_experiences_vouchers_phase5 from './20260702_105616_experiences_vouchers_phase5';
 
 export const migrations = [
   {
@@ -161,5 +163,15 @@ export const migrations = [
     up: migration_20260701_120000_homepage_localized.up,
     down: migration_20260701_120000_homepage_localized.down,
     name: '20260701_120000_homepage_localized',
+  },
+  {
+    up: migration_20260702_091041_competitor_parity_phase0.up,
+    down: migration_20260702_091041_competitor_parity_phase0.down,
+    name: '20260702_091041_competitor_parity_phase0',
+  },
+  {
+    up: migration_20260702_105616_experiences_vouchers_phase5.up,
+    down: migration_20260702_105616_experiences_vouchers_phase5.down,
+    name: '20260702_105616_experiences_vouchers_phase5'
   },
 ];

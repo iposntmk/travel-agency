@@ -267,8 +267,15 @@ export default async function TourDetailPage({ params }: PageProps) {
             <div className="border-t border-slate-200" />
 
             {/* Reviews */}
-            <div id="reviews" className="scroll-mt-20">
-              <TourReviews reviews={reviews} tourUrl={tourUrl} tourTitle={tour.title} />
+            <div className="scroll-mt-20">
+              <TourReviews
+                reviews={reviews}
+                tourId={tour.id}
+                ratingAverage={tour.ratingAverage}
+                ratingCount={tour.ratingCount}
+                tourUrl={tourUrl}
+                tourTitle={tour.title}
+              />
             </div>
 
             <div className="border-t border-slate-200" />
