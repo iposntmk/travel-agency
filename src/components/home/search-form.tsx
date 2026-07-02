@@ -3,6 +3,7 @@
 import { Calendar, ChevronDown, Compass, MapPin, Search, Users } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import type { SearchConfig, SearchOption, SearchTab } from "./types";
 
@@ -48,6 +49,7 @@ function withDefaults(t: Translate, config?: SearchConfig): Required<SearchConfi
 
 export function TcTravelSearchForm({ starts, config }: Props) {
   const t = useTranslations("search");
+  const router = useRouter();
   const resolved = withDefaults(t, config);
   const [activeIndex, setActiveIndex] = useState(0);
   const [start, setStart] = useState("");
@@ -79,13 +81,15 @@ export function TcTravelSearchForm({ starts, config }: Props) {
         if (max) params.set("duration", max);
       }
       if (style) params.set("category", style);
-      window.location.href = params.size > 0 ? `/tours?${params.toString()}` : "/tours";
+      // Locale-aware router keeps the active locale prefix (window.location
+      // would drop it and bounce through a middleware redirect).
+      router.push(params.size > 0 ? `/tours?${params.toString()}` : "/tours");
       return;
     }
 
     // Cruises — backend only filters by destination + nights.
     if (duration) params.set("nights", duration);
-    window.location.href = params.size > 0 ? `/cruises?${params.toString()}` : "/cruises";
+    router.push(params.size > 0 ? `/cruises?${params.toString()}` : "/cruises");
   }
 
   return (
